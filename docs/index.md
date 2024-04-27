@@ -36,7 +36,7 @@ The core architecture of AI Auditor consists of several interacting components:
   - Distance score calculated by the LLM Evaluator.  
   - Identified discrepancies or areas for improvement.  
 
-![Component Diagram AI Auditor](docs/qa_ai.drawio.png)
+![Component Diagram AI Auditor](qa_ai.drawio.png)
     
 ## Benefits:
 

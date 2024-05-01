@@ -1,8 +1,13 @@
 import { Hono } from "hono"
+import { Ai } from "@cloudflare/ai";
 
-const app = new Hono()
+type Bindings = {
+    AI: Ai;
+  };
 
-const evaluation = new Hono()
+const app = new Hono();
+
+const evaluation = new Hono<{ Bindings: Bindings }>();
 evaluation.get('/', (c) => c.text('List evaluations'))
 
 evaluation.get('/:id', (c) => {

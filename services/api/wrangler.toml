@@ -17,5 +17,5 @@ compatibility_date = "2023-12-01"
 # database_name = "my-database"
 # database_id = ""
 
-# [ai]
-# binding = "AI"
+[ai]
+binding = "AI"

@@ -1,14 +1,26 @@
 import { Hono } from 'hono'
+import { cors } from "hono/cors"
 import { basicAuth } from 'hono/basic-auth'
-
 import { logger } from 'hono/logger'
 
-import evaluation from "./core/evaluation";
-import submission from "./core/submission";
+import evaluation from "./core/evaluation"
+import submission from "./core/submission"
+
+import { models } from "./utils/models";
 
 const app = new Hono()
 
 app.use('*', logger())
+
+app.use(
+  "/*",
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://openqa.ai",
+    ],
+  }),
+)
 
 app.use(
   '/auth/*',
@@ -40,6 +52,30 @@ app.onError((err, c) => {
 })
 
 app.get('/', (c) => c.text('Welcome to OpenQA.ai!'))
+
+app.get("/ai", async (c) => {
+  const { prompt, model } = c.req.query();
+
+  console.log(prompt)
+  console.log(model)
+
+  if (!model) {
+    return c.text("No model was provided.")
+  } 
+  // else if (!models.map((model) => model.name).includes(model)) {
+  //   return c.text(`Model ${model} is not supported.`)
+  // }
+
+  const response = await c.env.AI.run('@cf/meta/llama-3-8b-instruct', {
+    prompt,
+  });
+  return c.json(response);
+});
+
+app.get("/models", async (c) => {
+  const response = { models };
+  return c.json({ response });
+});
 
 app.route("/evaluation", evaluation);
 app.route("/submission", submission);

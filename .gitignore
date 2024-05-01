@@ -8,6 +8,7 @@ __pycache__/
 
 *.lock
 .idea
+.DS_Store
 
 # Distribution / packaging
 .Python

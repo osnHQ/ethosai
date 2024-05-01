@@ -1,0 +1,27 @@
+[project]
+name = "experiements"
+version = "0.1.0"
+description = "This is for testing out different experiemental apps"
+authors = [
+    { name = "Lulzx", email = "wiserishabh@gmail.com" }
+]
+dependencies = [
+    "streamlit>=1.33.0",
+    "pandas>=2.2.2",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/web"]

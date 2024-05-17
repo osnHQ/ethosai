@@ -58,6 +58,6 @@ body:
     id: willing-to-submit-pr
     attributes:
       label: Are you willing to submit PR?
-      description: This is absolutely not required, but we are happy to guide you in the contribution process. Find us in help-needed on [channel](https://discord.com/channels/1216289357221199882/1227983739397603338)!
+      description: This is absolutely not required, but we are happy to guide you in the contribution process. Find us in help-needed on [channel](https://discord.com/channels/1216289357221199882/1227983739397603338) !
       options:
         - "Yes I am willing to submit a PR!"

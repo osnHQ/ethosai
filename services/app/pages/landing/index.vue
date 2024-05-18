@@ -47,6 +47,81 @@
   </p>
 </div>
 
+<div class="relative custom-gradient mt-25">
+  <div class="absolute w-[100px] h-[280px] left-[50px] ">
+        <div class="absolute w-[1300px] h-[280px]  top-0">
+            <div class="absolute w-full h-full bg-gradient blur-30 rounded-[20px]"></div>
+            <div class="absolute w-full h-full bg-[#13111A] rounded-[20px]">
+                <div class="absolute w-[791px] h-[68px] left-[20px] top-[calc(50%-34px-8.5px)] font-poppins font-semibold text-[40px] leading-[68px] text-white">
+                    Join our Community of Innovators
+                </div>
+                <div class="absolute w-[726px] h-[27px] left-[15px] top-[180px] font-inter font-light text-[18px] leading-[27px] text-center text-white opacity-80">
+                    Discover the power of our platform and revolutionize language models.
+                </div>
+                <div class="absolute w-[514px] h-[82.72px] left-[800px]">
+                    <div class="absolute w-[180px] h-[62px] left-0 top-[122px]">
+                        <div class="absolute w-full h-full bg-white rounded-[50px]"></div>
+                        <button class="absolute w-[151px] h-[38px] left-[15px] top-[15px] font-poppins font-semibold text-[22px] leading-[38px] text-black">
+                            Get Started
+                        </button>
+                    </div>
+                    <div class="absolute w-[180px] h-[62px] left-[244px] top-[122px]">
+                        <div class="absolute w-full h-full border-3 border-white rounded-[50px]"></div>
+                        <button class="absolute w-[54px] h-[34px] left-[60px] top-[15px] font-poppins font-semibold text-[22px] leading-[38px] text-white">
+                            Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="absolute w-[796.5px] h-[595px] left-[340px] mt-90">
+        <div class="absolute w-[795.515px] h-[594.84px] top-0">
+            <div class="absolute w-[116.5px] h-[43.5px] left-[calc(50%-58.25px)] top-0 font-inter font-extrabold text-[40px] leading-[43.5px] text-center text-white">
+                FAQ
+            </div>
+            
+            <div class="absolute w-[850.6px] h-[32.4px] mt-12 font-inter font-light text-[15px] leading-[32.4px] mr-160 text-white opacity-70">
+                Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+            </div>
+
+            <div class="absolute w-[995.515px] h-[489.395px] left-[calc(50%-497.7575px)] top-[130.44px] flex flex-col items-start gap-[7px]">
+                <div class="w-full h-[92.28px] bg-[#141414] border-2 border-[#1414141F] rounded-[12px] relative">
+                    <div class="absolute left-[36px] top-[33.56px] font-inter font-extrabold text-[18px] leading-[18px] text-white">
+                        How does the framework work?
+                    </div>
+                    <div class="absolute right-[36px] top-[30.23px] w-[39.775px] h-[39.775px] "><img src="public/vector.png" alt="vector"></div>
+                </div>
+                <div class="w-full h-[92.28px] bg-[#141414] border-2 border-[#FFFFFF1F] rounded-[12px] relative">
+                    <div class="absolute left-[36px] top-[33.56px] font-inter font-extrabold text-[18px] leading-[18px] text-white">
+                        How can I participate?
+                    </div>
+                    <div class="absolute right-[36px] top-[30.23px] w-[39.775px] h-[39.775px] "><img src="public/vector.png" alt="vector"></div>
+                </div>
+                <div class="w-full h-[92.28px] bg-[#141414] border-2 border-[#FFFFFF1F] rounded-[12px] relative">
+                    <div class="absolute left-[36px] top-[33.56px] font-inter font-extrabold text-[18px] leading-[18px] text-white">
+                        How are responses evaluated?
+                    </div>
+                    <div class="absolute right-[36px] top-[30.23px] w-[39.775px] h-[39.775px] "><img src="public/vector.png" alt="vector"></div>
+                </div>
+                <div class="w-full h-[92.28px] bg-[#141414] border-2 border-[#FFFFFF1F] rounded-[12px] relative">
+                    <div class="absolute left-[36px] top-[33.56px] font-inter font-extrabold text-[18px] leading-[18px] text-white">
+                        What are the benefits?
+                    </div>
+                    <div class="absolute right-[36px] top-[30.23px] w-[39.775px] h-[39.775px] "><img src="public/vector.png" alt="vector"></div>
+                </div>
+                <div class="w-full h-[92.28px] bg-[#141414] border-2 border-[#FFFFFF1F] rounded-[12px] relative">
+                    <div class="absolute left-[36px] top-[33.56px] font-inter font-extrabold text-[18px] leading-[18px] text-white">
+                        Still have questions?
+                    </div>
+                    <div class="absolute right-[36px] top-[30.23px] w-[39.775px] h-[39.775px] "><img src="public/vector.png" alt="vector"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <footer class="flex justify-between py-16 bg-[#1D2939] text-gray-400 px-20 absolute w-full left-0 top-790 ">
   
     <div class="flex flex-col items-start">
@@ -159,6 +234,22 @@
   /* Set body height to 100vh to cover full viewport height */
   height: 500vh;
 }
+
+.custom-gradient {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+        }
+        .bg-gradient {
+            background: linear-gradient(90deg, rgba(138, 121, 255, 0.8) 0%, rgba(206, 77, 164, 0.8) 100%);
+        }
+        .blur-30 {
+            filter: blur(30px);
+        }
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
 
   </style>
   

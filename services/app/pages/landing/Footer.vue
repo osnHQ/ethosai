@@ -1,5 +1,5 @@
 <template>
-    <footer class="top-790 left-0 absolute flex justify-between bg-[#1D2939] px-20 py-16 w-full text-gray-400">
+    <footer class="flex justify-between bg-[#1D2939] px-20 py-16 w-full text-gray-400">
         <div class="flex flex-col items-start">
             <div class="mb-4 footer-logo">
                 <img src="public/logo.png" alt="OpenQA.AI Logo" />
@@ -135,7 +135,7 @@
         </div>
     </footer>
 
-    <section class="top-868 left-0 absolute flex items-center gap-4 bg-gray-900 py-13 w-full h-10">
+    <section class="top-868 left-0 flex items-center gap-4 bg-gray-900 py-13 w-full h-10">
         <div class="flex-grow"></div>
         <div>
             <p class="mr-140 font-inter font-normal text-gray-400 text-sm">

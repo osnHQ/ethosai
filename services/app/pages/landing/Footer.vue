@@ -135,13 +135,12 @@
         </div>
     </footer>
 
-    <section class="top-868 left-0 flex items-center gap-4 bg-gray-900 py-13 w-full h-10">
-        <div class="flex-grow"></div>
-        <div>
-            <p class="mr-140 font-inter font-normal text-gray-400 text-sm">
+    <section class="flex items-center gap-4 bg-gray-900 w-full h-10">
+        <!-- <div>
+            <p class="font-normal text-gray-400 text-sm">
                 All rights reserved.
             </p>
-        </div>
+        </div> -->
         <!-- <Social /> -->
     </section>
 

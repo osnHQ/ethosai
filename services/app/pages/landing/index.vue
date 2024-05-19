@@ -1,14 +1,21 @@
 <template>
-    my landing pageeeeeeeeeeeeeee
-  </template>
-  
-  <script>
-  export default {
-    name: 'LandingPage'
-  }
-  </script>
-  
-  <style>
-  /* You can write custom CSS here if needed */
-  </style>
-  
+    <div>
+        <Navbar />
+        <Hero />
+        <Community />
+        <Features />
+        <!-- <GetStarted />
+        <FAQ /> -->
+        <Footer />
+    </div>
+</template>
+
+<script setup>
+import Navbar from "./Navbar";
+import Hero from "./Hero";
+import Community from "./Community";
+import Features from "./Features";
+// import GetStarted from "./GetStarted";
+// import FAQ from "./FAQ";
+import Footer from "./Footer";
+</script>

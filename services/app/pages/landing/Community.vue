@@ -1,10 +1,10 @@
 <template>
     <div class="mx-auto mt-24 p-8">
-        <div class="text-sm text-violet-500 uppercase tracking-wider">
+        <div class="text-center text-sm text-violet-500 uppercase tracking-wider">
             Join the World's Largest Decentralized AI Auditing Network
         </div>
 
-        <div class="mx-auto px-4 pt-2 pb-4 max-w-5xl font-medium text-3xl text-light md:text-4xl leading-relaxed">
+        <div class="mx-auto px-4 pt-2 pb-4 max-w-5xl font-medium text-3xl text-center text-light md:text-4xl leading-relaxed">
             Community insights and blockchain to ensure your AI models are unbiased, accurate, and fully accountable
         </div>
 

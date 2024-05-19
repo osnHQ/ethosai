@@ -1,38 +1,37 @@
 <template>
-    <h1 class="relative mt-28 font-bold text-6xl text-center">
-        World’s first decentralized AI <br />
-        auditing platform backed by <br />
-        community
-    </h1>
+    <div class="mx-auto p-4 pt-20 md:pt-32 container">
+        <div class="mb-4 font-bold text-4xl text-center md:text-5xl">
+            World's first decentralized AI <br />
+            auditing platform backed by <br />
+            community
+        </div>
 
-    <p class="mt-10">
-        Our scalable framework allows for continuous auditing of large
-        language models <br />
-        by evaluating the accuracy and bias of their responses using
-        community-
-        <br />
-        contributed prompts and evaluations.
-    </p>
+        <p class="my-8 text-center text-gray-400 text-lg">
+            Our scalable framework allows for continuous auditing of large
+            language models <br />
+            by evaluating the accuracy and bias of their responses using
+            community-
+            <br />
+            contributed prompts and evaluations.
+        </p>
 
-    <span class="mr-15">
-        <button
-            class="border-2 border-white bg-transparent hover:bg-white mt-9 px-4 py-2 rounded w-30 text-white hover:text-black transition duration-300 cursor-pointer">
-            Learn More
-        </button>
-    </span>
+        <div class="flex justify-center gap-8">
+            <button
+                class="bg-dark hover:bg-gray-100 mr-4 px-4 py-2 border border-light font-bold text-gray-800 text-light hover:text-dark">
+                Learn More
+            </button>
+            <button
+                class="bg-dark hover:bg-gray-100 mr-4 px-4 py-2 border border-light font-bold text-gray-800 text-light hover:text-dark">
+                Sign Up
+            </button>
+        </div>
 
-    <span class="mr-2 ml-1">
-        <button
-            class="border-2 border-white bg-transparent hover:bg-white px-4 py-2 rounded w-30 text-white hover:text-black transition duration-300 cursor-pointer">
-            Sign Up
-        </button>
-    </span>
-
-    <!--
+        <!--
         <img
-            src="public/Hero Image.png"
-            alt=""
-            class="block mx-auto mt-25 w-190"
-        /> -->
-
+          src="public/Hero Image.png"
+          alt=""
+          class="block mx-auto mt-25 w-190"
+        />
+      -->
+    </div>
 </template>

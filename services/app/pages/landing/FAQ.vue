@@ -1,66 +1,67 @@
 <template>
-    <div class="left-[340px] mt-90 w-[796.5px] h-[595px]">
-        <div class="top-0 w-[795.515px] h-[594.84px]">
-            <div
-                class="top-0 left-[calc(50%-58.25px)] w-[116.5px] h-[43.5px] font-extrabold font-inter text-[40px] text-center text-white leading-[43.5px]">
-                FAQ
-            </div>
-
-            <div
-                class="opacity-70 mt-12 mr-160 w-[850.6px] h-[32.4px] font-inter font-light text-[15px] text-white leading-[32.4px]">
-                Norem ipsum dolor sit amet, consectetur adipiscing elit.
-                Nunc vulputate libero et velit interdum, ac aliquet odio
-                mattis.
-            </div>
-
-            <div
-                class="top-[130.44px] left-[calc(50%-497.7575px)] flex flex-col items-start gap-[7px] w-[995.515px] h-[489.395px]">
-                <div class="relative border-[#1414141F] border-2 bg-[#141414] rounded-[12px] w-full h-[92.28px]">
-                    <div
-                        class="top-[33.56px] left-[36px] font-extrabold font-inter text-[18px] text-white leading-[18px]">
-                        How does the framework work?
-                    </div>
-                    <div class="top-[30.23px] right-[36px] w-[39.775px] h-[39.775px]">
-                        <img src="public/vector.png" alt="vector" />
-                    </div>
-                </div>
-                <div class="relative border-[#FFFFFF1F] border-2 bg-[#141414] rounded-[12px] w-full h-[92.28px]">
-                    <div
-                        class="top-[33.56px] left-[36px] font-extrabold font-inter text-[18px] text-white leading-[18px]">
-                        How can I participate?
-                    </div>
-                    <div class="top-[30.23px] right-[36px] w-[39.775px] h-[39.775px]">
-                        <img src="public/vector.png" alt="vector" />
-                    </div>
-                </div>
-                <div class="relative border-[#FFFFFF1F] border-2 bg-[#141414] rounded-[12px] w-full h-[92.28px]">
-                    <div
-                        class="top-[33.56px] left-[36px] font-extrabold font-inter text-[18px] text-white leading-[18px]">
-                        How are responses evaluated?
-                    </div>
-                    <div class="top-[30.23px] right-[36px] w-[39.775px] h-[39.775px]">
-                        <img src="public/vector.png" alt="vector" />
-                    </div>
-                </div>
-                <div class="relative border-[#FFFFFF1F] border-2 bg-[#141414] rounded-[12px] w-full h-[92.28px]">
-                    <div
-                        class="top-[33.56px] left-[36px] font-extrabold font-inter text-[18px] text-white leading-[18px]">
-                        What are the benefits?
-                    </div>
-                    <div class="top-[30.23px] right-[36px] w-[39.775px] h-[39.775px]">
-                        <img src="public/vector.png" alt="vector" />
-                    </div>
-                </div>
-                <div class="relative border-[#FFFFFF1F] border-2 bg-[#141414] rounded-[12px] w-full h-[92.28px]">
-                    <div
-                        class="top-[33.56px] left-[36px] font-extrabold font-inter text-[18px] text-white leading-[18px]">
-                        Still have questions?
-                    </div>
-                    <div class="top-[30.23px] right-[36px] w-[39.775px] h-[39.775px]">
-                        <img src="public/vector.png" alt="vector" />
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="max-w-6xl mx-auto p-6">
+      <h1 class="text-center text-4xl font-bold my-10">FAQ</h1>
+      <p class="text-center mx-auto mb-10 max-w-4xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
+      
+      <div class="mb-4">
+        <details class="border-b rounded-lg border-gray-700 bg-[#1c1c1c]">
+          <summary class="flex justify-between bg-[#141414] items-center font-bold w-full text-left p-6 cursor-pointer rounded-xl text-xl">
+            How does the framework work?
+            <img src="public/vector.png" class="w-8" alt="Vector Image">
+          </summary>
+          <div class="p-6 text-lg">
+            The framework works by ...
+          </div>
+        </details>
+      </div>
+      
+      <div class="mb-4">
+        <details class="border-b rounded-lg border-gray-700 bg-[#1c1c1c]">
+          <summary class="flex justify-between bg-[#141414] items-center font-bold w-full text-left p-6 cursor-pointer rounded-xl text-xl">
+            How can I participate?
+            <img src="public/vector.png" class="w-8" alt="Vector Image">
+          </summary>
+          <div class="p-6 text-lg">
+            You can participate by ...
+          </div>
+        </details>
+      </div>
+      
+      <div class="mb-4">
+        <details class="border-b rounded-lg border-gray-700 bg-[#1c1c1c]">
+          <summary class="flex justify-between bg-[#141414] items-center font-bold w-full text-left p-6 cursor-pointer rounded-xl text-xl">
+            How are responses evaluated?
+            <img src="public/vector.png" class="w-8" alt="Vector Image">
+          </summary>
+          <div class="p-6 text-lg">
+            Responses are evaluated by ...
+          </div>
+        </details>
+      </div>
+      
+      <div class="mb-4">
+        <details class="border-b rounded-lg border-gray-700 bg-[#1c1c1c]">
+          <summary class="flex justify-between bg-[#141414] items-center font-bold w-full text-left p-6 cursor-pointer rounded-xl text-xl">
+            What are the benefits?
+            <img src="public/vector.png" class="w-8" alt="Vector Image">
+          </summary>
+          <div class="p-6 text-lg">
+            The benefits are ...
+          </div>
+        </details>
+      </div>
+      
+      <div class="mb-4">
+        <details class="border-b rounded-lg border-gray-700 bg-[#1c1c1c]">
+          <summary class="flex justify-between bg-[#141414] items-center font-bold w-full text-left p-6 cursor-pointer rounded-xl text-xl">
+            Still have questions?
+            <img src="public/vector.png" class="w-8" alt="Vector Image">
+          </summary>
+          <div class="p-6 text-lg">
+            If you still have questions, ...
+          </div>
+        </details>
+      </div>
     </div>
-</template>
+  </template>
+  

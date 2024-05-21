@@ -8,13 +8,13 @@
     <!-- Text and Buttons Container -->
     <div class="relative flex flex-col lg:flex-row items-center justify-between h-full px-6 lg:px-12">
       <!-- Text Content -->
-      <div class="text-center lg:text-left mb-4 lg:mb-0">
+      <div class="text-center lg:text-left mb-4 lg:mb-0 mt-4">
         <h2 class="font-poppins font-semibold text-[30px] lg:mt-15 lg:text-[35px] leading-[40px] lg:leading-[40px] text-white">
-          Join our Community of Innovators
-        </h2>
-        <p class="font-inter font-light text-[17px] lg:text-[15px] leading-[27px] text-center lg:text-left text-white opacity-80 mt-2">
-          Discover the power of our platform and revolutionize language models.
-        </p>
+           Join our Community of Innovators
+         </h2>
+          <p class="font-inter font-light text-[17px] lg:text-[15px] leading-[27px] text-center lg:text-left text-white opacity-80 mt-2">
+            Discover the power of our platform and revolutionize language models.
+           </p>
       </div>
 
       <!-- Buttons -->

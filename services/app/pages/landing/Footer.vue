@@ -1,52 +1,52 @@
 <template>
-    <footer class="flex flex-col md:flex-row justify-between bg-[#1D2939] px-8 md:px-20 py-16 w-full text-gray-400">
+    <footer class="flex flex-col md:flex-row justify-between bg-[#1D2939] px-8 md:px-20 py-6 w-full text-gray-400">
     <div class="flex flex-col items-start mb-8 md:mb-0">
       <div class="mb-4 footer-logo">
         <img src="public/logo.png" alt="OpenQA.AI Logo" />
       </div>
-      <p class="text-white">Lorem Ipsum Text Here</p>
+      <p class="text-white">Decentralized AI Evaluation Network</p>
     </div>
 
-    <div class="flex flex-wrap justify-between w-full md:w-auto gap-x-30 gap-y-5">
+    <div class="flex flex-wrap justify-between w-full md:w-auto gap-x-40 gap-y-5 mr-20 mt-5">
       <div class="w-full md:w-auto mb-8 md:mb-0">
-        <h2 class="mb-4 font-semibold text-white">
+        <!-- <h2 class="mb-4 font-semibold text-white">
           Product
-        </h2>
+        </h2> -->
         <ul>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Overview</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Features</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Solutions <span class="bg-white px-2 py-1 rounded-full text-[#1D2939] text-sm">New</span></a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Tutorials</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Pricing</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Releases</a></li>
+          <li><a href="/" class="block mb-2 hover:text-gray-300">Home</a></li>
+          <li><a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" class="block mb-2 hover:text-gray-300">Whitepaper</a></li>
+          <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Solutions <span class="bg-white px-2 py-1 rounded-full text-[#1D2939] text-sm">New</span></a></li> -->
+          <li><a href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>
+          <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Pricing</a></li>
+          <li><a href="#" class="block mb-2 hover:text-gray-300">Releases</a></li> -->
         </ul>
       </div>
 
       <div class="w-full md:w-auto mb-8 md:mb-0">
-        <h2 class="mb-4 font-semibold text-white">Company</h2>
+        <!-- <h2 class="mb-4 font-semibold text-white">Company</h2> -->
         <ul>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">About us</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Careers</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Press</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">News</a></li>
+          <li><a href="https://discord.gg/X8s7Qvz6" class="block mb-2 hover:text-gray-300">Discord</a></li>
+          <li><a href="https://github.com/osnHQ/openQA.ai" class="block mb-2 hover:text-gray-300">Github</a></li>
+          <li><a href="https://www.linkedin.com/company/openqa-ai/jobs/" class="block mb-2 hover:text-gray-300">Careers</a></li>
+          <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">News</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Media kit</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Contact</a></li>
+          <li><a href="#" class="block mb-2 hover:text-gray-300">Contact</a></li> -->
         </ul>
       </div>
 
       <div class="w-full md:w-auto mb-8 md:mb-0">
-        <h2 class="mb-4 font-semibold text-white">Resources</h2>
+        <!-- <h2 class="mb-4 font-semibold text-white">Resources</h2> -->
         <ul>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Blog</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Newsletter</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Events</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Help centre</a></li>
+          <li><a href="https://www.linkedin.com/company/openqa-ai/" class="block mb-2 hover:text-gray-300">LinkedIn</a></li>
+          <li><a href="https://twitter.com/openqa_ai" class="block mb-2 hover:text-gray-300">Twitter</a></li>
+          <li><a href="mailto: openqaai@gmail.com" class="block mb-2 hover:text-gray-300">Contact</a></li>
+          <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Help centre</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Tutorials</a></li>
-          <li><a href="#" class="block mb-2 hover:text-gray-300">Support</a></li>
+          <li><a href="#" class="block mb-2 hover:text-gray-300">Support</a></li> -->
         </ul>
       </div>
 
-      <div class="w-full md:w-auto mb-8 md:mb-0">
+      <!-- <div class="w-full md:w-auto mb-8 md:mb-0">
         <h2 class="mb-4 font-semibold text-white">Social</h2>
         <ul>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Twitter</a></li>
@@ -56,9 +56,9 @@
           <li><a href="#" class="block mb-2 hover:text-gray-300">AngelList</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Dribbble</a></li>
         </ul>
-      </div>
+      </div> -->
 
-      <div class="w-full md:w-auto">
+      <!-- <div class="w-full md:w-auto">
         <h2 class="mb-4 font-semibold text-white">Legal</h2>
         <ul>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Terms</a></li>
@@ -68,7 +68,7 @@
           <li><a href="#" class="block mb-2 hover:text-gray-300">Settings</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Contact</a></li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </footer>
     <section class="flex items-center gap-4 bg-gray-900 w-full h-10">

@@ -12,18 +12,18 @@
             community-contributed prompts and evaluations.
         </div>
 
-    
+
         <div class="flex justify-center gap-9">
-            <a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" 
-               class="inline-block my-8">
-                <button class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
+            <a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" class="inline-block my-8">
+                <button
+                    class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
                     Learn More
                 </button>
             </a>
-            <a href="https://tally.so/r/nGrMK2" 
-               class="inline-block my-8">
-                <button class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
-                    Sign Up
+            <a href="https://tally.so/r/nGrMK2" class="inline-block my-8">
+                <button
+                    class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
+                    Join Waitlist
                 </button>
             </a>
         </div>

@@ -12,15 +12,20 @@
             community-contributed prompts and evaluations.
         </div>
 
-        <div class="flex justify-center gap-8 my-8">
-            <button
-                class="bg-dark hover:bg-gray-100 mr-4 px-6 py-3 border border-light rounded font-bold text-gray-800 text-light hover:text-dark">
-                Learn More
-            </button>
-            <button
-                class="bg-dark hover:bg-gray-100 px-6 py-3 border border-light rounded font-bold text-gray-800 text-light hover:text-dark">
-                Sign Up
-            </button>
+    
+        <div class="flex justify-center gap-9">
+            <a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" 
+               class="inline-block my-8">
+                <button class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
+                    Learn More
+                </button>
+            </a>
+            <a href="https://tally.so/r/nGrMK2" 
+               class="inline-block my-8">
+                <button class="bg-dark px-6 py-3 border border-light rounded font-bold text-gray-800 text-light transition duration-300 ease-in-out transform hover:bg-gray-100 hover:text-gray-800 hover:shadow-md">
+                    Sign Up
+                </button>
+            </a>
         </div>
 
         <div class="mx-auto my-auto max-w-lg">

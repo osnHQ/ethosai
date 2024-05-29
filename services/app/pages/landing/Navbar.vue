@@ -7,7 +7,8 @@
             <NuxtLink to="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" class="hover:text-gray">Whitepaper</NuxtLink>
             <!-- <NuxtLink to="/" class="hover:text-gray">Blog</NuxtLink> -->
             <NuxtLink to="https://www.linkedin.com/company/openqa-ai/jobs/" class="hover:text-gray">Careers</NuxtLink>
-            <NuxtLink to="mailto: openqaai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
+            <NuxtLink to="mailto:openqaai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
         </nav>
     </div>
 </template>
+

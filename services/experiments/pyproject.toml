@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "streamlit>=1.33.0",
     "pandas>=2.2.2",
+    "ollama>=0.2.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

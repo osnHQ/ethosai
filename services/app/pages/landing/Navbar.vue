@@ -1,5 +1,5 @@
 <template>
-    <a href="https://openqa.ai/"><img src="public/circlelogo.png" class="w-60 pos-absolute md:block max-sm-hidden" alt=""></a>
+    <a href="https://openqa.ai/"><img src="public/circlelogo.png" class="w-60 pos-absolute md:block max-sm-hidden" alt="OpenQA.ai Logo"></a>
     <div class="flex justify-center px-8 py-10">
         
         <nav class="space-x-8 border-white px-8 py-4 border rounded-full max-w-3xl text-light">

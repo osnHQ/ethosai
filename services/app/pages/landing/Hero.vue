@@ -14,7 +14,7 @@
 
     <div class="flex justify-center gap-9">
      <a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" class="flex justify-center gap-8 my-8">
-        <button class="bg-dark hover:bg-gray-100 mr-4 px-6 py-3 border border-light rounded font-bold text-gray-800 text-light hover:text-dark">
+        <button class="bg-transparent hover:bg-gray-100 mr-4 px-6 py-3 border border-light rounded font-bold text-gray-800 text-light hover:text-dark">
             Learn More
         </button>
      </a>

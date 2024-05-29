@@ -1,11 +1,11 @@
 <template>
     <footer class="flex flex-col md:flex-row justify-between bg-[#1D2939] px-8 md:px-20 py-6 w-full text-gray-400">
-        <div class="flex flex-col items-start mb-8 md:mb-0">
-            <div class="mb-4 footer-logo">
-                <img src="public/logo.png" alt="OpenQA.AI Logo" />
-            </div>
-            <p class="text-white">Decentralized AI Evaluation Network</p>
-        </div>
+    <div class="flex flex-col items-start mb-8 md:mb-0">
+      <div class="mb-4 footer-logo">
+        <a href="https://openqa.ai/"><img src="public/logo.png" alt="OpenQA.AI Logo" /></a>
+      </div>
+      <p class="text-white">Decentralized AI Evaluation Network</p>
+    </div>
 
         <div class="flex flex-wrap justify-between w-full md:w-auto gap-x-40 gap-y-5 mr-20 mt-5">
             <div class="w-full md:w-auto mb-8 md:mb-0">

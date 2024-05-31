@@ -1,6 +1,6 @@
-# openQA
+# ethosAI
 
-**openQA** is an open-source framework designed to automate the testing and evaluation of AI models. It provides a comprehensive architecture for defining audit configurations, running tests, analyzing results, and generating reports.  
+**ethosAI** is an open-source framework designed to automate the testing and evaluation of AI models. It provides a comprehensive architecture for defining audit configurations, running tests, analyzing results, and generating reports.  
   
 Traditionally, testing AI models involves complex, subjective evaluations. AI Auditor changes that by introducing a revolutionary approach - leveraging a second Large Language Model (LLM) for distance-based scoring. This innovative framework empowers you to:  
 

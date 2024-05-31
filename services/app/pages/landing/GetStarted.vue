@@ -26,7 +26,7 @@
       </a>
       <a href="https://tally.so/r/nGrMK2">
         <button class="w-[150px] lg:w-[150px] h-[50px] lg:h-[50px] border-3 border-white text-white font-poppins font-semibold text-[15px] lg:text-[18px] leading-[38px] rounded-full">
-          Join
+          Join Waitlist
         </button>
       </a>
       </div>

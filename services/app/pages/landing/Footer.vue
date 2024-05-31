@@ -1,7 +1,7 @@
 <template>
     <footer class="flex flex-col md:flex-row justify-between bg-[#1D2939] px-8 md:px-20 py-6 w-full text-gray-400">
-    <div class="flex flex-col items-start mb-8 md:mb-0">
-      <div class="mb-4 footer-logo">
+    <div class="flex flex-col items-start mb-8 mt-3 md:mb-0">
+      <div class="mb-4 footer-logo w-30">
         <a href="https://openqa.ai/"><img src="public/logo.png" alt="OpenQA.AI Logo" /></a>
       </div>
       <p class="text-white">Decentralized AI Evaluation Network</p>

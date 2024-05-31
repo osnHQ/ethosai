@@ -1,7 +1,7 @@
 <template>
     <div class="mt-12 py-8 text-center ">
         <div class="mx-auto max-w-screen-lg font-semibold text-3xl text-white md:text-4xl leading-tight">
-            Discover How Our Framework Revolutionizes Language Model Auditing
+            Discover how ethosAI LLM is disrupting the future for LLM users and creators
         </div>
     </div>
 

@@ -14,11 +14,12 @@
                     <div class="blur-effect ml--20 mt-470"></div>
                     <div class="blur-effect ml-315 mt-620"></div>
                     <div class="blur-effect ml--20 mt-770"></div>
+                    <div class="blur-effect ml-315 mt-890"></div>
                     <div class="red-blur-effect ml-160 mt-235"></div>
                     <div class="blurred-gradient ml-160 mt-335"></div>
                     <div class="purple-circle ml-130 mt-360"></div>
-                    <div class="blurred-gradient ml-160 mt-1035"></div>
-                    <div class="purple-circle ml-130 mt-1035"></div>
+                    <div class="blurred-gradient ml-160 mt-1135"></div>
+                    <div class="purple-circle ml-130 mt-1135"></div>
                     <img src="public/Stars.png" class="absolute w-200 left-80" alt="">
                     <img src="public/Stars.png" class="absolute w-350 top-150" alt="">
                     <img src="public/Stars.png" class="absolute w-350 top-460" alt="">

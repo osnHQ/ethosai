@@ -1,2 +1,2 @@
-export const appName = 'OpenQA.ai'
-export const appDescription = 'Decentralized AI Watchdog'
+export const appName = 'ethosAI Decentralised Continuous AI Audit Infrastructure'
+export const appDescription = 'Decentralised Continuous AI Audit Infrastructure'

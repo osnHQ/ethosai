@@ -14,10 +14,10 @@
         </h2> -->
                 <ul>
                     <li><a href="/" class="block mb-2 hover:text-gray-300">Home</a></li>
-                    <li><a href="https://ethos-ai.gitbook.io/ethosai-whitepaper"
+                    <li><a target="_blank" href="https://ethos-ai.gitbook.io/ethosai-whitepaper"
                             class="block mb-2 hover:text-gray-300">Whitepaper</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Solutions <span class="bg-white px-2 py-1 rounded-full text-[#1D2939] text-sm">New</span></a></li> -->
-                    <li><a href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>
+                    <li><a target="_blank"href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Pricing</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Releases</a></li> -->
                 </ul>

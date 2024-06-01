@@ -4,7 +4,7 @@
       <div class="mb-4 footer-logo w-30">
         <a href="https://openqa.ai/"><img src="public/logo.png" alt="OpenQA.AI Logo" /></a>
       </div>
-      <p class="text-white">Decentralized AI Evaluation Network</p>
+      <p class="text-white">Decentralised Continuous AI Audit Infrastructure</p>
     </div>
 
         <div class="flex flex-wrap justify-between w-full md:w-auto gap-x-40 gap-y-5 mr-20 mt-5">
@@ -14,7 +14,7 @@
         </h2> -->
                 <ul>
                     <li><a href="/" class="block mb-2 hover:text-gray-300">Home</a></li>
-                    <li><a href="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1"
+                    <li><a href="https://ethos-ai.gitbook.io/ethosai-whitepaper"
                             class="block mb-2 hover:text-gray-300">Whitepaper</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Solutions <span class="bg-white px-2 py-1 rounded-full text-[#1D2939] text-sm">New</span></a></li> -->
                     <li><a href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>

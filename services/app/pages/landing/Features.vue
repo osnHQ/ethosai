@@ -22,33 +22,15 @@
 
     <div class="flex flex-col-reverse lg:flex-row mx-auto mt-10 w-full max-w-screen-lg h-auto lg:h-[508px]">
     <div class="flex justify-center items-center p-5 lg:order-2">
-        <img src="public/ScoringEngine.png" alt="Description of the image" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
+        <img src="public/flowchart1.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
     </div>
     <div class="flex-1 p-5 overflow-y-auto lg:order-1">
-        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">OpenQAs Scoring Engine</div>
-        <p class="mb-6 font-light text-gray-400 text-left text-sm leading-7">Our state-of-the-art Scoring Engine precisely measures the deviation between the AI-generated output and the ideal expected output. This distance-based method quantifies the accuracy of the AI response, ensuring a rigorous evaluation standard.</p>
-
-        <div class="flex items-start mt-8 h-auto text-left">
-            <div class="relative mb-6 w-30 h-auto">
-                <img src="public/Precision.png" alt="Precision" class="w-25 h-auto object-cover">
-                <img src="public/clock.png" alt="Clock image" class="top-1/2 left-1/2 absolute p-2 w-15 h-auto transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div class="ml-4">
-                <h2 class="mb-2 text-lg text-white">Precision</h2>
-                <p class="font-light text-gray-400 text-justify text-sm leading-7">Accurately pinpoints discrepancies to ensure each response meets the highest quality standards.</p>
-            </div>
-        </div>
-
-        <div class="flex items-start mt-8 h-auto text-left">
-            <div class="relative mb-6 w-25 h-auto">
-                <img src="public/Precision.png" alt="Precision" class="w-25 h-auto object-cover">
-                <img src="public/Cross.png" alt="Cross image" class="top-1/2 left-1/2 absolute p-2 w-15 h-auto transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div class="ml-4">
-                <h2 class="mb-2 text-lg text-white">Reliability</h2>
-                <p class="font-light text-gray-400 text-justify text-sm leading-7">Consistent and dependable scoring that users can trust for evaluating AI outputs.</p>
-            </div>
-        </div>
+        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">EAI Token Flow</div>
+        <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
+        <li class="mb-2 py-3">The EAI token is used to incentivize participation in the EthosAI platform.</li>
+        <li class="mb-2 py-3">Community members submit LLM evaluation config files in exchange for EAI tokens.</li>
+        <li class="mb-2 py-3">A committee of reviewers approves these contributions, which are then incorporated into the EAI Scorecard and EAI DePIN LLM, further improving the LLM auditing process.</li>
+    </ul>
     </div>
 </div>
 
@@ -58,44 +40,31 @@
 
     <div class="flex flex-col lg:flex-row mx-auto mt-10 w-full max-w-screen-lg h-auto lg:h-[508px]">
     <div class="flex-1 p-5 overflow-y-auto lg:order-2 lg:w-1/2">
-        <div class="flex items-start h-auto text-left">
-            <div class="relative mb-6 w-60 h-20">
-                <img src="public/Precision.png" alt="Precision" class="w-full h-full object-cover">
-                <img src="public/clock.png" alt="Clock image" class="top-1/2 left-1/2 absolute p-2 w-15 h-auto transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div class="ml-4">
-                <h2 class="mb-1 text-lg text-white">Bias Free Testing</h2>
-                <p class="font-light text-gray-400 text-justify text-sm leading-7">Our scalable framework allows for continuous auditing of large language models by evaluating the accuracy and bias of their responses using community-contributed prompts and evaluations.</p>
-            </div>
-        </div>
-
-        <div class="flex items-start mt-5 h-auto text-left">
-            <div class="relative mb-6 w-65 h-20">
-                <img src="public/Precision.png" alt="Precision" class="w-full h-full object-cover">
-                <img src="public/Cross.png" alt="Cross image" class="top-1/2 left-1/2 absolute p-2 w-15 h-auto transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div class="ml-4">
-                <h2 class="mb-1 text-lg text-white">Accuracy Assurance</h2>
-                <p class="font-light text-gray-400 text-justify text-sm leading-7">Utilize sophisticated algorithms to measure the 'distance' between the AI's response and the expected output. This rigorous validation process guarantees that the AI models perform accurately and reliably.</p>
-            </div>
-        </div>
-
-        <div class="flex items-start mt-5 h-auto text-left">
-            <div class="relative mb-6 w-60 h-20">
-                <img src="public/Precision.png" alt="Precision" class="w-full h-full object-cover">
-                <img src="public/Cross.png" alt="Cross image" class="top-1/2 left-1/2 absolute p-2 w-15 h-auto transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div class="ml-4">
-                <h2 class="mb-2 text-lg text-white">Tokenization</h2>
-                <p class="font-light text-gray-400 text-justify text-sm leading-7">Earn tokens and build your reputation within our community by contributing to the platform through submitting, reviewing, and refining prompts, as well as engaging in other activities.</p>
-            </div>
-        </div>
+        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">Token Allocation for LLM Audits</div>
+        <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
+        <li class="mb-2 py-3">60% of tokens are allocated to the Creators for ethosAI Evals ( configuration files ), incentivizing users to contribute evaluations of  LLM audits.</li>
+        <li class="mb-2 py-3">30% of tokens are allocated to the EAI LLM DePIN infrastructure.</li>
+        <li class="mb-2 py-3">10% of tokens are allocated to the auditor staking pool, rewarding those who stake their tokens to support Evals reviews.</li>
+    </ul>
     </div>
     <div class="flex justify-center items-center p-5 lg:order-1 lg:w-1/2">
-        <img src="public/ScoringEngine2.png" alt="ScoringEngine2" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
+        <img src="public/flowchart2.png" alt="flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
     </div>
 </div>
 
+<div class="flex flex-col-reverse lg:flex-row mx-auto mt-10 w-full max-w-screen-lg h-auto lg:h-[508px]">
+    <div class="flex justify-center items-center p-5 lg:order-2">
+        <img src="public/flowchart3.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
+    </div>
+    <div class="flex-1 p-5 overflow-y-auto lg:order-1">
+        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">Ecosystem Flow</div>
+        <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
+        <li class="mb-2 py-3">Community-Powered Auditing:  ethosAI leverages a  decentralized community of users who act as Evals Creators that can be fed to ethosAI Audit Engine.</li>
+        <li class="mb-2 py-3">Incentivized Participation:  ethosAI offers  incentives for contributions.</li>
+        <li class="mb-2 py-3">Continuous Improvement:  LLM models use ethosAI engine with approved or top rated files to ensure AI disruptions' sustainability and speed.</li>
+    </ul>
+    </div>
+</div>
 
 </template>
 

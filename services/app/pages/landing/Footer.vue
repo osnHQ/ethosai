@@ -14,10 +14,10 @@
         </h2> -->
                 <ul>
                     <li><a href="/" class="block mb-2 hover:text-gray-300">Home</a></li>
-                    <li><a href="https://ethos-ai.gitbook.io/ethosai-whitepaper"
+                    <li><a target="_blank" href="https://ethos-ai.gitbook.io/ethosai-whitepaper"
                             class="block mb-2 hover:text-gray-300">Whitepaper</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Solutions <span class="bg-white px-2 py-1 rounded-full text-[#1D2939] text-sm">New</span></a></li> -->
-                    <li><a href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>
+                    <li><a target="_blank"href="https://tally.so/r/nGrMK2" class="block mb-2 hover:text-gray-300">Waitlist</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Pricing</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Releases</a></li> -->
                 </ul>
@@ -26,10 +26,10 @@
             <div class="w-full md:w-auto mb-8 md:mb-0">
                 <!-- <h2 class="mb-4 font-semibold text-white">Company</h2> -->
                 <ul>
-                    <li><a href="https://discord.gg/X8s7Qvz6" class="block mb-2 hover:text-gray-300">Discord</a></li>
-                    <li><a href="https://github.com/osnHQ/openQA.ai" class="block mb-2 hover:text-gray-300">Github</a>
+                    <li><a target="_blank" href="https://discord.gg/VtR9j8QH" class="block mb-2 hover:text-gray-300">Discord</a></li>
+                    <li><a target="_blank" href="https://github.com/osnHQ/ethosai" class="block mb-2 hover:text-gray-300">Github</a>
                     </li>
-                    <li><a href="https://www.linkedin.com/company/openqa-ai/jobs/"
+                    <li><a target="_blank"href="https://www.linkedin.com/company/ethosaione/jobs/"
                             class="block mb-2 hover:text-gray-300">Careers</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">News</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Media kit</a></li>
@@ -40,10 +40,10 @@
             <div class="w-full md:w-auto mb-8 md:mb-0">
                 <!-- <h2 class="mb-4 font-semibold text-white">Resources</h2> -->
                 <ul>
-                    <li><a href="https://www.linkedin.com/company/openqa-ai/"
+                    <li><a target="_blank" href="https://www.linkedin.com/company/ethosaione/about/"
                             class="block mb-2 hover:text-gray-300">LinkedIn</a></li>
-                    <li><a href="https://twitter.com/openqa_ai" class="block mb-2 hover:text-gray-300">Twitter</a></li>
-                    <li><a href="mailto: openqaai@gmail.com" class="block mb-2 hover:text-gray-300">Contact</a></li>
+                    <li><a target="_blank"href="https://x.com/ethosaione" class="block mb-2 hover:text-gray-300">Twitter</a></li>
+                    <li><a href="mailto: contactethosai@gmail.com" class="block mb-2 hover:text-gray-300">Contact</a></li>
                     <!-- <li><a href="#" class="block mb-2 hover:text-gray-300">Help centre</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Tutorials</a></li>
           <li><a href="#" class="block mb-2 hover:text-gray-300">Support</a></li> -->

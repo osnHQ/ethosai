@@ -6,8 +6,8 @@
       <NuxtLink to="https://ethos-ai.gitbook.io/ethosai-whitepaper" class="hover:text-gray">Whitepaper
       </NuxtLink>
       <!-- <NuxtLink to="/" class="hover:text-gray">Blog</NuxtLink> -->
-      <NuxtLink to="https://www.linkedin.com/company/openqa-ai/jobs/" class="hover:text-gray">Careers</NuxtLink>
-      <NuxtLink to="mailto:openqaai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
+      <NuxtLink to="https://www.linkedin.com/company/ethosaione/jobs/" class="hover:text-gray">Careers</NuxtLink>
+      <NuxtLink to="mailto: contactethosai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
     </nav>
   </div>
   <div class="flex items-center justify-center mt-5 h-1">

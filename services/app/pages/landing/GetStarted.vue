@@ -19,7 +19,7 @@
 
       <!-- Buttons -->
       <div class="flex flex-col lg:mt-10 lg:flex-row space-y-4 lg:space-y-0 lg:space-x-5">
-        <a href="https://discord.gg/X8s7Qvz6">
+        <a href="https://discord.gg/VtR9j8QH">
         <button class="w-[150px] lg:w-[150px] h-[50px] lg:h-[50px] bg-white text-black font-poppins font-semibold text-[15px] lg:text-[18px] leading-[38px] rounded-full">
           Get Started
         </button>

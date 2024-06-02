@@ -1,11 +1,11 @@
 <template>
     <div class="mx-auto container">
         <div class="mx-auto px-2 md:px-8 pt-12 pb-12 max-w-4xl font-bold text-4xl text-center md:text-5xl">
-            Creating safe AI future with our LLM Audit Decentralised Infrastructure
+            Creating safe AI future with our Decentralised LLM Auditing Infrastructure
         </div>
 
         <div class="mx-auto px-8 max-w-2xl text-center text-gray-400 text-md md:text-lg">
-            EthosAI tackles the key challenge in AI: building the infrastructure for safe and rapid innovation.  We leverage a unique approach -a <b>decentralized community of users</b> who identify issues in AI systems. <b>Their insights</b> are then reviewed and compiled into a massive database fed into <b>ethosAI LLM decentralised auditor infrastructure</b>, continuously improving AI fairness and reliability for everyone.
+            ethosAI tackles the key challenge in AI: building the infrastructure for safe and rapid innovation.  We leverage a unique approach -a <b>decentralized community of users</b> who identify issues in AI systems. <b>Their insights</b> are then reviewed and compiled into a massive database fed into <b>ethosAI LLM decentralised auditing infrastructure</b>, continuously improving AI fairness and reliability for everyone.
         </div>
 
     <div class="flex justify-center gap-9">

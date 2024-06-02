@@ -5,24 +5,24 @@
                 <div>
                     <Navbar />
                     <div class="blur-effect"></div>
-                    <div class="blur-effect ml-200"></div>
-                    <div class="blur-effect ml-300 mt-80"></div>
-                    <div class="blur-effect ml-160 mt-160"></div>
-                    <div class="blur-effect ml-160 mt-160"></div>
+                    <div class="blur-effect ml-200 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="blur-effect ml-300 mt-80 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="blur-effect ml-160 mt-160 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="blur-effect ml-160 mt-160 md-hidden lg-block max-sm:hidden"></div>
                     <div class="blur-effect ml--20 mt-270"></div>
-                    <div class="blur-effect ml-315 mt-370"></div>
+                    <div class="blur-effect ml-315 mt-370 md-hidden lg-block max-sm:hidden"></div>
                     <div class="blur-effect ml--20 mt-470"></div>
-                    <div class="blur-effect ml-315 mt-620"></div>
+                    <div class="blur-effect ml-315 mt-620 md-hidden lg-block max-sm:hidden"></div>
                     <div class="blur-effect ml--20 mt-770"></div>
-                    <div class="blur-effect ml-315 mt-890"></div>
-                    <div class="red-blur-effect ml-160 mt-235"></div>
-                    <div class="blurred-gradient ml-160 mt-335"></div>
-                    <div class="purple-circle ml-130 mt-360"></div>
-                    <div class="blurred-gradient ml-160 mt-1135"></div>
-                    <div class="purple-circle ml-130 mt-1135"></div>
-                    <img src="public/Stars.png" class="absolute w-200 left-80" alt="">
-                    <img src="public/Stars.png" class="absolute w-350 top-150" alt="">
-                    <img src="public/Stars.png" class="absolute w-350 top-460" alt="">
+                    <div class="blur-effect ml-315 mt-890 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="red-blur-effect ml-160 mt-235 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="blurred-gradient ml-160 mt-335 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="purple-circle ml-130 mt-360 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="blurred-gradient ml-160 mt-1135 md-hidden lg-block max-sm:hidden"></div>
+                    <div class="purple-circle ml-130 mt-1135 md-hidden lg-block max-sm:hidden"></div>
+                    <img src="public/Stars.png" class="absolute w-200 left-80 md-hidden lg-block max-sm:hidden -z-1" alt="">
+                    <img src="public/Stars.png" class="absolute w-350 top-150 md-hidden lg-block max-sm:hidden -z-1" alt="">
+                    <img src="public/Stars.png" class="absolute w-350 top-460 md-hidden lg-block max-sm:hidden -z-1" alt="">
                     <Hero />
                     <Community />
                     <Features />

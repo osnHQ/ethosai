@@ -1,5 +1,5 @@
 <template>
-    <div class="flex md:flex-row flex-col justify-center mt-10">
+    <div class="flex md:flex-row flex-col justify-center mt-10 pr-8 md:pl-8">
         <div class="bg-[#1d1b26] mx-4 mb-6 px-8 py-12 rounded-[50px] w-full max-w-md h-auto text-center text-white">
             <img src="public/Accuracy.png" alt="Accuracy" class="mx-auto mb-5 w-20">
             <h2 class="mt-8 mb-4 font-bold text-2xl">Accuracy</h2>
@@ -22,14 +22,14 @@
 
     <div class="flex flex-col-reverse lg:flex-row mx-auto mt-10 w-full max-w-screen-lg h-auto lg:h-[508px]">
     <div class="flex justify-center items-center p-5 lg:order-2">
-        <img src="public/flowchart1.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
+        <img src="public/flowchart3.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
     </div>
     <div class="flex-1 p-5 overflow-y-auto lg:order-1">
-        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">EAI Token Flow</div>
+        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">Ecosystem Flow</div>
         <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
-        <li class="mb-2 py-3">The EAI token is used to incentivize participation in the EthosAI platform.</li>
-        <li class="mb-2 py-3">Community members submit LLM evaluation config files in exchange for EAI tokens.</li>
-        <li class="mb-2 py-3">A committee of reviewers approves these contributions, which are then incorporated into the EAI Scorecard and EAI DePIN LLM, further improving the LLM auditing process.</li>
+        <li class="mb-2 py-3">Community-Powered Auditing:  ethosAI leverages a  decentralized community of users who act as Evals Creators that can be fed to ethosAI Audit Engine.</li>
+        <li class="mb-2 py-3">Incentivized Participation:  ethosAI offers  incentives for contributions.</li>
+        <li class="mb-2 py-3">Continuous Improvement:  LLM models use ethosAI engine with approved or top rated files to ensure AI disruptions' sustainability and speed.</li>
     </ul>
     </div>
 </div>
@@ -54,14 +54,14 @@
 
 <div class="flex flex-col-reverse lg:flex-row mx-auto mt-10 w-full max-w-screen-lg h-auto lg:h-[508px]">
     <div class="flex justify-center items-center p-5 lg:order-2">
-        <img src="public/flowchart3.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
+        <img src="public/flowchart1.png" alt="Flowchart" class="max-w-full max-h-full object-contain lg:w-2/2 lg:h-auto w-full">
     </div>
     <div class="flex-1 p-5 overflow-y-auto lg:order-1">
-        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">Ecosystem Flow</div>
+        <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">EAI Token Flow</div>
         <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
-        <li class="mb-2 py-3">Community-Powered Auditing:  ethosAI leverages a  decentralized community of users who act as Evals Creators that can be fed to ethosAI Audit Engine.</li>
-        <li class="mb-2 py-3">Incentivized Participation:  ethosAI offers  incentives for contributions.</li>
-        <li class="mb-2 py-3">Continuous Improvement:  LLM models use ethosAI engine with approved or top rated files to ensure AI disruptions' sustainability and speed.</li>
+        <li class="mb-2 py-3">The EAI token is used to incentivize participation in the EthosAI platform.</li>
+        <li class="mb-2 py-3">Community members submit LLM evaluation config files in exchange for EAI tokens.</li>
+        <li class="mb-2 py-3">A committee of reviewers approves these contributions, which are then incorporated into the EAI Scorecard and EAI DePIN LLM, further improving the LLM auditing process.</li>
     </ul>
     </div>
 </div>

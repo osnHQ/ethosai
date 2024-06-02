@@ -26,7 +26,7 @@
             <div class="w-full md:w-auto mb-8 md:mb-0">
                 <!-- <h2 class="mb-4 font-semibold text-white">Company</h2> -->
                 <ul>
-                    <li><a target="_blank" href="https://discord.gg/VtR9j8QH" class="block mb-2 hover:text-gray-300">Discord</a></li>
+                    <li><a target="_blank" href="https://discord.gg/sqNqwhCgMt" class="block mb-2 hover:text-gray-300">Discord</a></li>
                     <li><a target="_blank" href="https://github.com/osnHQ/ethosai" class="block mb-2 hover:text-gray-300">Github</a>
                     </li>
                     <li><a target="_blank"href="https://www.linkedin.com/company/ethosaione/jobs/"

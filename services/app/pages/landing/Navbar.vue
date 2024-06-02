@@ -1,7 +1,7 @@
 <template>
-  <div class="flex justify-center px-8 py-10">
+  <div class="flex justify-center px-1 py-10">
 
-    <nav class="space-x-8 border-white px-8 py-4 border rounded-full max-w-3xl text-light">
+    <nav class="space-x-8 border-white px-2 py-4 md-px-8 md-py-4 border rounded-full max-w-3xl text-light">
       <NuxtLink to="/" class="hover:text-gray">Home</NuxtLink>
       <NuxtLink to="https://ethos-ai.gitbook.io/ethosai-whitepaper" class="hover:text-gray">Whitepaper
       </NuxtLink>

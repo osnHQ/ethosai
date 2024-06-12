@@ -34,5 +34,8 @@
     "pinia": "^2.1.7",
     "typescript": "^5.4.5",
     "vue-tsc": "^2.0.14"
+  },
+  "dependencies": {
+    "bun": "^1.1.13"
   }
 }

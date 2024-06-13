@@ -2,15 +2,15 @@
     <div class="lg:h-[80vh] container mx-auto lg:flex flex-row items-center justify-between">
         <div class="w-1/2">
             <div class=" pt-12 pb-12 max-w-4xl font-bold text-4xl md:text-5xl">
-                Creating safe AI future with our Decentralised LLM Auditing Infrastructure
+                World's first decentralised AI Audit Network
             </div>
 
             <div class=" text-gray-400 text-md md:text-lg">
                 ethosAI tackles the key challenge in AI: building the infrastructure for safe and rapid innovation. We
                 leverage
-                a unique approach -a <b>decentralized community of users</b> who identify issues in AI systems. <b>Their
-                    insights</b> are then reviewed and compiled into a massive database fed into <b>ethosAI LLM
-                    decentralised
+                a unique approach -a <b>decentralized auditing network</b> to identify issues in AI systems. <b>Network
+                    insights</b> are then zkRolled up for proof of work, reviewed and compiled into a massive database fed into <b>ethosAI 
+                    decentralised AI 
                     auditing infrastructure</b>, continuously improving AI fairness and reliability for everyone.
             </div>
 

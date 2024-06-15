@@ -1,11 +1,17 @@
 <template>
   <div class="container h-20 mx-auto relative">
     <!-- logo fixed with position -->
-    <div class="flex items-center justify-center mt-5 h-1 absolute left-0">
-      <a class="" href="https://openqa.ai/">
-        <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
-      </a>
-    </div>
+
+    <a class="
+    max-md-hidden
+    absolute left-0 top-2" href="https://openqa.ai/">
+      <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
+    </a>
+
+    <!-- for mobile device -->
+    <a class="max-md-block sm:hidden md:hidden lg:hidden" href="https://openqa.ai/">
+      <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
+    </a>
 
     <div class="flex justify-center items-center mt-10">
 

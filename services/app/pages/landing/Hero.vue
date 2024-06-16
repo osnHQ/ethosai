@@ -9,12 +9,7 @@
             </div>
 
             <div class="max-md-text-center sm:text-center lg:text-left text-gray-400 text-md md:text-lg">
-                ethosAI tackles the key challenge in AI: building the infrastructure for safe and rapid innovation. We
-                leverage
-                a unique approach -a <b>decentralized auditing network</b> to identify issues in AI systems. <b>Network
-                    insights</b> are then zkRolled up for proof of work, reviewed and compiled into a massive database fed into <b>ethosAI 
-                    decentralised AI 
-                    auditing infrastructure</b>, continuously improving AI fairness and reliability for everyone.
+                Traditional AI development is shrouded in secrecy, leaving users unsure of potential biases and limitations. EthosAI shatters this barrier by introducing the world's first decentralized AI audit network. This revolutionary approach empowers a global community to participate in the crucial task of ensuring fair and reliable AI for everyone.
             </div>
 
             <div class="flex lg:justify-start max-md-justify-center sm:justify-center">

@@ -27,9 +27,10 @@
     <div class="flex-1 p-5 overflow-y-auto lg:order-1">
         <div class="mb-6 font-semibold text-3xl text-left text-white leading-tight">Ecosystem Flow</div>
         <ul class="list-disc pl-5 pt-5 text-xl text-justify text-gray-300">
-        <li class="mb-2 py-3">Community-Powered Auditing:  ethosAI leverages a  decentralized community of users who act as Evals Creators that can be fed to ethosAI Audit Engine.</li>
-        <li class="mb-2 py-3">Incentivized Participation:  ethosAI offers  incentives for contributions.</li>
-        <li class="mb-2 py-3">Continuous Improvement:  LLM models use ethosAI engine with approved or top rated files to ensure AI disruptions' sustainability and speed.</li>
+        <li class="mb-2 py-3"><b>Decentralized Power</b>: Leverage the collective intelligence of a global network to identify and address issues in AI systems.</li>
+        <li class="mb-2 py-3"><b>Community Insights</b>: Contribute your expertise and help shape the future of responsible AI development.</li>
+        <li class="mb-2 py-3"><b>zk-Rollup Technology</b>: Ensure secure and efficient data processing while protecting user privacy.</li>
+        <li class="mb-2 py-3"><b>Continuous Improvement</b>: Network insights are constantly fed back into the system, leading to a continuously evolving database of AI knowledge.</li>
     </ul>
     </div>
 </div>

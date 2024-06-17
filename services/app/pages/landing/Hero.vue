@@ -1,10 +1,10 @@
 <template>
-    <div class="lg:h-[80vh] sm:h-auto container mx-auto lg:flex lg:flex-row lg:items-center lg:justify-between">
+    <div class="lg:h-[80vh] sm:h-auto lg:flex lg:flex-row lg:items-center lg:justify-between">
 
         
-        <div class="max-md-w-full sm:w-full lg:w-1/2">
+        <div class="max-md-w-full sm:w-full lg:w-1/2 md:ml-10">
 
-            <div class="max-md-text-center sm:text-center lg:text-left pt-12 pb-12 max-w-4xl font-bold max-md-text-4xl md:text-3xl lg:text-4xl">
+            <div class="max-md-text-center sm:text-center lg:text-left pt-12 pb-12 max-w-4xl font-bold max-md-text-4xl md:text-3xl lg:text-6xl">
                 World's first decentralised AI Audit Network
             </div>
 
@@ -32,10 +32,29 @@
         </div>
 
 
-
+<!-- 
         <div class="max-w-lg max-md-hidden sm:hidden w-1/2 lg:flex items-center justify-center">
             <img src="public/Hero Image.png" alt="" />
-        </div>
+        </div> -->
+        <div class="max-w-lg max-md-hidden sm:hidden w-1/2 lg:flex items-center justify-center mr-10 mt-20">
+    <LottieAnimation :animationData="animationData" :width="'90%'" :height="'100%'" />
+  </div>
 
     </div>
 </template>
+
+<script>
+import LottieAnimation from '/components/LottieAnimation.vue'; // Adjust the path as needed
+import animationData from 'public/animations/lottie.json' // Adjust the path as needed
+
+export default {
+  components: {
+    LottieAnimation
+  },
+  data() {
+    return {
+      animationData
+    };
+  }
+};
+</script>

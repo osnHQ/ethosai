@@ -33,17 +33,17 @@
             </div>
         </div>
     </div>
-    <div class="mt-12 py-8 text-center ">
+    <div class="mx-auto mt-8">
+        <div class="text-center text-sm text-violet-500 uppercase tracking-wider">
+            <img src="public/gl_laptop_ethos.png" alt="ethosAI Flow" class="rounded mx-auto d-block" />
+        </div>
+    </div>
+    <div class="mt-12 text-center">
         <div class="mx-auto max-w-screen-lg font-semibold text-3xl text-white md:text-4xl leading-tight">
             Empowering responsible AI innovation for enterprises
         </div>
         <div class="mx-auto max-w-screen-lg sm:text-center lg:text-center text-gray-400 text-md md:text-lg">
             Demonstrate your commitment to building bias-free and accurate LLMs by partnering with ethosAI.one and share scorecards to establish trust.
-        </div>
-    </div>    
-    <div class="mx-auto mt-8 p-8">
-        <div class="text-center text-sm text-violet-500 uppercase tracking-wider">
-            <img src="public/EvalResults_1.png" alt="ethosAI Flow" class="rounded mx-auto d-block" />
         </div>
     </div>
 </template>

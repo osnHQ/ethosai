@@ -10,7 +10,7 @@
 
     <!-- for mobile device -->
      <div class="flex justify-center items-center md:hidden mt-5">
-      <a href="https://openqa.ai/">
+      <a href="https://ethosai.one/">
       <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
     </a>
      </div>

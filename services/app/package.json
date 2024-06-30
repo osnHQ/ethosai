@@ -37,6 +37,10 @@
     "vue-tsc": "^2.0.14"
   },
   "dependencies": {
-    "bun": "^1.1.13"
-  }
+    "bun": "^1.1.13",
+    "ollama": "^0.5.2"
+  },
+  "trustedDependencies": [
+    "protobufjs"
+  ]
 }

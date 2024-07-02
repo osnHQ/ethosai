@@ -9,7 +9,7 @@
             </div>
 
             <div class="max-md-text-center sm:text-center lg:text-left text-gray-400 text-md md:text-lg">
-                Traditional AI development is shrouded in secrecy, leaving users unsure of potential biases and limitations. EthosAI shatters this barrier by introducing the world's first decentralized AI audit network. This revolutionary approach enables a decentralised approach to create impact for the crucial task of ensuring fair and reliable AI for everyone.
+                AI is reshaping our world, but its development happens in secret. EthosAI creates an open network to test AI systems, with a mission to make AI fair and trustworthy for all.
             </div>
 
             <div class="flex lg:justify-start max-md-justify-center sm:justify-center">

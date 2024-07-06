@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-6xl mx-auto p-6">
-      <h1 class="text-center text-4xl font-bold my-10">FAQ</h1>
+      <h1 class="text-center text-4xl font-bold mb-10">FAQ</h1>
       <!-- <p class="text-center mx-auto mb-10 max-w-4xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p> -->
       
       <div class="mb-4">

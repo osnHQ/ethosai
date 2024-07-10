@@ -8,3 +8,4 @@ dist
 bun.lockb
 package-lock.json
 package.json
+.env

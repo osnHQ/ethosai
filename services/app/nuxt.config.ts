@@ -3,7 +3,7 @@ import { appDescription } from './constants/index';
 
 export default defineNuxtConfig({
   site: {
-    url: 'https://openqa.pages.dev',
+    url: 'https://ethosai.one',
   },
 
   modules: [

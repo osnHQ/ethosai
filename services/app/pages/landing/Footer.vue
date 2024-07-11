@@ -4,7 +4,7 @@
       <div class="mb-4 footer-logo w-30">
         <a href="https://ethosai.one/"><img src="public/logo.png" alt="OpenQA.AI Logo" /></a>
       </div>
-      <p class="text-white">Decentralised Continuous AI Audit Infrastructure</p>
+      <p class="text-white">Continuous AI Audit Infrastructure</p>
     </div>
 
         <div class="flex flex-wrap justify-between w-full md:w-auto gap-x-40 gap-y-5 mr-20 mt-5">

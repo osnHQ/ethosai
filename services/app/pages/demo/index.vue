@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import OpenAI from 'openai';
-import ollama from 'ollama';
+import ollama from 'ollama/browser';
 
 interface QA {
   question: string;

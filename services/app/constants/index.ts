@@ -1,2 +1,2 @@
-export const appName = 'ethosAI Decentralised Continuous AI Audit Infrastructure'
-export const appDescription = 'Decentralised Continuous AI Audit Infrastructure'
+export const appName = 'ethosAI Continuous AI Audit Infrastructure'
+export const appDescription = 'Continuous AI Audit Infrastructure'

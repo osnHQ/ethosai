@@ -5,7 +5,7 @@
         <div class="max-md-w-full sm:w-full lg:w-1/2 md:ml-10">
 
             <div class="max-md-text-center sm:text-center lg:text-left pt-12 pb-12 max-w-4xl font-bold max-md-text-4xl md:text-3xl lg:text-6xl">
-                World's first decentralised AI Audit Network
+                World's first <br> AI Audit Network
             </div>
 
             <div class="max-md-text-center sm:text-center lg:text-left text-gray-400 text-md md:text-lg">

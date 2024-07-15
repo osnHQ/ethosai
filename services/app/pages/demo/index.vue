@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import OpenAI from 'openai';
-import ollama from 'ollama';
+import ollama from 'ollama/browser';
 
 interface QA {
   question: string;
@@ -184,11 +184,11 @@ const generateAnswers = async () => {
         const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
 
         if (api === 'openai') {
-          const openai = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'] });
+          const openai = new OpenAI({ apiKey: import.meta.env.OPENAI_API_KEY, dangerouslyAllowBrowser: true });
 
           const response = await openai.chat.completions.create({
             model,
-            messages: [{ role: 'user', content: qa.question }]
+            messages: [{ role: 'user', content: `reply with one or two words only. ${qa.question}` }]
           });
 
           qa[modelKey] = {
@@ -207,7 +207,6 @@ const generateAnswers = async () => {
             similarityScore: null
           };
         }
-
 
         qa.status = '✅';
       }
@@ -440,10 +439,6 @@ watch(selectedModels, (newModels) => {
 
 
   qaData.value = [...sampleQA.value];
-});
-
-onMounted(() => {
-  generateAnswers();
 });
 </script>
 

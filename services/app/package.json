@@ -23,9 +23,9 @@
     "@nuxtjs/color-mode": "^3.4.0",
     "@nuxtjs/sitemap": "latest",
     "@pinia/nuxt": "^0.5.1",
-    "@unocss/eslint-config": "^0.59.4",
-    "@unocss/nuxt": "^0.59.4",
-    "@vite-pwa/nuxt": "^0.6.0",
+    "@unocss/eslint-config": "^0.61.3",
+    "@unocss/nuxt": "^0.61.3",
+    "@vite-pwa/nuxt": "^0.9.1",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
     "consola": "^3.2.3",
@@ -38,9 +38,13 @@
   },
   "dependencies": {
     "bun": "^1.1.13",
-    "ollama": "^0.5.2"
+    "ollama": "^0.5.2",
+    "openai": "^4.52.5"
   },
   "trustedDependencies": [
-    "protobufjs"
+    "bun",
+    "esbuild",
+    "protobufjs",
+    "vue-demi"
   ]
 }

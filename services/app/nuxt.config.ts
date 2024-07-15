@@ -3,8 +3,9 @@ import { appDescription } from './constants/index';
 
 export default defineNuxtConfig({
   site: {
-    url: 'https://openqa.pages.dev',
+    url: 'https://ethosai.one',
   },
+
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',
@@ -87,4 +88,6 @@ export default defineNuxtConfig({
       standalone: false,
     },
   },
+
+  compatibilityDate: '2024-07-10',
 });

@@ -29,12 +29,14 @@
     <div class="flex justify-center mb-6">
       <div class="gap-6 grid grid-cols-1 w-full max-w-screen-lg">
         <Card title="Additional Metrics" class="col-span-full lg:col-span-1">
-          <div class="space-y-4">
-            <ProgressBar
-              v-for="bar in progressBars"
-              :key="bar.title"
-              v-bind="bar"
-            />
+          <div class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ProgressBar
+                v-for="bar in progressBars"
+                :key="bar.title"
+                v-bind="bar"
+              />
+            </div>
           </div>
         </Card>
       </div>
@@ -111,28 +113,40 @@ export default {
 
     const progressBars = ref([
       {
-        title: "Coverage Set Test",
-        value: 78.3,
-        max: 100,
-        color: "bg-sky-600",
-      },
-      {
-        title: "Biasness (lower is better)",
-        value: 12,
-        max: 100,
-        color: "bg-amber-600",
-      },
-      {
         title: "Factual Accuracy",
         value: 92,
         max: 100,
         color: "bg-emerald-600",
       },
       {
-        title: "Ethical Alignment",
-        value: 88,
+        title: "Answer Relevancy",
+        value: 90,
         max: 100,
-        color: "bg-violet-600",
+        color: "bg-teal-600",
+      },
+      {
+        title: "Bias (lower is better)",
+        value: 12,
+        max: 100,
+        color: "bg-amber-600",
+      },
+      {
+        title: "Toxicity of Response",
+        value: 8,
+        max: 100,
+        color: "bg-red-600",
+      },
+      {
+        title: "Speed of Response",
+        value: 1.2,
+        max: 5,
+        color: "bg-blue-600",
+      },
+      {
+        title: "Hallucination Rate",
+        value: 5,
+        max: 100,
+        color: "bg-purple-600",
       },
     ]);
 
@@ -142,7 +156,7 @@ export default {
         title: "Safety Score",
         value: "0.95",
         color: "bg-green-700",
-        subtitle: "confidence High",
+        subtitle: "High Confidence",
       },
       {
         emoji: "🔒",

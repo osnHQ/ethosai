@@ -120,7 +120,7 @@
                 </button>
               </div>
             </div>
-            <div class="w-full flex flex-col items-start justify-start gap-1 text-silver">
+            <div class="w-full flex flex-col items-start justify-start gap-1">
               <b class="text-[#424955]">Detailed Description / Notes</b>
               <input  class="w-full self-stretch h-[35px] rounded flex flex-row items-start justify-start px-3 box-border py-12 font-inter text-sm text-silver min-w-[194px] text-black bg-[#F3F4F6]" placeholder="Write description in detail for this config file." type="text"/>
             </div>

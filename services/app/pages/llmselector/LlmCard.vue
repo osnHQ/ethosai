@@ -1,6 +1,6 @@
 <template>
   <article class="flex flex-col grow px-4 pt-4 pb-9 mx-auto w-full bg-white rounded shadow max-md:mt-6">
-    <img :src="llm.image" :alt="llm.name" class="w-full aspect-[1.59] object-cover" />
+    <img :src="llm.image" :alt="llm.name" class="w-full aspect-1.59 object-cover" />
     <p class="mt-6 text-sm leading-5 text-zinc-400">{{ llm.company }}</p>
     <h2 class="mt-5 text-lg leading-7 text-blue-600">{{ llm.name }}</h2>
     <p class="mt-5 text-xs leading-5 text-zinc-900">{{ llm.description }}

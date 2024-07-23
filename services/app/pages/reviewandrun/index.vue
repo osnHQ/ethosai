@@ -1,13 +1,14 @@
 <template>
     <div>
-        <CreateConfig />
+        <ReviewAndRun />
     </div>
 </template>
 
 <script setup>
-import CreateConfig from "./CreateConfig.vue"
+import ReviewAndRun from "./ReviewAndRun.vue"
 
 const color = useColorMode()
 color.value === 'light'
 color.preference = 'light'
+
 </script>

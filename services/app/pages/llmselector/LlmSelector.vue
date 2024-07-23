@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full relative shadow bg-white flex items-start justify-end py-0 pr-7 pl-0 gap-2 text-left text-base text-dimgray font-inter mq975:pl-7">
-    <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-[calc(100%_-_287px)] mq975:max-w-full">
+  <div class="w-225 relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
+    <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-xl">
       <section class="flex flex-col pb-20 bg-white rounded shadow-sm">
         <header class="flex flex-col pl-7 w-full text-zinc-900 max-md:pl-5 max-md:max-w-full">
           <h1 class="flex gap-5 self-start text-3xl leading-10">
@@ -27,7 +27,7 @@
         <p class="self-end mt-1 mr-8 text-sm leading-6 text-right text-black max-md:mr-2.5">
           Total <span class="font-bold text-cyan-500">14</span> LLMs
         </p>
-        <main class="self-center px-5 mt-10 w-full max-w-[1365px] max-md:max-w-full">
+        <main class="self-center px-5 mt-10 w-full max-md:max-w-full">
           <div class="flex gap-5 max-md:flex-col max-md:gap-0">
             <LlmCard
               v-for="(llm, index) in llms"

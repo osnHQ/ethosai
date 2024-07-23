@@ -1,6 +1,6 @@
 <template>
-      <div class="w-full relative shadow bg-white flex items-start justify-end py-0 pr-7 pl-0 gap-2 text-left text-base text-dimgray font-inter mq975:pl-7">
-        <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-[calc(100%_-_260px)] mq975:max-w-full text-black">
+      <div class="w-350 relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
+        <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-280">
 
     <div class="flex flex-col px-7 py-7 bg-white rounded shadow-sm max-md:px-5">
       <h1 class="text-3xl leading-10 text-zinc-900 max-md:max-w-full">

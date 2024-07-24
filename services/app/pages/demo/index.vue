@@ -1,447 +1,189 @@
 <template>
-  <div class="bg-gray-100 p-8 min-h-screen text-dark">
-    <div class="bg-white shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
-      <header class="bg-blue-600 p-6 text-white">
-        <h1 class="font-bold text-3xl">LLM Evaluation</h1>
-      </header>
+  <div
+    class="bg-gradient-to-br from-gray-100 dark:from-gray-900 via-gray-200 dark:via-gray-800 to-gray-300 dark:to-gray-900 px-4 sm:px-6 lg:px-8 py-12 min-h-screen transition-all duration-500">
+    <div class="mx-auto max-w-5xl">
+      <h1
+        class="bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-10 font-extrabold text-4xl text-center text-transparent sm:text-6xl animate-pulse">
+        Audit Report Demo
+      </h1>
 
-      <div class="flex md:flex-row flex-col">
-        <div class="border-gray-200 p-6 border-r md:w-1/3">
-          <h2 class="mb-4 font-semibold text-xl">Configuration</h2>
-
-          <div class="mb-4">
-            <label class="block mb-2 font-medium text-gray-700" for="api">Select API:</label>
-            <select id="api" v-model="selectedApi"
-              class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
-              <option value="ollama">Ollama</option>
-              <option value="openai">OpenAI</option>
-            </select>
-          </div>
-
-          <label class="block mb-2 font-medium text-gray-700" for="models">Select Models:</label>
-          <select id="models" v-model="selectedModels" multiple
-            class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
-            <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
-          </select>
-
-          <button @click="generateAnswers" :disabled="isLoading"
-            class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline mt-4 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
-            <span v-if="isLoading" class="flex justify-center items-center">
-              <svg class="mr-3 -ml-1 w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-              </svg>
-              Generating...
-            </span>
-            <span v-else>Generate Answers</span>
-          </button>
-
-          <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">QA Pair Generation</h3>
-            <input v-model="batchTopics" type="text" placeholder="Enter topics separated by commas"
-              class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500" />
-            <button @click="generateBatchQAPairs" :disabled="isGeneratingBatch"
-              class="bg-green-500 hover:bg-green-600 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
-              {{ isGeneratingBatch ? 'Generating...' : 'Generate QA Pairs' }}
-            </button>
-          </div>
-
-          <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">Statistics</h3>
-            <p>Total QA Pairs: {{ qaData.length }}</p>
-            <p>Average Similarity Score: {{ averageSimilarityScore.toFixed(2) }}</p>
-          </div>
-
-          <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">Export/Import</h3>
-            <button @click="exportData"
-              class="bg-indigo-500 hover:bg-indigo-600 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
-              Export Data
-            </button>
-            <input type="file" @change="importData" accept=".json" class="mt-2" />
-          </div>
+      <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden">
+        <div class="bg-gray-200 dark:bg-gray-700 h-2">
+          <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 transition-all duration-500 ease-out"
+            :style="{ width: `${(step / 5) * 100}%` }"></div>
         </div>
 
-        <div class="p-6 md:w-2/3">
-          <div class="flex justify-between items-center mb-4">
-            <input v-model="filter" type="text" placeholder="Filter questions and answers..."
-              class="border-gray-300 p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-500" />
-            <select v-model="pageSize" class="border-gray-300 p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
-              <option :value="5">5 per page</option>
-              <option :value="10">10 per page</option>
-              <option :value="20">20 per page</option>
-            </select>
+        <div class="p-8">
+          <div class="flex justify-between mb-8">
+            <div v-for="i in 5" :key="i" class="flex flex-col items-center">
+              <div :class="[
+                'rounded-full h-10 w-10 flex items-center justify-center text-white font-semibold',
+                step >= i ? 'bg-indigo-600' : 'bg-gray-400 dark:bg-gray-600'
+              ]">
+                {{ i }}
+              </div>
+              <div class="mt-2 text-gray-600 text-xs dark:text-gray-400">
+                {{ stepLabels[i - 1] || 'Report' }}
+              </div>
+            </div>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="border-gray-200 bg-white border min-w-full">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th v-for="header in tableHeaders" :key="header.key"
-                    class="px-4 py-2 font-medium text-gray-500 text-left text-xs uppercase tracking-wider cursor-pointer"
-                    @click="sort(header.key)">
-                    {{ header.label }}
-                    <span v-if="sortKey === header.key">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-gray-50">
-                  <td class="px-4 py-2 text-gray-900 text-sm">{{ qa.question }}</td>
-                  <td class="px-4 py-2 text-gray-900 text-sm">{{ qa.answer }}</td>
-                  <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-900 text-sm">
-                    {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.generatedAnswer || '⏳' }}
-                  </td>
-                  <td v-for="model in selectedModels" :key="`${model}-score`" class="px-4 py-2 text-gray-900 text-sm">
-                    <span :class="getSimilarityScoreClass(qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore)">
-                      {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore?.toFixed(2) || '⏳' }}
-                    </span>
-                  </td>
+          <div :key="step" class="space-y-4">
+            <div v-if="step <= 4">
+              <h2 class="mb-6 font-semibold text-3xl text-gray-800 dark:text-gray-100">
+                {{ stepTitles[step - 1] }}
+              </h2>
+              <div class="gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <div v-for="option in stepOptions[step - 1]" :key="option.value"
+                  @click="selectOption(stepTypes[step - 1], option.value)"
+                  class="bg-gray-100 dark:bg-gray-700 shadow-md hover:shadow-lg p-6 rounded-xl transition-all duration-300 cursor-pointer"
+                  :class="{
+                    'ring-2 ring-indigo-600 bg-indigo-100 dark:bg-indigo-700': selectedOptions[stepTypes[step - 1]] === option.value
+                  }">
+                  <div class="flex items-center">
+                    <div :class="[
+                      'rounded-full p-3',
+                      selectedOptions[stepTypes[step - 1]] === option.value ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-gray-300 dark:bg-gray-600'
+                    ]">
+                      <span class="text-2xl">{{ option.icon }}</span>
+                    </div>
+                    <div class="ml-4">
+                      <h3 class="font-medium text-gray-800 text-lg dark:text-gray-100 capitalize">{{ option.label }}
+                      </h3>
+                      <p class="mt-1 text-gray-600 text-sm dark:text-gray-400">{{ getDescription(stepTypes[step - 1],
+                        option.value) }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                  <td class="px-4 py-2 text-gray-900 text-sm">
-                    <span :class="getStatusClass(qa.status)">{{ qa.status }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            <div v-if="report" class="bg-white dark:bg-gray-800 shadow-lg mt-12 rounded-2xl overflow-hidden">
+              <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+                <h2 class="font-bold text-3xl text-white">Generated Report</h2>
+                <p class="mt-2 text-indigo-100">Based on your selections, we've generated the following report:</p>
+              </div>
+              <div>
+                
+                <Report />
 
-          <div class="flex justify-between items-center mt-4">
-            <p class="text-gray-700 text-sm">
-              Showing {{ currentPage * pageSize + 1 }} to {{ Math.min((currentPage + 1) * pageSize,
-                filteredQaData.length) }} of {{ filteredQaData.length }} entries
-            </p>
-            <div>
-              <button @click="prevPage" :disabled="currentPage === 0"
-                class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-white focus:outline-none">
-                Previous
-              </button>
-              <button @click="nextPage" :disabled="currentPage >= Math.ceil(filteredQaData.length / pageSize) - 1"
-                class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-white focus:outline-none">
-                Next
-              </button>
+                <div class="bg-gray-100 dark:bg-gray-700 shadow-md p-6 rounded-lg">
+                  <h3 class="mb-4 font-semibold text-gray-800 text-xl dark:text-gray-100">Analysis Summary</h3>
+                  <p class="mb-4 text-gray-700 dark:text-gray-300">{{ report.summary }}</p>
+                  <h4 class="mb-2 font-semibold text-gray-800 text-lg dark:text-gray-100">Key Findings:</h4>
+                  <ul class="space-y-2 pl-5 text-gray-700 dark:text-gray-300 list-disc">
+                    <li v-for="(finding, index) in report.keyFindings" :key="index">{{ finding }}</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-if="!report" class="flex justify-between mt-10">
+        <button @click="prevStep"
+          class="bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 dark:bg-gray-800 disabled:opacity-50 px-4 py-2 rounded-lg text-gray-100 dark:text-gray-100 transition-all duration-300"
+          :disabled="step === 1">
+          Previous
+        </button>
+        <button @click="nextStep"
+          class="bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-600 dark:bg-indigo-700 px-4 py-2 rounded-lg text-white transition-all duration-300"
+          :disabled="step === 5">
+          {{ step === 4 ? 'Finish' : 'Next' }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import OpenAI from 'openai';
-import ollama from 'ollama/browser';
+<script setup>
+import { ref } from 'vue';
+import Report from '../reports/index.vue';
 
-interface QA {
-  question: string;
-  answer: string;
-  status: string;
-  [key: string]: any;
-}
+const step = ref(1);
+const selectedOptions = ref({ auditSection: '', category: '', biasFile: '', model: '' });
+const report = ref(null);
 
-type Vector = number[];
+const stepTitles = ['Choose Audit Section', 'Choose Category', 'Choose Bias File', 'Choose Model'];
+const stepLabels = ['Audit', 'Category', 'Bias File', 'Model'];
+const stepTypes = ['auditSection', 'category', 'biasFile', 'model'];
 
-const sampleQA = ref<QA[]>([
-  { question: "Who wrote the novel '1984'?", answer: "George Orwell", status: "⏳" },
-  { question: "What is the chemical symbol for gold?", answer: "Au", status: "⏳" },
-  { question: "What is the capital of France?", answer: "Paris", status: "⏳" },
-  { question: "Who painted the Mona Lisa?", answer: "Leonardo da Vinci", status: "⏳" },
-  { question: "What is the largest planet in our solar system?", answer: "Jupiter", status: "⏳" },
-  { question: "What is the smallest prime number?", answer: "2", status: "⏳" },
-  { question: "What year did the Titanic sink?", answer: "1912", status: "⏳" },
-  { question: "What is the longest river in the world?", answer: "Nile", status: "⏳" },
-  { question: "What element does 'O' represent on the periodic table?", answer: "Oxygen", status: "⏳" },
-  { question: "Who is known as the father of modern physics?", answer: "Albert Einstein", status: "⏳" },
-  { question: "What is the boiling point of water in Celsius?", answer: "100°C", status: "⏳" },
-  { question: "What planet is known as the Red Planet?", answer: "Mars", status: "⏳" }
-]);
+const stepOptions = [
+  [
+    { value: 'factual', label: 'Factual', icon: '🔍' },
+    { value: 'bias', label: 'Bias', icon: '⚖️' },
+  ],
+  [
+    { value: 'india_geography', label: 'India Geography', icon: '🌏' },
+    { value: 'world_history', label: 'World History', icon: '📜' },
+    { value: 'science', label: 'Science', icon: '🔬' },
+  ],
+  [
+    { value: 'bias1.json', label: 'Bias File 1', icon: '📂' },
+    { value: 'bias2.json', label: 'Bias File 2', icon: '📂' },
+    { value: 'bias3.json', label: 'Bias File 3', icon: '📂' },
+  ],
+  [
+    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', icon: '🤖' },
+    { value: 'gpt-4', label: 'GPT-4', icon: '🤖' },
+    { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', icon: '🤖' },
+  ],
+];
 
-const similarity = (x: Vector, y: Vector, precision: number = 10): number => {
-  const dot = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
-  const magX = Math.sqrt(x.reduce((sum, xi) => sum + xi * xi, 0));
-  const magY = Math.sqrt(y.reduce((sum, yi) => sum + yi * yi, 0));
-  
-  const sim = magX && magY ? dot / (magX * magY) : 0;
-  return parseFloat(sim.toFixed(precision));
+const selectOption = (type, value) => {
+  selectedOptions.value[type] = value;
 };
 
-const generateEmbedding = async (model: string, prompt: string): Promise<Vector> => {
-  const response = await ollama.embeddings({ model, prompt });
-  return response.embedding;
+const generateReport = () => {
+  report.value = {
+    auditSection: selectedOptions.value.auditSection,
+    category: selectedOptions.value.category,
+    biasFile: selectedOptions.value.biasFile,
+    gptModel: selectedOptions.value.model,
+    summary: "Our analysis provides a thorough overview of the selected content, emphasizing strengths and suggesting areas for enhancement in terms of factual accuracy and bias mitigation. Our approach ensures a well-rounded evaluation considering various perspectives.",
+    keyFindings: [
+      "The content shows high factual accuracy, with 95% of claims corroborated by reliable sources.",
+      "Some biases were identified, particularly in historical contexts, suggesting a predominantly Western perspective.",
+      "Scientific explanations were clear and up-to-date with current terminology and theories.",
+      "Suggestions for improvement include broadening sources and integrating diverse viewpoints in historical contexts."
+    ]
+  };
 };
 
-const generateAnswers = async () => {
-  isLoading.value = true;
-  try {
-    const api = selectedApi.value;
+const prevStep = () => {
+  if (step.value > 1) step.value -= 1;
+};
 
-    for (const qa of sampleQA.value) {
-      for (const model of selectedModels.value) {
-        const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
+const nextStep = () => {
+  if (step.value === 4) {
+    generateReport();
+  }
+  if (step.value < 5) step.value += 1;
+};
 
-        if (api === 'openai') {
-          const openai = new OpenAI({ apiKey: import.meta.env.OPENAI_API_KEY, dangerouslyAllowBrowser: true });
-
-          const response = await openai.chat.completions.create({
-            model,
-            messages: [{ role: 'user', content: `reply with one or two words only. ${qa.question}` }]
-          });
-
-          qa[modelKey] = {
-            generatedAnswer: response.choices[0].message.content,
-            similarityScore: null
-          };
-        } else if (api === 'ollama') {
-          const response = await ollama.chat({
-            model,
-            messages: [{ role: "user", content: `reply with one or two words only. ${qa.question}` }]
-          });
-
-          const generatedAnswer = response.message.content.replace(/\.$/, "");
-          qa[modelKey] = {
-            generatedAnswer,
-            similarityScore: null
-          };
-        }
-
-        qa.status = '✅';
-      }
-
-
-      for (const model of selectedModels.value) {
-        const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
-        const generatedAnswer = sampleQA.value.find(q => q.question === qa.question)?.answer;
-
-        if (generatedAnswer) {
-          const [answerEmbedding, generatedEmbedding] = await Promise.all([
-            generateEmbedding('nomic-embed-text', qa.answer),
-            generateEmbedding('nomic-embed-text', qa[modelKey]?.generatedAnswer || '')
-          ]);
-
-          qa[modelKey].similarityScore = similarity(answerEmbedding, generatedEmbedding);
-        }
-      }
+const getDescription = (type, value) => {
+  const descriptions = {
+    auditSection: {
+      factual: 'Identify and correct factual inaccuracies in the text.',
+      bias: 'Assess potential biases present in the text.'
+    },
+    category: {
+      india_geography: 'Content related to the geography of India.',
+      world_history: 'Historical events and contexts from around the world.',
+      science: 'Topics and principles related to science.'
+    },
+    biasFile: {
+      'bias1.json': 'Bias data file 1 containing specific examples and information.',
+      'bias2.json': 'Bias data file 2 with different examples of bias.',
+      'bias3.json': 'Bias data file 3 with another set of bias examples.'
+    },
+    model: {
+      'gpt-3.5-turbo': 'GPT-3.5 Turbo model, suitable for a range of tasks.',
+      'gpt-4': 'GPT-4 model, providing more advanced capabilities.',
+      'gpt-4-turbo': 'GPT-4 Turbo model, optimized for efficiency and performance.'
     }
-
-    qaData.value = [...sampleQA.value];
-  } catch (error) {
-    console.error('Error generating answers:', error);
-  } finally {
-    isLoading.value = false;
-    calculateAverageSimilarityScore();
-  }
+  };
+  return descriptions[type][value] || '';
 };
-
-const calculateAverageSimilarityScore = () => {
-  const totalScores = selectedModels.value.reduce((total, model) => {
-    const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
-    const scores = qaData.value.map(qa => qa[modelKey]?.similarityScore || 0);
-    return total + scores.reduce((sum, score) => sum + score, 0);
-  }, 0);
-
-  const numberOfScores = selectedModels.value.length * qaData.value.length;
-  averageSimilarityScore.value = numberOfScores ? totalScores / numberOfScores : 0;
-};
-
-const generateBatchQAPairs = async () => {
-  if (!batchTopics.value.trim()) {
-    alert("Please enter topics for batch generation.");
-    return;
-  }
-
-  isGeneratingBatch.value = true;
-
-  try {
-    const topics = batchTopics.value.split(',').map(topic => topic.trim());
-
-
-    const newQAPairs = await Promise.all(topics.map(async (topic) => {
-
-      const questionResponse = await ollama.chat({
-        model: selectedModels.value[0],
-        messages: [{ role: "user", content: `Generate a concise question about ${topic}.` }],
-      });
-      const newQuestion = questionResponse.message.content.trim();
-
-
-      const answerResponse = await ollama.chat({
-        model: selectedModels.value[0],
-        messages: [
-          { role: "user", content: `Answer the following question in one or two words only: ${newQuestion}` },
-        ],
-      });
-      const newAnswer = answerResponse.message.content.trim();
-
-      return { question: newQuestion, answer: newAnswer, status: "⏳" };
-    }));
-
-
-    sampleQA.value.push(...newQAPairs);
-    qaData.value = [...sampleQA.value];
-
-    await generateAnswers();
-
-    calculateAverageSimilarityScore();
-
-    batchTopics.value = '';
-  } catch (error) {
-    console.error("Error generating batch QA pairs:", error);
-    alert("An error occurred while generating batch QA pairs. Please try again.");
-  } finally {
-    isGeneratingBatch.value = false;
-  }
-};
-
-
-const exportData = () => {
-  const blob = new Blob([JSON.stringify(qaData.value, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'qa-data.json';
-  link.click();
-  URL.revokeObjectURL(url);
-};
-
-const importData = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (input.files?.length) {
-    const file = input.files[0];
-    const text = await file.text();
-
-    try {
-      
-      const importedData = JSON.parse(text) as { question: string; answer: string }[];
-      
-      if (!Array.isArray(importedData) || !importedData.every(item => item.question && item.answer)) {
-        throw new Error("Invalid data format.");
-      }
-      
-      sampleQA.value = importedData.map(item => ({
-        question: item.question,
-        answer: item.answer,
-        status: '⏳'  
-      }));
-      qaData.value = [...sampleQA.value];
-      
-      calculateAverageSimilarityScore(); 
-
-    } catch (error) {
-      console.error("Error importing data:", error);
-      alert("An error occurred while importing data. Please make sure the file is correctly formatted.");
-    }
-  }
-};
-
-
-const sort = (key: string) => {
-  if (sortKey.value === key) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortKey.value = key;
-    sortOrder.value = 'asc';
-  }
-};
-
-const prevPage = () => {
-  if (currentPage.value > 0) {
-    currentPage.value -= 1;
-  }
-};
-
-const nextPage = () => {
-  if (currentPage.value < Math.ceil(filteredQaData.value.length / pageSize.value) - 1) {
-    currentPage.value += 1;
-  }
-};
-
-const getSimilarityScoreClass = (score: number) => {
-  if (score > 0.8) return 'text-green-500';
-  if (score > 0.5) return 'text-yellow-500';
-  return 'text-red-500';
-};
-
-const getStatusClass = (status: string) => {
-  return status === '⏳' ? 'text-gray-500' : 'text-blue-500';
-};
-
-const selectedApi = ref('ollama');
-const availableModels = computed(() => {
-  return selectedApi.value === 'ollama'
-    ? ['qwen2:0.5b', 'qwen2:1.5b', 'tinyllama:1.1b']
-    : ['gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'];
-});
-
-const selectedModels = ref<string[]>(['qwen2:1.5b']);
-const batchTopics = ref('');
-const filter = ref('');
-const pageSize = ref(20);
-const currentPage = ref(0);
-const isLoading = ref(false);
-const isGeneratingBatch = ref(false);
-
-const qaData = ref<QA[]>(sampleQA.value);
-const averageSimilarityScore = ref(0);
-
-const tableHeaders = computed(() => [
-  { key: 'question', label: 'Question' },
-  { key: 'answer', label: 'Answer' },
-  ...selectedModels.value.map(model => ({ key: model, label: model })),
-  ...selectedModels.value.map(model => ({ key: `${model}-score`, label: `${model} Score` })),
-  { key: 'status', label: 'Status' }
-]);
-
-const sortKey = ref('question');
-const sortOrder = ref('asc');
-
-const sortedQaData = computed(() => {
-  return [...qaData.value].sort((a, b) => {
-    const compareA = a[sortKey.value] || '';
-    const compareB = b[sortKey.value] || '';
-    if (sortOrder.value === 'asc') {
-      return compareA > compareB ? 1 : compareA < compareB ? -1 : 0;
-    } else {
-      return compareA < compareB ? 1 : compareA > compareB ? -1 : 0;
-    }
-  });
-});
-
-const filteredQaData = computed(() => {
-  return sortedQaData.value.filter(qa =>
-    (qa.question.toLowerCase().includes(filter.value.toLowerCase()) ||
-     qa.answer.toLowerCase().includes(filter.value.toLowerCase()))
-  );
-});
-
-const paginatedQaData = computed(() => {
-  const start = currentPage.value * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredQaData.value.slice(start, end);
-});
-
-watch(selectedModels, (newModels) => {
-  if (newModels.length === 0) return;
-
-
-  sampleQA.value.forEach(qa => {
-    newModels.forEach(model => {
-      const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
-      qa[modelKey] = {
-        generatedAnswer: null,
-        similarityScore: null
-      };
-    });
-  });
-
-
-  qaData.value = [...sampleQA.value];
-});
 </script>
-
-<style scoped>
-/* Add any scoped styles here */
-</style>

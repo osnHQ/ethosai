@@ -63,26 +63,10 @@
                 <h2 class="font-bold text-3xl text-white">Generated Report</h2>
                 <p class="mt-2 text-indigo-100">Based on your selections, we've generated the following report:</p>
               </div>
-              <div class="p-8">
-                <div class="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
-                  <div class="bg-indigo-50 dark:bg-gray-700 shadow-md p-4 rounded-lg">
-                    <h3 class="font-semibold text-indigo-900 dark:text-indigo-300">Audit Section</h3>
-                    <p class="mt-1 text-indigo-700 dark:text-indigo-400 capitalize">{{ report.auditSection }}</p>
-                  </div>
-                  <div class="bg-purple-50 dark:bg-gray-700 shadow-md p-4 rounded-lg">
-                    <h3 class="font-semibold text-purple-900 dark:text-purple-300">Category</h3>
-                    <p class="mt-1 text-purple-700 dark:text-purple-400 capitalize">{{ report.category.replace('_', ' ')
-                      }}</p>
-                  </div>
-                  <div class="bg-indigo-50 dark:bg-gray-700 shadow-md p-4 rounded-lg">
-                    <h3 class="font-semibold text-indigo-900 dark:text-indigo-300">Bias File</h3>
-                    <p class="mt-1 text-indigo-700 dark:text-indigo-400 capitalize">{{ report.biasFile.replace(/_/g, ' ') }}</p>
-                  </div>
-                  <div class="bg-purple-50 dark:bg-gray-700 shadow-md p-4 rounded-lg">
-                    <h3 class="font-semibold text-purple-900 dark:text-purple-300">GPT Model</h3>
-                    <p class="mt-1 text-purple-700 dark:text-purple-400 uppercase">{{ report.gptModel }}</p>
-                  </div>
-                </div>
+              <div>
+                
+                <Report />
+
                 <div class="bg-gray-100 dark:bg-gray-700 shadow-md p-6 rounded-lg">
                   <h3 class="mb-4 font-semibold text-gray-800 text-xl dark:text-gray-100">Analysis Summary</h3>
                   <p class="mb-4 text-gray-700 dark:text-gray-300">{{ report.summary }}</p>
@@ -115,6 +99,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import Report from '../reports/index.vue';
 
 const step = ref(1);
 const selectedOptions = ref({ auditSection: '', category: '', biasFile: '', model: '' });

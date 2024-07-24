@@ -1,9 +1,5 @@
 <template>
   <div class="flex flex-col bg-slate-900 p-4 sm:p-6 min-h-screen text-gray-200">
-    <h2 class="mb-4 sm:mb-6 font-bold text-2xl text-center text-gray-200 sm:text-3xl md:text-4xl">
-      LLM Evaluation Report
-    </h2>
-
     <div class="flex flex-grow justify-center mb-6">
       <div class="gap-4 grid grid-cols-2 w-full max-w-screen-lg">
         <MetricCard
@@ -66,6 +62,7 @@ import MetricCard from "./MetricCard.vue";
 import ProgressBar from "./ProgressBar.vue";
 
 export default {
+  name: "Report",
   components: {
     Card,
     MetricCard,

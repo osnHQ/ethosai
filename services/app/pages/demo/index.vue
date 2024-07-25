@@ -13,8 +13,8 @@
           <p class="mt-2 text-indigo-100">Based on your selections, we've generated the following report:</p>
         </div>
         <div class="p-6">
-          <Report />
-          <Table :data="testData" :model="selectedOptions.model" />
+          <Report v-if="result" :result="result" />
+          <Table :data="testData" :model="selectedOptions.model" @result="result = $event" />
           <div class="bg-gray-100 dark:bg-gray-700 shadow-md p-6 rounded-lg hidden">
             <h3 class="mb-4 font-semibold text-gray-800 text-xl dark:text-gray-100">Analysis Summary</h3>
             <p class="mb-4 text-gray-700 dark:text-gray-300">{{ report.summary }}</p>
@@ -99,6 +99,7 @@ import Table from "../playground/index.vue";
 const step = ref(1);
 const selectedOptions = ref({ audit: '', category: '', model: '' });
 const report = ref(null);
+const result = ref(null);
 
 const stepTitles = ['Choose Audit Section', 'Choose Category', 'Choose Model', 'Choose QA Pair Generation'];
 const stepLabels = ['Audit', 'Category', 'Model'];

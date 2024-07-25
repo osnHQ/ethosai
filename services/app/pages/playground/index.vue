@@ -222,6 +222,13 @@ const calculateSimilarityScoresForQA = async (qa: { [x: string]: any; question: 
   await Promise.all(promises);
 };
 
+const emit = defineEmits({
+  result: (payload: { accuracy: number; relevance: number; bias: number }) => {
+    return payload;
+  }
+})
+
+
 const generateAnswers = async () => {
   isLoading.value = true;
   try {
@@ -236,6 +243,13 @@ const generateAnswers = async () => {
   } finally {
     isLoading.value = false;
     calculateAverageSimilarityScore();
+    calculateAverageRelevantScore();
+
+    emit('result', {
+      accuracy: Math.floor(averageSimilarityScore.value * 100),
+      relevance: Math.floor(averageRelevanceScore.value * 100),
+      bias: 100 // TODO
+    });
   }
 };
 
@@ -250,6 +264,35 @@ const calculateAverageSimilarityScore = () => {
   const numberOfScores = selectedModels.value.length * qaData.value.length;
   averageSimilarityScore.value = numberOfScores ? totalScores / numberOfScores : 0;
 };
+
+const calculateF1 = (groundTruth: string, prediction: string) => {
+    const groundTruthTokens = groundTruth.toLowerCase().replace(/[^\w ]/, '').split(' ');
+    const predictionTokens = prediction.toLowerCase().replace(/[^\w ]/, '').split(' ');
+
+    const commonTokens = groundTruthTokens.filter((token: string) => predictionTokens.includes(token));
+
+    const precision = commonTokens.length / predictionTokens.length;
+    const recall = commonTokens.length / groundTruthTokens.length;
+
+    if (precision + recall === 0) {
+        return 0;
+    }
+
+    const f1 = 2 * (precision * recall) / (precision + recall);
+    return f1;
+}
+
+
+const calculateAverageRelevantScore = () => {
+  const totalScores = selectedModels.value.reduce((total, model) => {
+    const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
+    const scores = qaData.value.map(qa => calculateF1(qa.answer, qa[modelKey]?.generatedAnswer || ''));
+    return total + scores.reduce((sum, score) => sum + score, 0);
+  }, 0);
+
+  const numberOfScores = selectedModels.value.length * qaData.value.length;
+  averageRelevanceScore.value = numberOfScores ? totalScores / numberOfScores : 0;
+}
 
 const generateBatchQAPairs = async () => {
   if (!batchTopics.value.trim()) {
@@ -401,6 +444,7 @@ const isGeneratingBatch = ref(false);
 
 const qaData = ref<QA[]>(sampleQA.value);
 const averageSimilarityScore = ref(0);
+const averageRelevanceScore = ref(0);
 
 const tableHeaders = computed(() => [
   { key: 'question', label: 'Question' },

@@ -1,12 +1,8 @@
 <template>
-  <div class="bg-dark px-8 py-16 min-h-screen text-light">
-    <div class="bg-dark-900 shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
-      <header class="bg-dark-800 p-6 text-light hidden">
-        <h1 class="font-bold text-3xl">LLM Evaluation</h1>
-      </header>
-
+  <div class="bg-dark text-light">
+    <div class="bg-gray-900 shadow-xl mx-auto rounded-lg overflow-hidden">
       <div class="flex md:flex-row flex-col">
-        <div class="border-dark p-6 border-r ">
+        <div class="border-dark p-6 border-r hidden">
           <h2 class="mb-4 font-semibold text-xl">Configuration</h2>
 
           <div class="mb-4">
@@ -36,29 +32,6 @@
             </span>
           </button>
 
-          <!-- <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">QA Pair Generation</h3>
-            <input v-model="batchTopics" type="text" placeholder="Enter topics separated by commas"
-              class="border-gray-700 bg-dark text-light p-2 border rounded-lg w-full focus:ring-2 focus:ring-blue-600" />
-            <button @click="generateBatchQAPairs" :disabled="isGeneratingBatch"
-              class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded-full w-full font-bold text-light focus:outline-none">
-              <span v-if="isGeneratingBatch">
-                <span class="animate-spin mr-2">⏳</span>
-                Generating...
-              </span>
-              <span v-else>
-                <span>📝</span>
-                Generate QA Pairs
-              </span>
-            </button>
-          </div> -->
-
-          <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">Statistics</h3>
-            <p>Total QA Pairs: {{ qaData.length }}</p>
-            <p>Average Similarity Score: {{ averageSimilarityScore.toFixed(2) }}</p>
-          </div>
-
           <div class="mt-6 flex justify-between items-center p-4 bg-dark-800 rounded-full shadow-md">
             <button @click="exportData"
               class="flex-1 mx-2 bg-dark-300 hover:bg-dark-500 px-4 py-2 rounded-full font-bold text-light focus:outline-none transition-all duration-200">
@@ -74,22 +47,22 @@
           </div>
         </div>
 
-        <div class="p-6">
+        <div class="p-6  min-w-full">
           <div class="flex justify-between items-center mb-4">
             <input v-model="filter" type="text" placeholder="Filter questions and answers..."
-              class="border-gray-700 bg-dark text-light p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-600" />
+              class="border-gray-700 bg-gray-800 text-light p-2 border rounded-md w-64" />
             <select v-model="pageSize"
-              class="border-gray-700 bg-dark text-light p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
+              class="border-gray-700 bg-gray-800 text-light p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
               <option :value="5">5 per page</option>
               <option :value="10">10 per page</option>
               <option :value="20">20 per page</option>
             </select>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="border-dark bg-dark border min-w-full">
+          <div class="overflow-x-auto rounded-lg">
+            <table class="border-dark bg-gray-800 border min-w-full">
               <thead>
-                <tr class="bg-dark-800">
+                <tr class="bg-gray-700">
                   <th v-for="header in tableHeaders" :key="header.key"
                     class="px-4 py-2 font-medium text-gray-300 text-left text-xs uppercase tracking-wider cursor-pointer"
                     @click="sort(header.key)">
@@ -99,7 +72,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-dark-800">
+                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-gray-900 transition-all duration-300">
                   <td class="px-4 py-2 text-gray-300 text-sm">{{ qa.question }}</td>
                   <td class="px-4 py-2 text-gray-300 text-sm">{{ qa.answer }}</td>
                   <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-300 text-sm">
@@ -124,13 +97,13 @@
               Showing {{ currentPage * pageSize + 1 }} to {{ Math.min((currentPage + 1) * pageSize,
                 filteredQaData.length) }} of {{ filteredQaData.length }} entries
             </p>
-            <div>
+            <div v-if="filteredQaData.length > pageSize">
               <button @click="prevPage" :disabled="currentPage === 0"
-                class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-gray-300 focus:outline-none">
+                class="bg-gray-700 hover:bg-gray-500 cursor-pointer disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l text-light focus:outline-none mr-1">
                 Previous
               </button>
               <button @click="nextPage" :disabled="currentPage >= Math.ceil(filteredQaData.length / pageSize) - 1"
-                class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-light focus:outline-none">
+                class="bg-gray-700 hover:bg-gray-500 cursor-pointer disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r text-light focus:outline-none">
                 Next
               </button>
             </div>
@@ -338,28 +311,39 @@ const exportData = () => {
   URL.revokeObjectURL(url);
 };
 
+const readFileContent = async (file: File): Promise<string> => {
+  return await file.text();
+};
+
+const parseAndValidateData = (text: string): { question: string; answer: string }[] => {
+  const importedData = JSON.parse(text) as { question: string; answer: string }[];
+
+  if (!Array.isArray(importedData) || !importedData.every(item => item.question && item.answer)) {
+    throw new Error("Invalid data format.");
+  }
+
+  return importedData;
+};
+
+const updateStateWithImportedData = (data: { question: string; answer: string }[]) => {
+  sampleQA.value = data.map(item => ({
+    question: item.question,
+    answer: item.answer,
+    status: '⏳'
+  }));
+  qaData.value = [...sampleQA.value];
+  calculateAverageSimilarityScore();
+};
+
 const importData = async (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files?.length) {
     const file = input.files[0];
-    const text = await file.text();
 
     try {
-
-      const importedData = JSON.parse(text) as { question: string; answer: string }[];
-
-      if (!Array.isArray(importedData) || !importedData.every(item => item.question && item.answer)) {
-        throw new Error("Invalid data format.");
-      }
-
-      sampleQA.value = importedData.map(item => ({
-        question: item.question,
-        answer: item.answer,
-        status: '⏳'
-      }));
-      qaData.value = [...sampleQA.value];
-
-      calculateAverageSimilarityScore();
+      const text = await readFileContent(file);
+      const importedData = parseAndValidateData(text);
+      updateStateWithImportedData(importedData);
 
     } catch (error) {
       console.error("Error importing data:", error);
@@ -400,14 +384,14 @@ const getStatusClass = (status: string) => {
   return status === '⏳' ? 'text-dark-500' : 'text-blue-500';
 };
 
-const selectedApi = ref('ollama');
+const selectedApi = ref('openai');
 const availableModels = computed(() => {
   return selectedApi.value === 'ollama'
     ? ['qwen2:0.5b', 'qwen2:1.5b', 'tinyllama:1.1b']
     : ['gpt-4o-mini'];
 });
 
-const selectedModels = ref<string[]>(['qwen2:1.5b']);
+const selectedModels = ref<string[]>(['gpt-4o-mini']);
 const batchTopics = ref('');
 const filter = ref('');
 const pageSize = ref(20);
@@ -470,5 +454,17 @@ watch(selectedModels, (newModels) => {
 
 
   qaData.value = [...sampleQA.value];
+});
+
+const props = defineProps(['data', 'model']);
+
+onMounted(() => {
+  const model = props.model || 'gpt-4o-mini';
+  selectedModels.value = [model];
+  if (props.data) {
+    const data = parseAndValidateData(props.data);
+    updateStateWithImportedData(data);
+    generateAnswers();
+  }
 });
 </script>

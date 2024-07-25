@@ -1,5 +1,5 @@
 <script setup lang="ts">
 const color = useColorMode()
-color.value === 'dark'
-color.preference = 'dark'
+color.value === 'system'
+color.preference = 'system'
 </script>

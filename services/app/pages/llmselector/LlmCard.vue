@@ -1,7 +1,7 @@
 <template>
   <article class="flex flex-col overflow-hidden rounded-lg shadow-lg bg-white">
     <div class="flex-shrink-0">
-      <img class="h-48 w-full object-cover" :src="llm.image" :alt="llm.name">
+      <img :src="llm.image" :alt="llm.name" class="h-48 w-full object-cover">
     </div>
     <div class="flex flex-1 flex-col justify-between p-6">
       <div class="flex-1">
@@ -10,23 +10,11 @@
         </p>
         <a href="#" class="mt-2 block">
           <h3 class="text-xl font-semibold text-gray-900">{{ llm.name }}</h3>
-          <p class="mt-3 text-base text-gray-500">{{ truncateDescription(llm.description) }}</p>
+          <p class="mt-3 text-base text-gray-500">{{ truncatedDescription }}</p>
         </a>
       </div>
       <div class="mt-6 flex flex-wrap gap-2">
-        <span v-for="(capability, index) in llm.capabilities" :key="index"
-          :class="[
-            'inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium',
-            {
-              'bg-gray-100 text-gray-800': capability === 'Text Reasoning',
-              'bg-cyan-100 text-cyan-800': capability === 'Image Generation' || capability === 'Text Summarization',
-              'bg-indigo-100 text-indigo-800': capability === 'Coding' || capability === 'Code Generation',
-              'bg-purple-100 text-purple-800': capability === 'Personalized' || capability === 'Accurate',
-              'bg-pink-100 text-pink-800': capability === 'Creative Writing',
-              'bg-green-100 text-green-800': capability === 'Query Response',
-            }
-          ]"
-        >
+        <span v-for="(capability, index) in llm.capabilities" :key="index" :class="capabilityClasses(capability)">
           {{ capability }}
         </span>
       </div>
@@ -49,7 +37,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent, computed } from 'vue';
+
+export default defineComponent({
   name: 'LlmCard',
   props: {
     llm: {
@@ -57,10 +47,32 @@ export default {
       required: true,
     },
   },
-  methods: {
-    truncateDescription(text, length = 100) {
-      return text.length > length ? text.substring(0, length) + '...' : text;
-    }
-  }
-};
+  setup(props) {
+    const truncatedDescription = computed(() => {
+      const length = 100;
+      return props.llm.description.length > length 
+        ? props.llm.description.substring(0, length) + '...' 
+        : props.llm.description;
+    });
+
+    const capabilityClasses = (capability) => {
+      return [
+        'inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium',
+        {
+          'bg-gray-100 text-gray-800': capability === 'Text Reasoning',
+          'bg-cyan-100 text-cyan-800': capability === 'Image Generation' || capability === 'Text Summarization',
+          'bg-indigo-100 text-indigo-800': capability === 'Coding' || capability === 'Code Generation',
+          'bg-purple-100 text-purple-800': capability === 'Personalized' || capability === 'Accurate',
+          'bg-pink-100 text-pink-800': capability === 'Creative Writing',
+          'bg-green-100 text-green-800': capability === 'Query Response',
+        }
+      ];
+    };
+
+    return {
+      truncatedDescription,
+      capabilityClasses,
+    };
+  },
+});
 </script>

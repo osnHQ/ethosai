@@ -1,31 +1,31 @@
 <template>
-  <div class="bg-gray-100 p-8 min-h-screen text-dark">
-    <div class="bg-white shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
-      <header class="bg-blue-600 p-6 text-white">
+  <div class="bg-gray-100 dark:bg-gray-900 p-8 min-h-screen text-dark dark:text-gray-300">
+    <div class="bg-white dark:bg-gray-800 shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
+      <header class="bg-blue-600 dark:bg-blue-700 p-6 text-white">
         <h1 class="font-bold text-3xl">LLM Evaluation</h1>
       </header>
 
       <div class="flex md:flex-row flex-col">
-        <div class="border-gray-200 p-6 border-r md:w-1/3">
+        <div class="border-gray-200 dark:border-gray-700 p-6 border-r md:w-1/3">
           <h2 class="mb-4 font-semibold text-xl">Configuration</h2>
 
           <div class="mb-4">
-            <label class="block mb-2 font-medium text-gray-700" for="api">Select API:</label>
+            <label class="block mb-2 font-medium text-gray-700 dark:text-gray-300" for="api">Select API:</label>
             <select id="api" v-model="selectedApi"
-              class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
+              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
               <option value="ollama">Ollama</option>
               <option value="openai">OpenAI</option>
             </select>
           </div>
 
-          <label class="block mb-2 font-medium text-gray-700" for="models">Select Models:</label>
+          <label class="block mb-2 font-medium text-gray-700 dark:text-gray-300" for="models">Select Models:</label>
           <select id="models" v-model="selectedModels" multiple
-            class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
+            class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
             <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
           </select>
 
           <button @click="generateAnswers" :disabled="isLoading"
-            class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline mt-4 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
+            class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline mt-4 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
             <span v-if="isLoading" class="flex justify-center items-center">
               <svg class="mr-3 -ml-1 w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
@@ -42,9 +42,9 @@
           <div class="mt-6">
             <h3 class="mb-2 font-semibold text-lg">QA Pair Generation</h3>
             <input v-model="batchTopics" type="text" placeholder="Enter topics separated by commas"
-              class="border-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500" />
+              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500" />
             <button @click="generateBatchQAPairs" :disabled="isGeneratingBatch"
-              class="bg-green-500 hover:bg-green-600 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
+              class="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
               {{ isGeneratingBatch ? 'Generating...' : 'Generate QA Pairs' }}
             </button>
           </div>
@@ -58,7 +58,7 @@
           <div class="mt-6">
             <h3 class="mb-2 font-semibold text-lg">Export/Import</h3>
             <button @click="exportData"
-              class="bg-indigo-500 hover:bg-indigo-600 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
+              class="bg-indigo-500 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
               Export Data
             </button>
             <input type="file" @change="importData" accept=".json" class="mt-2" />
@@ -68,8 +68,8 @@
         <div class="p-6 md:w-2/3">
           <div class="flex justify-between items-center mb-4">
             <input v-model="filter" type="text" placeholder="Filter questions and answers..."
-              class="border-gray-300 p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-500" />
-            <select v-model="pageSize" class="border-gray-300 p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-500" />
+            <select v-model="pageSize" class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
               <option :value="5">5 per page</option>
               <option :value="10">10 per page</option>
               <option :value="20">20 per page</option>
@@ -77,11 +77,11 @@
           </div>
 
           <div class="overflow-x-auto">
-            <table class="border-gray-200 bg-white border min-w-full">
+            <table class="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 border min-w-full">
               <thead>
-                <tr class="bg-gray-100">
+                <tr class="bg-gray-100 dark:bg-gray-700">
                   <th v-for="header in tableHeaders" :key="header.key"
-                    class="px-4 py-2 font-medium text-gray-500 text-left text-xs uppercase tracking-wider cursor-pointer"
+                    class="px-4 py-2 font-medium text-gray-500 dark:text-gray-300 text-left text-xs uppercase tracking-wider cursor-pointer"
                     @click="sort(header.key)">
                     {{ header.label }}
                     <span v-if="sortKey === header.key">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
@@ -89,19 +89,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-gray-50">
-                  <td class="px-4 py-2 text-gray-900 text-sm">{{ qa.question }}</td>
-                  <td class="px-4 py-2 text-gray-900 text-sm">{{ qa.answer }}</td>
-                  <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-900 text-sm">
+                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">{{ qa.question }}</td>
+                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">{{ qa.answer }}</td>
+                  <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
                     {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.generatedAnswer || '⏳' }}
                   </td>
-                  <td v-for="model in selectedModels" :key="`${model}-score`" class="px-4 py-2 text-gray-900 text-sm">
+                  <td v-for="model in selectedModels" :key="`${model}-score`" class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
                     <span :class="getSimilarityScoreClass(qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore)">
                       {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore?.toFixed(2) || '⏳' }}
                     </span>
                   </td>
 
-                  <td class="px-4 py-2 text-gray-900 text-sm">
+                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
                     <span :class="getStatusClass(qa.status)">{{ qa.status }}</span>
                   </td>
                 </tr>
@@ -110,17 +110,17 @@
           </div>
 
           <div class="flex justify-between items-center mt-4">
-            <p class="text-gray-700 text-sm">
+            <p class="text-gray-700 dark:text-gray-400 text-sm">
               Showing {{ currentPage * pageSize + 1 }} to {{ Math.min((currentPage + 1) * pageSize,
                 filteredQaData.length) }} of {{ filteredQaData.length }} entries
             </p>
             <div>
               <button @click="prevPage" :disabled="currentPage === 0"
-                class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-white focus:outline-none">
+                class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-white focus:outline-none">
                 Previous
               </button>
               <button @click="nextPage" :disabled="currentPage >= Math.ceil(filteredQaData.length / pageSize) - 1"
-                class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-white focus:outline-none">
+                class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-white focus:outline-none">
                 Next
               </button>
             </div>

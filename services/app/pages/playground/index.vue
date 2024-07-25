@@ -1,53 +1,57 @@
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 p-8 min-h-screen text-dark dark:text-gray-300">
-    <div class="bg-white dark:bg-gray-800 shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
-      <header class="bg-blue-600 dark:bg-blue-700 p-6 text-white">
+  <div class="bg-dark px-8 py-16 min-h-screen text-light">
+    <div class="bg-dark-900 shadow-xl mx-auto rounded-lg max-w-7xl overflow-hidden">
+      <header class="bg-dark-800 p-6 text-light hidden">
         <h1 class="font-bold text-3xl">LLM Evaluation</h1>
       </header>
 
       <div class="flex md:flex-row flex-col">
-        <div class="border-gray-200 dark:border-gray-700 p-6 border-r md:w-1/3">
+        <div class="border-dark p-6 border-r ">
           <h2 class="mb-4 font-semibold text-xl">Configuration</h2>
 
           <div class="mb-4">
-            <label class="block mb-2 font-medium text-gray-700 dark:text-gray-300" for="api">Select API:</label>
+            <label class="block mb-2 font-medium text-light" for="api">Select API:</label>
             <select id="api" v-model="selectedApi"
-              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
+              class="border-gray-700 bg-dark text-light p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-600">
               <option value="ollama">Ollama</option>
               <option value="openai">OpenAI</option>
             </select>
           </div>
 
-          <label class="block mb-2 font-medium text-gray-700 dark:text-gray-300" for="models">Select Models:</label>
+          <label class="block mb-2 font-medium text-light" for="models">Select Models:</label>
           <select id="models" v-model="selectedModels" multiple
-            class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500">
+            class="border-gray-700 bg-dark text-light p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-600">
             <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
           </select>
 
           <button @click="generateAnswers" :disabled="isLoading"
-            class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline mt-4 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
+            class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 mt-4 px-4 py-2 rounded-full w-full font-bold text-light focus:outline-none">
             <span v-if="isLoading" class="flex justify-center items-center">
-              <svg class="mr-3 -ml-1 w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-              </svg>
+              <span class="animate-spin mr-2">⏳</span>
               Generating...
             </span>
-            <span v-else>Generate Answers</span>
+            <span v-else>
+              <span>📝</span>
+              Generate Answers
+            </span>
           </button>
 
-          <div class="mt-6">
+          <!-- <div class="mt-6">
             <h3 class="mb-2 font-semibold text-lg">QA Pair Generation</h3>
             <input v-model="batchTopics" type="text" placeholder="Enter topics separated by commas"
-              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-500" />
+              class="border-gray-700 bg-dark text-light p-2 border rounded-lg w-full focus:ring-2 focus:ring-blue-600" />
             <button @click="generateBatchQAPairs" :disabled="isGeneratingBatch"
-              class="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
-              {{ isGeneratingBatch ? 'Generating...' : 'Generate QA Pairs' }}
+              class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline mt-2 px-4 py-2 rounded-full w-full font-bold text-light focus:outline-none">
+              <span v-if="isGeneratingBatch">
+                <span class="animate-spin mr-2">⏳</span>
+                Generating...
+              </span>
+              <span v-else>
+                <span>📝</span>
+                Generate QA Pairs
+              </span>
             </button>
-          </div>
+          </div> -->
 
           <div class="mt-6">
             <h3 class="mb-2 font-semibold text-lg">Statistics</h3>
@@ -55,21 +59,27 @@
             <p>Average Similarity Score: {{ averageSimilarityScore.toFixed(2) }}</p>
           </div>
 
-          <div class="mt-6">
-            <h3 class="mb-2 font-semibold text-lg">Export/Import</h3>
+          <div class="mt-6 flex justify-between items-center p-4 bg-dark-800 rounded-full shadow-md">
             <button @click="exportData"
-              class="bg-indigo-500 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:shadow-outline mt-2 px-4 py-2 rounded w-full font-bold text-white focus:outline-none">
-              Export Data
+              class="flex-1 mx-2 bg-dark-300 hover:bg-dark-500 px-4 py-2 rounded-full font-bold text-light focus:outline-none transition-all duration-200">
+              <span class="mr-2">📤</span>
+              Export
             </button>
-            <input type="file" @change="importData" accept=".json" class="mt-2" />
+            <label for="file-upload"
+              class="flex-1 font-bold text-center mx-2 cursor-pointer bg-dark-300 hover:bg-dark-500 px-4 py-2 rounded-full text-light transition-all duration-200">
+              <span class="mr-2">📥</span>
+              Import
+              <input id="file-upload" type="file" @change="importData" accept=".json" class="hidden" />
+            </label>
           </div>
         </div>
 
-        <div class="p-6 md:w-2/3">
+        <div class="p-6">
           <div class="flex justify-between items-center mb-4">
             <input v-model="filter" type="text" placeholder="Filter questions and answers..."
-              class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-500" />
-            <select v-model="pageSize" class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+              class="border-gray-700 bg-dark text-light p-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-600" />
+            <select v-model="pageSize"
+              class="border-gray-700 bg-dark text-light p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
               <option :value="5">5 per page</option>
               <option :value="10">10 per page</option>
               <option :value="20">20 per page</option>
@@ -77,11 +87,11 @@
           </div>
 
           <div class="overflow-x-auto">
-            <table class="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 border min-w-full">
+            <table class="border-dark bg-dark border min-w-full">
               <thead>
-                <tr class="bg-gray-100 dark:bg-gray-700">
+                <tr class="bg-dark-800">
                   <th v-for="header in tableHeaders" :key="header.key"
-                    class="px-4 py-2 font-medium text-gray-500 dark:text-gray-300 text-left text-xs uppercase tracking-wider cursor-pointer"
+                    class="px-4 py-2 font-medium text-gray-300 text-left text-xs uppercase tracking-wider cursor-pointer"
                     @click="sort(header.key)">
                     {{ header.label }}
                     <span v-if="sortKey === header.key">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
@@ -89,19 +99,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">{{ qa.question }}</td>
-                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">{{ qa.answer }}</td>
-                  <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
+                <tr v-for="(qa, index) in paginatedQaData" :key="index" class="hover:bg-dark-800">
+                  <td class="px-4 py-2 text-gray-300 text-sm">{{ qa.question }}</td>
+                  <td class="px-4 py-2 text-gray-300 text-sm">{{ qa.answer }}</td>
+                  <td v-for="model in selectedModels" :key="model" class="px-4 py-2 text-gray-300 text-sm">
                     {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.generatedAnswer || '⏳' }}
                   </td>
-                  <td v-for="model in selectedModels" :key="`${model}-score`" class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
+                  <td v-for="model in selectedModels" :key="`${model}-score`" class="px-4 py-2 text-gray-300 text-sm">
                     <span :class="getSimilarityScoreClass(qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore)">
                       {{ qa[model.replace(/[^a-zA-Z0-9]/g, '_')]?.similarityScore?.toFixed(2) || '⏳' }}
                     </span>
                   </td>
 
-                  <td class="px-4 py-2 text-gray-900 dark:text-gray-300 text-sm">
+                  <td class="px-4 py-2 text-gray-300 text-sm">
                     <span :class="getStatusClass(qa.status)">{{ qa.status }}</span>
                   </td>
                 </tr>
@@ -110,17 +120,17 @@
           </div>
 
           <div class="flex justify-between items-center mt-4">
-            <p class="text-gray-700 dark:text-gray-400 text-sm">
+            <p class="text-gray-400 text-sm">
               Showing {{ currentPage * pageSize + 1 }} to {{ Math.min((currentPage + 1) * pageSize,
                 filteredQaData.length) }} of {{ filteredQaData.length }} entries
             </p>
             <div>
               <button @click="prevPage" :disabled="currentPage === 0"
-                class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-white focus:outline-none">
+                class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-l font-bold text-gray-300 focus:outline-none">
                 Previous
               </button>
               <button @click="nextPage" :disabled="currentPage >= Math.ceil(filteredQaData.length / pageSize) - 1"
-                class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-white focus:outline-none">
+                class="bg-dark-300 hover:bg-dark-500 disabled:opacity-50 focus:shadow-outline px-4 py-2 rounded-r font-bold text-light focus:outline-none">
                 Next
               </button>
             </div>
@@ -130,6 +140,8 @@
     </div>
   </div>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
@@ -153,7 +165,7 @@ const sampleQA = ref<QA[]>([
   { question: "What is the largest planet in our solar system?", answer: "Jupiter", status: "⏳" },
   { question: "What is the smallest prime number?", answer: "2", status: "⏳" },
   { question: "What year did the Titanic sink?", answer: "1912", status: "⏳" },
-  { question: "What is the longest river in the world?", answer: "Nile", status: "⏳" },
+  { question: "What is the longest river in the world?", answer: "Nile River", status: "⏳" },
   { question: "What element does 'O' represent on the periodic table?", answer: "Oxygen", status: "⏳" },
   { question: "Who is known as the father of modern physics?", answer: "Albert Einstein", status: "⏳" },
   { question: "What is the boiling point of water in Celsius?", answer: "100°C", status: "⏳" },
@@ -164,7 +176,7 @@ const similarity = (x: Vector, y: Vector, precision: number = 10): number => {
   const dot = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
   const magX = Math.sqrt(x.reduce((sum, xi) => sum + xi * xi, 0));
   const magY = Math.sqrt(y.reduce((sum, yi) => sum + yi * yi, 0));
-  
+
   const sim = magX && magY ? dot / (magX * magY) : 0;
   return parseFloat(sim.toFixed(precision));
 };
@@ -174,58 +186,76 @@ const generateEmbedding = async (model: string, prompt: string): Promise<Vector>
   return response.embedding;
 };
 
+const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+
+const fetchAnswerFromOpenAI = async (model: string, question: string) => {
+  const openai = new OpenAI({ apiKey: openaiApiKey, dangerouslyAllowBrowser: true });
+
+  const response = await openai.chat.completions.create({
+    model,
+    messages: [{ role: 'user', content: `reply with one or two words only. ${question}` }]
+  });
+
+  return response.choices[0].message.content?.replace(/\.$/, "");
+};
+
+const fetchAnswerFromOllama = async (model: string, question: string) => {
+  const { response } = await ollama.generate({
+    model,
+    stream: false,
+    prompt: `reply with one or two words only. ${question}`
+  });
+
+  return response.replace(/\.$/, "");
+};
+
+const generateAnswersForQA = async (qa: { [x: string]: any; question: string; answer: string; status: string; }, api: string, models: any[]) => {
+  const promises = models.map(async (model) => {
+    const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
+
+    let generatedAnswer;
+    if (api === 'openai') {
+      generatedAnswer = await fetchAnswerFromOpenAI(model, qa.question);
+    } else if (api === 'ollama') {
+      generatedAnswer = await fetchAnswerFromOllama(model, qa.question);
+    }
+
+    qa[modelKey] = {
+      generatedAnswer,
+      similarityScore: null
+    };
+    qa.status = '✅';
+  });
+
+  await Promise.all(promises);
+};
+
+const calculateSimilarityScoresForQA = async (qa: { [x: string]: any; question: string; answer: string; status: string; }, models: any[]) => {
+  const promises = models.map(async (model) => {
+    const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
+    const generatedAnswer = qa[modelKey]?.generatedAnswer;
+    const embeddingModel = 'nomic-embed-text';
+
+    if (generatedAnswer) {
+      const [answerEmbedding, generatedEmbedding] = await Promise.all([
+        generateEmbedding(embeddingModel, qa.answer),
+        generateEmbedding(embeddingModel, generatedAnswer)
+      ]);
+
+      qa[modelKey].similarityScore = similarity(answerEmbedding, generatedEmbedding);
+    }
+  });
+
+  await Promise.all(promises);
+};
+
 const generateAnswers = async () => {
   isLoading.value = true;
   try {
     const api = selectedApi.value;
 
-    for (const qa of sampleQA.value) {
-      for (const model of selectedModels.value) {
-        const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
-
-        if (api === 'openai') {
-          const openai = new OpenAI({ apiKey: import.meta.env.OPENAI_API_KEY, dangerouslyAllowBrowser: true });
-
-          const response = await openai.chat.completions.create({
-            model,
-            messages: [{ role: 'user', content: `reply with one or two words only. ${qa.question}` }]
-          });
-
-          qa[modelKey] = {
-            generatedAnswer: response.choices[0].message.content,
-            similarityScore: null
-          };
-        } else if (api === 'ollama') {
-          const response = await ollama.chat({
-            model,
-            messages: [{ role: "user", content: `reply with one or two words only. ${qa.question}` }]
-          });
-
-          const generatedAnswer = response.message.content.replace(/\.$/, "");
-          qa[modelKey] = {
-            generatedAnswer,
-            similarityScore: null
-          };
-        }
-
-        qa.status = '✅';
-      }
-
-
-      for (const model of selectedModels.value) {
-        const modelKey = model.replace(/[^a-zA-Z0-9]/g, '_');
-        const generatedAnswer = sampleQA.value.find(q => q.question === qa.question)?.answer;
-
-        if (generatedAnswer) {
-          const [answerEmbedding, generatedEmbedding] = await Promise.all([
-            generateEmbedding('nomic-embed-text', qa.answer),
-            generateEmbedding('nomic-embed-text', qa[modelKey]?.generatedAnswer || '')
-          ]);
-
-          qa[modelKey].similarityScore = similarity(answerEmbedding, generatedEmbedding);
-        }
-      }
-    }
+    await Promise.all(sampleQA.value.map(qa => generateAnswersForQA(qa, api, selectedModels.value)));
+    await Promise.all(sampleQA.value.map(qa => calculateSimilarityScoresForQA(qa, selectedModels.value)));
 
     qaData.value = [...sampleQA.value];
   } catch (error) {
@@ -235,6 +265,7 @@ const generateAnswers = async () => {
     calculateAverageSimilarityScore();
   }
 };
+
 
 const calculateAverageSimilarityScore = () => {
   const totalScores = selectedModels.value.reduce((total, model) => {
@@ -314,21 +345,21 @@ const importData = async (event: Event) => {
     const text = await file.text();
 
     try {
-      
+
       const importedData = JSON.parse(text) as { question: string; answer: string }[];
-      
+
       if (!Array.isArray(importedData) || !importedData.every(item => item.question && item.answer)) {
         throw new Error("Invalid data format.");
       }
-      
+
       sampleQA.value = importedData.map(item => ({
         question: item.question,
         answer: item.answer,
-        status: '⏳'  
+        status: '⏳'
       }));
       qaData.value = [...sampleQA.value];
-      
-      calculateAverageSimilarityScore(); 
+
+      calculateAverageSimilarityScore();
 
     } catch (error) {
       console.error("Error importing data:", error);
@@ -366,14 +397,14 @@ const getSimilarityScoreClass = (score: number) => {
 };
 
 const getStatusClass = (status: string) => {
-  return status === '⏳' ? 'text-gray-500' : 'text-blue-500';
+  return status === '⏳' ? 'text-dark-500' : 'text-blue-500';
 };
 
 const selectedApi = ref('ollama');
 const availableModels = computed(() => {
   return selectedApi.value === 'ollama'
     ? ['qwen2:0.5b', 'qwen2:1.5b', 'tinyllama:1.1b']
-    : ['gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'];
+    : ['gpt-4o-mini'];
 });
 
 const selectedModels = ref<string[]>(['qwen2:1.5b']);
@@ -412,8 +443,8 @@ const sortedQaData = computed(() => {
 
 const filteredQaData = computed(() => {
   return sortedQaData.value.filter(qa =>
-    (qa.question.toLowerCase().includes(filter.value.toLowerCase()) ||
-     qa.answer.toLowerCase().includes(filter.value.toLowerCase()))
+  (qa.question.toLowerCase().includes(filter.value.toLowerCase()) ||
+    qa.answer.toLowerCase().includes(filter.value.toLowerCase()))
   );
 });
 
@@ -441,7 +472,3 @@ watch(selectedModels, (newModels) => {
   qaData.value = [...sampleQA.value];
 });
 </script>
-
-<style scoped>
-/* Add any scoped styles here */
-</style>

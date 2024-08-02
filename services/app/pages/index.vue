@@ -2,7 +2,7 @@
     <div>
         <Suspense>
             <ClientOnly>
-                <div>
+                <div class="text-white bg-transparent">
                     <Navbar />
                     <Background />
                     <Hero />
@@ -31,10 +31,10 @@ import Features from './landing/Features'
 import GetStarted from './landing/GetStarted'
 import FAQ from './landing/FAQ'
 import Footer from './landing/Footer'
-import Background from './landing/Background.vue'
-import Partnerships from './landing/Partnerships.vue'
+import Background from './landing/Background'
+import Partnerships from './landing/Partnerships'
 
-const color = useColorMode()
-color.value === 'dark'
-color.preference = 'dark'
+definePageMeta({
+  colorMode: 'dark',
+})
 </script>

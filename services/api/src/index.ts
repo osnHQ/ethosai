@@ -1,90 +1,107 @@
-import { Hono } from 'hono'
-import { cors } from "hono/cors"
-import { basicAuth } from 'hono/basic-auth'
-import { logger } from 'hono/logger'
+import { Hono } from "hono";
+import { prettyJSON } from "hono/pretty-json";
+import { cors } from "hono/cors";
+import { jwt } from "hono/jwt";
+import { logger } from "hono/logger";
+import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
 
-import evaluation from "./core/evaluation"
-import submission from "./core/submission"
+const EvalParamsSchema = z.object({
+  evalFileName: z.string().min(1),
+  type: z.enum(["Factual", "Bias"]),
+  category: z.string().min(1),
+  fileId: z.string().uuid(),
+  fileOwnerId: z.string().uuid(),
+  fileContent: z.string().min(1),
+});
 
-import { models } from "./utils/models";
+type EvalParams = z.infer<typeof EvalParamsSchema>;
 
-const app = new Hono()
+const app = new Hono();
 
-app.use('*', logger())
+app.use("*", cors());
+app.use("*", prettyJSON());
+app.use("*", logger());
 
 app.use(
-  "/*",
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://openqa.ai",
-    ],
-  }),
-)
-
-app.use(
-  '/auth/*',
-  basicAuth({
-    username: 'admin',
-    password: 'admin'
+  "/api/*",
+  jwt({
+    secret: "secret",
   })
-)
+);
 
-app.use('/api/*', async (c, next) => {
-  await next()
-  c.header('X-message', 'Powered by OpenQA.ai!')
-})
+app.get("/", (c) => c.text("EthosAI API is running!"));
 
-app.use('*', async (c, next) => {
-  const start = Date.now()
-  await next()
-  const ms = Date.now() - start
-  c.header('X-Response-Time', `${ms}ms`)
-})
+const api = app.basePath("/api");
 
-app.notFound((c) => {
-  return c.text('Route Not Found', 404)
-})
+api.post("/evals", zValidator("json", EvalParamsSchema), async (c) => {
+  const params = c.req.valid("json");
+
+  try {
+    const { evalFileName, fileId, fileContent } = params;
+    const key = `evals/${fileId}/${evalFileName}`;
+
+    const decodedFileContent = atob(fileContent);
+
+    // Use AWS S3 to store the file
+    await c.env.AWS_S3_BUCKET.put(key, decodedFileContent, {
+      httpMetadata: { contentType: "application/octet-stream" },
+    });
+
+    return c.json({ message: "Eval file uploaded to S3", fileId, key }, 201);
+  } catch (error) {
+    console.error("Error uploading file to S3:", error);
+    return c.json({ error: "Failed to upload file" }, 500);
+  }
+});
+
+api.get("/evals/:id", async (c) => {
+  const id = c.req.param("id");
+
+  try {
+    const fileName = "example.txt";
+    const key = `evals/${id}/${fileName}`;
+
+    // Generate a signed URL using AWS S3
+    const signedUrl = await c.env.AWS_S3_BUCKET.createSignedUrl({
+      key: key,
+      expiresIn: 3600, // URL expires in 1 hour
+    });
+
+    return c.json({ message: "Eval file access URL generated", signedUrl });
+  } catch (error) {
+    console.error("Error generating signed URL:", error);
+    return c.json({ error: "Failed to retrieve file" }, 500);
+  }
+});
+
+api.delete("/evals/:id", async (c) => {
+  const id = c.req.param("id");
+
+  try {
+    const fileName = "example.txt";
+    const key = `evals/${id}/${fileName}`;
+
+    // Delete the file from AWS S3
+    await c.env.AWS_S3_BUCKET.delete(key);
+
+    return c.json({ message: `Eval file ${id} deleted from S3` }, 200);
+  } catch (error) {
+    console.error("Error deleting file from S3:", error);
+    return c.json({ error: "Failed to delete file" }, 500);
+  }
+});
 
 app.onError((err, c) => {
-  console.error(`${err}`)
-  return c.text(`${err}`, 500)
-})
-
-app.get('/', (c) => c.text('Welcome to OpenQA.ai!'))
-
-app.get("/ai", async (c) => {
-  const { prompt, model } = c.req.query();
-
-  console.log(prompt)
-  console.log(model)
-
-  if (!model) {
-    return c.text("No model was provided.")
-  } 
-  // else if (!models.map((model) => model.name).includes(model)) {
-  //   return c.text(`Model ${model} is not supported.`)
-  // }
-
-  const response = await c.env.AI.run('@cf/meta/llama-3-8b-instruct', {
-    prompt,
-  });
-  return c.json(response);
+  console.error(`${err}`);
+  if (err instanceof Error) {
+    return c.json({ error: err.message }, 400);
+  }
+  return c.json({ error: "Internal Server Error" }, 500);
 });
 
-app.get("/models", async (c) => {
-  const response = { models };
-  return c.json({ response });
+app.notFound((c) => {
+  return c.json({ error: "Not Found" }, 404);
 });
 
-app.route("/evaluation", evaluation);
-app.route("/submission", submission);
-
-app.get('/redirect', (c) => c.redirect('/'))
-app.get('/auth/*', (c) => c.text('You are authorized'))
-
-app.get('/error', () => {
-  throw Error('Error has occurred')
-})
-
-export default app
+export default app;

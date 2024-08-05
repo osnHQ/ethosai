@@ -27,8 +27,8 @@
         <p class="self-end mt-4 text-sm leading-6 text-right text-black">
           Total <span class="font-bold text-cyan-500">14</span> LLMs
         </p>
-        <main class="w-full flex flex-col items-center mt-10 px-4 sm:px-10">
-          <div class="flex flex-wrap gap-6 justify-center w-full">
+        <main class="self-center px-5 mt-10 w-full max-w-[1365px] max-md:max-w-full">
+          <div class="flex gap-5 max-md:flex-col max-md:gap-0">
             <LlmCard
               v-for="(llm, index) in llms"
               :key="index"

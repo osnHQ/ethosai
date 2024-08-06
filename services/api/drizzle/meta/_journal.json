@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1722934171301,
+      "tag": "0000_medical_ikaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1722934248169,
+      "tag": "0001_tricky_wolfsbane",
+      "breakpoints": true
+    }
+  ]
+}

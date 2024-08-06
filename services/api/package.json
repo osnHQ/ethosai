@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
+    "@scalar/hono-api-reference": "^0.5.131",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.30.10",
     "hono": "^4.5.3",

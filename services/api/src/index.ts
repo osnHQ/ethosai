@@ -13,6 +13,14 @@ export type Env = {
   OPENAI_API_KEY: string;
 };
 
+interface EvaluationResult {
+  question: string;
+  answer: string;
+  generated: string;
+  similarity: number;
+  evaluationId: string;
+}
+
 const app = new Hono<{ Bindings: Env }>();
 
 app.get(
@@ -96,6 +104,61 @@ app.get(
       evaluationId: newEvaluation[0].id,
     });
   },
+);
+
+function parseCSV(text: string): Record<string, string>[] {
+  const lines = text.split('\n');
+  const headers = lines[0].split(',').map(header => header.trim());
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    return headers.reduce((obj, header, index) => {
+      obj[header] = values[index]?.trim() ?? '';
+      return obj;
+    }, {} as Record<string, string>);
+  });
+}
+
+app.post('/evaluateBatch',
+  zValidator('form', z.object({
+    file: z.instanceof(File),
+    model: z.string(),
+  })),
+  async (c) => {
+    const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
+
+    const { file, model } = c.req.valid('form');
+    const content = await file.text();
+    const records = parseCSV(content);
+
+    const results = await Promise.all(records.map(async (record: any) => {
+      const { question, answer } = record;
+
+      const openaiResponse = await openai.chat.completions.create({
+        model: model,
+        messages: [{ role: "user", content: question }],
+        max_tokens: 100,
+        temperature: 0.7,
+      });
+
+      const generatedResponse = openaiResponse.choices[0].message.content || "";
+
+      const [answerEmbedding, generatedEmbedding] = await Promise.all([
+        getEmbedding(answer, openai),
+        getEmbedding(generatedResponse, openai),
+      ]);
+
+      const similarity = cosineSimilarity(answerEmbedding, generatedEmbedding);
+
+      return {
+        question,
+        answer,
+        generated: generatedResponse,
+        similarity,
+      };
+    }));
+
+    return c.json(results);
+  }
 );
 
 app.get("/evaluations/:id", async (c) => {

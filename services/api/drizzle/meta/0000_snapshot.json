@@ -1,5 +1,5 @@
 {
-  "id": "c99d7124-1321-4966-bb48-db9aaf0ce2f9",
+  "id": "7eabb9a6-16ee-4d6b-be25-1f614a6d109f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -14,17 +14,29 @@
           "primaryKey": true,
           "notNull": true
         },
-        "model_id": {
-          "name": "model_id",
-          "type": "integer",
+        "model": {
+          "name": "model",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "evaluator": {
           "name": "evaluator",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "output": {
+          "name": "output",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score": {
+          "name": "score",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -36,15 +48,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "evaluations_model_id_models_id_fk": {
-          "name": "evaluations_model_id_models_id_fk",
+        "evaluations_model_models_name_fk": {
+          "name": "evaluations_model_models_name_fk",
           "tableFrom": "evaluations",
           "tableTo": "models",
           "columnsFrom": [
-            "model_id"
+            "model"
           ],
           "columnsTo": [
-            "id"
+            "name"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -86,10 +98,18 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "models_name_unique": {
+          "name": "models_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
     },
-    "results": {
-      "name": "results",
+    "reports": {
+      "name": "reports",
       "schema": "",
       "columns": {
         "id": {
@@ -104,18 +124,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "output": {
-          "name": "output",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "score": {
-          "name": "score",
-          "type": "numeric(5, 2)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -126,9 +134,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "results_evaluation_id_evaluations_id_fk": {
-          "name": "results_evaluation_id_evaluations_id_fk",
-          "tableFrom": "results",
+        "reports_evaluation_id_evaluations_id_fk": {
+          "name": "reports_evaluation_id_evaluations_id_fk",
+          "tableFrom": "reports",
           "tableTo": "evaluations",
           "columnsFrom": [
             "evaluation_id"

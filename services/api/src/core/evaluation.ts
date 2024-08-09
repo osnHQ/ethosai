@@ -104,7 +104,7 @@ evaluationRouter.post('/evaluateBatch',
   }
 );
 
-evaluationRouter.post('/evaluateBatchCsv',
+evaluationRouter.post('/evaluateCsv',
   zValidator('form', z.object({
     file: z.instanceof(File),
     model: z.string(),
@@ -126,7 +126,7 @@ evaluationRouter.post('/evaluateBatchCsv',
       const recordsWithIds = await getRecordsWithIds(db, records);
 
       const results = await Promise.all(
-        recordsWithIds.map((record: { id: number; content: string; answer: string; }) => evaluateQuestion(db, openai, model, record))
+        recordsWithIds.map((record: { content: string; answer: string; }) => evaluateQuestion(db, openai, model, record))
       );
 
       return c.json(results);

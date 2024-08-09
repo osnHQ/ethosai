@@ -9,7 +9,7 @@ export function createOpenAIClient(apiKey: string) {
 export async function generateResponse(openai: OpenAI, modelName: string, prompt: string) {
   const response = await openai.chat.completions.create({
     model: modelName,
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "system", content: "Answer the factoids with short one or few words only." }, { role: "user", content: prompt }],
     max_tokens: 100,
     temperature: 0.7,
   });

@@ -1,15 +1,15 @@
-import { pgTable, serial, text, varchar, integer, timestamp, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, numeric } from 'drizzle-orm/pg-core';
 
 export const models = pgTable('models', {
   id: serial('id').primaryKey(),
-  name: varchar('name', { length: 255 }).notNull().unique(),
+  name: text('name').notNull().unique(),
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow()
 });
 
 export const evaluations = pgTable('evaluations', {
   id: serial('id').primaryKey(),
-  model: varchar('model', { length: 255 }).notNull(),
+  model: text('model').notNull(),
   question: text('question').notNull(),
   answer: text('answer').notNull(),
   output: text('output'),

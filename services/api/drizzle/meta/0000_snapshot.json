@@ -1,5 +1,5 @@
 {
-  "id": "b1c27db5-ca6b-4262-b645-2d11d936067e",
+  "id": "dfc69913-0850-4ebc-9b96-75c486a016fe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -14,15 +14,21 @@
           "primaryKey": true,
           "notNull": true
         },
-        "model_id": {
-          "name": "model_id",
-          "type": "integer",
+        "model": {
+          "name": "model",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "question_id": {
-          "name": "question_id",
-          "type": "integer",
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer": {
+          "name": "answer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -47,34 +53,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "evaluations_model_id_models_id_fk": {
-          "name": "evaluations_model_id_models_id_fk",
-          "tableFrom": "evaluations",
-          "tableTo": "models",
-          "columnsFrom": [
-            "model_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "evaluations_question_id_questions_id_fk": {
-          "name": "evaluations_question_id_questions_id_fk",
-          "tableFrom": "evaluations",
-          "tableTo": "questions",
-          "columnsFrom": [
-            "question_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -90,7 +69,7 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -120,41 +99,6 @@
           ]
         }
       }
-    },
-    "questions": {
-      "name": "questions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "content": {
-          "name": "content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "answer": {
-          "name": "answer",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
     },
     "reports": {
       "name": "reports",

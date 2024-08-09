@@ -25,7 +25,7 @@ export async function generateReport(openai: OpenAI, modelName: string, prompt: 
     response_format: {
       "type": "json_schema",
       "json_schema": {
-          "name": "math_reasoning",
+          "name": "evaluation_report",
           "schema": {
               "type": "object",
               "properties": {

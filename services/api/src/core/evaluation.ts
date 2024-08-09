@@ -6,6 +6,7 @@ import { createDbConnection, createOpenAIClient } from "../utils/functions";
 import { evaluateQuestion } from "./process";
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
+import { generateReport } from "../utils/openai";
 
 export type Env = {
   DATABASE_URL: string;
@@ -33,7 +34,11 @@ evaluationRouter.get(
 
     try {
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-      return c.json(result);
+
+      const prompt = `question: ${question}\nanswer: ${answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`;
+      const report = await generateReport(openai, model, prompt);
+
+      return c.json({ ...result, ...JSON.parse(report) });
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
@@ -59,7 +64,10 @@ evaluationRouter.post(
 
     try {
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-      return c.json(result);
+      const prompt = `question: ${question}\nanswer: ${answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`;
+      const report = await generateReport(openai, model, prompt);
+
+      return c.json({ ...result, ...JSON.parse(report) });
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
@@ -84,7 +92,11 @@ evaluationRouter.post('/evaluateBatch',
       const results = await Promise.all(
         questions.map((question) => evaluateQuestion(db, openai, model, { ...question }))
       );
-      return c.json(results);
+      
+      const prompts = results.map((result) => `question: ${result.question}\nanswer: ${result.answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`);
+      const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
+
+      return c.json(results.map((result, index) => ({ ...result, ...JSON.parse(reports[index]) })));
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Batch evaluation failed" }).getResponse();

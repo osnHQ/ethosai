@@ -12,20 +12,15 @@ export const createOpenAIClient = (apiKey: string): OpenAI => {
     return new OpenAI({ apiKey });
 };
 
-export const cosineSimilarity = (vecA: number[], vecB: number[]): number => {
-    const dotProduct = vecA.reduce((sum, a, idx) => sum + a * vecB[idx], 0);
-    const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
-    const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
-    return dotProduct / (magnitudeA * magnitudeB);
-};
-
-export const getEmbedding = async (
-    text: string,
-    openai: OpenAI,
-): Promise<number[]> => {
-    const response = await openai.embeddings.create({
-        model: "text-embedding-3-small",
-        input: text,
+export const parseCSV = (text: string): Record<string, string>[] => {
+    const lines = text.split('\n');
+    const headers = lines[0].split(',').map(header => header.trim());
+    return lines.slice(1).map(line => {
+      const values = line.split(',');
+      return headers.reduce((obj, header, index) => {
+        obj[header] = values[index]?.trim() ?? '';
+        return obj;
+      }, {} as Record<string, string>);
     });
-    return response.data[0].embedding;
-};
+  }
+  

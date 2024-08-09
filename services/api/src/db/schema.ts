@@ -16,7 +16,7 @@ export const questions = pgTable('questions', {
 
 export const evaluations = pgTable('evaluations', {
   id: serial('id').primaryKey(),
-  modelId: integer('model_id').notNull().references(() => models.id),
+  model: varchar('model', { length: 255 }).notNull(),
   questionId: integer('question_id').notNull().references(() => questions.id),
   output: text('output'),
   score: numeric('score', { precision: 5, scale: 4 }),

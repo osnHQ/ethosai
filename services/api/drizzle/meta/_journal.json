@@ -8,6 +8,13 @@
       "when": 1723039557020,
       "tag": "0000_tan_wraith",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1723182392096,
+      "tag": "0001_black_stellaris",
+      "breakpoints": true
     }
   ]
 }

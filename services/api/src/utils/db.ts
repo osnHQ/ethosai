@@ -1,5 +1,5 @@
 import { NeonHttpDatabase } from "drizzle-orm/neon-http";
-import { models, questions } from "../db/schema";
+import { models } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export async function getModelByName(db: NeonHttpDatabase, modelName: string) {
@@ -10,27 +10,10 @@ export async function getModelByName(db: NeonHttpDatabase, modelName: string) {
     return model[0];
 }
 
-export async function getQuestionById(db: NeonHttpDatabase, questionId: number) {
-    const question = await db.select().from(questions).where(eq(questions.id, questionId)).limit(1);
-    if (question.length === 0) {
-        throw new Error("Question not found");
-    }
-    return question[0];
-}
-
-export async function getQuestionByContent(db: NeonHttpDatabase, content: string) {
-    const question = await db.select().from(questions).where(eq(questions.content, content)).limit(1);
-    if (question.length === 0) {
-        throw new Error("Question not found");
-    }
-    return question[0];
-}
-
 export async function getRecordsWithIds(db: NeonHttpDatabase, records: { content: string, answer: string }[]) {
     const recordsWithIds = await Promise.all(records.map(async (record, index) => {
-        const question = await getQuestionByContent(db, record.content);
         return {
-            id: question.id,
+            id: index + 1,
             content: record.content,
             answer: record.answer,
         };

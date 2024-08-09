@@ -7,17 +7,11 @@ export const models = pgTable('models', {
   createdAt: timestamp('created_at').defaultNow()
 });
 
-export const questions = pgTable('questions', {
-  id: serial('id').primaryKey(),
-  content: text('content').notNull(),
-  answer: text('answer').notNull(),
-  createdAt: timestamp('created_at').defaultNow()
-});
-
 export const evaluations = pgTable('evaluations', {
   id: serial('id').primaryKey(),
   model: varchar('model', { length: 255 }).notNull(),
-  questionId: integer('question_id').notNull().references(() => questions.id),
+  question: text('question').notNull(),
+  answer: text('answer').notNull(),
   output: text('output'),
   score: numeric('score', { precision: 5, scale: 4 }),
   createdAt: timestamp('created_at').defaultNow(),

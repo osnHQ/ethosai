@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { createDbConnection, createOpenAIClient } from "../utils/functions";
-import { evaluateQuestion, upsertQuestions } from "./process";
+import { evaluateQuestion } from "./process";
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
 
@@ -32,7 +32,7 @@ evaluationRouter.get(
     const { question, answer, model } = c.req.valid("query");
 
     try {
-      const result = await evaluateQuestion(db, openai, model, { id: Date.now(), content: question, answer });
+      const result = await evaluateQuestion(db, openai, model, { content: question, answer });
       return c.json(result);
     } catch (error) {
       console.error(error);
@@ -58,7 +58,7 @@ evaluationRouter.post(
     const { question, answer, model } = c.req.valid("json");
 
     try {
-      const result = await evaluateQuestion(db, openai, model, { id: Date.now(), content: question, answer });
+      const result = await evaluateQuestion(db, openai, model, { content: question, answer });
       return c.json(result);
     } catch (error) {
       console.error(error);
@@ -82,7 +82,7 @@ evaluationRouter.post('/evaluateBatch',
 
     try {
       const results = await Promise.all(
-        questions.map((question, index) => evaluateQuestion(db, openai, model, { ...question, id: index + 1 }))
+        questions.map((question) => evaluateQuestion(db, openai, model, { ...question }))
       );
       return c.json(results);
     } catch (error) {
@@ -111,8 +111,6 @@ evaluationRouter.post('/evaluateBatchCsv',
     }));
 
     try {
-      await upsertQuestions(db, records);
-
       const recordsWithIds = await getRecordsWithIds(db, records);
 
       const results = await Promise.all(

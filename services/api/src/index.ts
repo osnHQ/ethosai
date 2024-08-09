@@ -6,8 +6,8 @@ import generalRouter from "./core/general";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.route('/api/evaluation', evaluationRouter);
-app.route('/api', generalRouter);
+app.route('/eval', evaluationRouter);
+app.route('/', generalRouter);
 
 app.get('/reference', apiReference({
   spec: {

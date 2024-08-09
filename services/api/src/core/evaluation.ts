@@ -129,7 +129,11 @@ evaluationRouter.post('/evaluateCsv',
         recordsWithIds.map((record: { content: string; answer: string; }) => evaluateQuestion(db, openai, model, record))
       );
 
-      return c.json(results);
+      const prompts = results.map((result) => `question: ${result.question}\nanswer: ${result.answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`);
+      const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
+
+      return c.json(results.map((result, index) => ({ ...result, ...JSON.parse(reports[index]) })));
+
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Batch CSV evaluation failed" }).getResponse();

@@ -24,10 +24,12 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
+    "@passwordless-id/webauthn": "^2.0.4",
     "@scalar/hono-api-reference": "^0.5.134",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.30.10",
     "hono": "^4.5.4",
+    "jose": "^5.6.3",
     "openai": "^4.55.3",
     "pg": "^8.12.0",
     "pg-pool": "^3.6.2"

@@ -3,11 +3,10 @@
     class="min-h-screen bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
     <div class="container mx-auto px-6 py-12">
 
-      <div v-if="notification.message" 
-         :class="[
-           'fixed top-5 right-5 px-4 py-2 rounded-md shadow-lg transition-all duration-300',
-           notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-         ]">
+      <div v-if="notification.message" :class="[
+        'fixed top-5 right-5 px-4 py-2 rounded-md shadow-lg transition-all duration-300',
+        notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+      ]">
         {{ notification.message }}
       </div>
 
@@ -63,7 +62,7 @@
             <div class="w-full flex flex-col items-start justify-start pt-0 px-0 gap-1">
               <b class="text-gray-700">Name of Configuration File</b>
               <div class="w-full flex flex-row items-start justify-start pt-1 pb-1.5 text-silver">
-                <input
+                <input v-model="configFileName"
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                   placeholder="Input text" type="text" />
               </div>
@@ -116,7 +115,6 @@
                 </div>
               </div>
 
-              <!-- input Fields for Q/A -->
               <div class="w-full flex flex-row flex-wrap items-start justify-start gap-7 ">
                 <div class="w-md flex flex-col items-start justify-start gap-1">
                   <b class="text-gray-700">Enter your Question</b>
@@ -136,7 +134,6 @@
               </div>
 
 
-              <!-- button to add Q&A -->
               <div class="flex flex-row items-center justify-center w-full mt-[-20px] mq700:flex-wrap">
                 <button @click="addQA"
                   class="cursor-pointer [border:none] py-[7px] px-3  bg-cyan-500 rounded overflow-hidden flex flex-row items-start justify-start whitespace-nowrap">
@@ -147,7 +144,6 @@
                 </button>
               </div>
 
-              <!-- Div to display dynamic ques/ans cards -->
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
                 <div v-for="(qa, index) in qas" :key="index"
                   class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-light rounded-md shadow-md">
@@ -167,17 +163,15 @@
             </div>
 
 
-            <!-- Description box -->
 
             <div class="w-full flex flex-col items-start justify-start gap-1">
               <b class="text-gray-700">Detailed Description / Notes</b>
-              <input
+              <input v-model="description"
                 class="w-full self-stretch h-[35px] rounded flex flex-row items-start justify-start px-3 box-border py-12 font-inter text-sm text-silver min-w-[194px] text-black bg-light"
                 placeholder="Write description in detail for this config file." type="text" />
             </div>
 
 
-            <!-- Buttons to discard/save/submit changes to form -->
             <div class="w-full flex flex-row items-center justify-center pt-3 gap-5 text-lg text-darkslategray-100">
               <button @click="resetForm" class="rounded bg-red-50 text-red-500 py-2 px-4">Discard changes</button>
               <button @click="saveDraft"
@@ -228,6 +222,8 @@ export default defineComponent({
         message: '',
         type: '', // 'success' or 'error'
       },
+      configFileName: '', 
+      description: '',
     };
   },
   methods: {
@@ -235,7 +231,6 @@ export default defineComponent({
       this.notification.message = message;
       this.notification.type = type;
 
-      // Hide the notification after 3 seconds
       setTimeout(() => {
         this.notification.message = '';
         this.notification.type = '';
@@ -261,7 +256,7 @@ export default defineComponent({
       const qa = this.qas[index];
       this.newQuestion = qa.question;
       this.newAnswer = qa.answer;
-      this.qas.splice(index, 1); // Remove the old entry to replace with the updated one
+      this.qas.splice(index, 1); 
     },
 
     triggerFileInput() {
@@ -274,7 +269,7 @@ export default defineComponent({
       const file = input.files?.[0];
       if (file) {
         this.selectedFileName = file.name;
-        this.fileTypeIcon = this.getFileTypeIcon(file.type); // Setting the file type icon for image preview
+        this.fileTypeIcon = this.getFileTypeIcon(file.type); 
         console.log('Selected file:', file);
       }
     },
@@ -295,11 +290,8 @@ export default defineComponent({
       this.qas = [];
       this.selectedFileName = '';
       this.fileTypeIcon = '';
-
-      const fileInput = this.$refs.fileInput as HTMLInputElement | null;
-      if (fileInput) {
-        fileInput.value = '';
-      }
+      this.configFileName = '';
+      this.description = '';
     },
 
     saveDraft() {
@@ -309,7 +301,9 @@ export default defineComponent({
         newAnswer: this.newAnswer,
         selectedFileName: this.selectedFileName,
         fileTypeIcon: this.fileTypeIcon,
-      };
+        configFileName: this.configFileName, 
+        description: this.description, 
+          };
       localStorage.setItem('draftData', JSON.stringify(draftData));
       this.showNotification('Draft saved successfully!', 'success');
     },
@@ -322,6 +316,9 @@ export default defineComponent({
         this.newAnswer = draftData.newAnswer || '';
         this.selectedFileName = draftData.selectedFileName || '';
         this.fileTypeIcon = draftData.fileTypeIcon || '';
+        this.configFileName = draftData.configFileName || ''; 
+        this.description = draftData.description || ''; 
+
       }
     },
 
@@ -343,19 +340,19 @@ export default defineComponent({
         });
 
         if (response.ok) {
-          this.showNotification('Submission successfull !', 'success');   
-           } else {
+          this.showNotification('Submission successfull !', 'success');
+        } else {
           throw new Error(`Error: ${response.status}`);
         }
       } catch (error) {
         console.error('Submission error:', error);
-        this.showNotification('Submission Failed!', 'error');    
-        }
+        this.showNotification('Submission Failed!', 'error');
+      }
     },
   },
 
   mounted() {
-    this.loadDraft(); // Load the draft when the component is mounted on the client side
+    this.loadDraft();
   },
 });
 </script>

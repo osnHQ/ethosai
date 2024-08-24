@@ -1,7 +1,6 @@
 import concurrent.futures
 import os
 import json
-import csv
 import openai
 import pymupdf
 import streamlit as st
@@ -22,13 +21,23 @@ def extract_text_from_pdf(pdf_path):
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
 
+def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"):
+    pages = extract_text_from_pdf(pdf_path)
+    batches = ["".join(pages[i:i + batch_size]) for i in range(0, len(pages), batch_size)]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        process_func = partial(process_batch, model=model)
+        results = list(executor.map(process_func, batches))
+
+    return results
+
+def process_batch(batch_text, model):
+    return generate_qa_from_text(batch_text, model)
+
 def generate_qa_from_text(text, model="gpt-4o-mini"):
     prompt = f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
     response = openai.chat.completions.create(
-        messages=[{
-            "role": "user",
-            "content": prompt,
-        }],
+        messages=[{"role": "user", "content": prompt}],
         model=model,
         response_format={
             "type": "json_schema",
@@ -43,12 +52,8 @@ def generate_qa_from_text(text, model="gpt-4o-mini"):
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "question": {
-                                        "type": "string"
-                                    },
-                                    "answer": {
-                                        "type": "string"
-                                    }
+                                    "question": {"type": "string"},
+                                    "answer": {"type": "string"}
                                 },
                                 "required": ["question", "answer"],
                                 "additionalProperties": False
@@ -62,53 +67,15 @@ def generate_qa_from_text(text, model="gpt-4o-mini"):
         })
     return response.choices[0].message.content
 
-def process_batch(batch_text, model):
-    return generate_qa_from_text(batch_text, model)
-
-def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"):
-    pages = extract_text_from_pdf(pdf_path)
-    batches = [
-        "".join(pages[i:i + batch_size])
-        for i in range(0, len(pages), batch_size)
-    ]
-
-    with concurrent.futures.ThreadPoolExecutor(
-            max_workers=max_workers) as executor:
-        process_func = partial(process_batch, model=model)
-        results = list(executor.map(process_func, batches))
-
-    return results
-
-def save_to_jsonl(qa_tables, output_file):
-    with open(output_file, 'w', encoding='utf-8') as jsonlfile:
-        for table in qa_tables:
-            qa_dict = json.loads(table)
-            for qa in qa_dict['questions']:
-                jsonlfile.write(json.dumps(qa) + '\n')
-
-st.title("EthosAI")
-
-uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
-
-def fuzzy_compare_sentences(sentence1, sentence2):
-    lower1, lower2 = sentence1.lower(), sentence2.lower()
-
-    return {
-        "Simple ratio": fuzz.ratio(lower1, lower2),
-        "Partial ratio": fuzz.partial_ratio(lower1, lower2),
-        "Token sort ratio": fuzz.token_sort_ratio(sentence1, sentence2),
-        "Token set ratio": fuzz.token_set_ratio(sentence1, sentence2)
-    }
-
-
-def exact_similarity(sentence1, sentence2):
-    return sentence1.lower() == sentence2.lower()
-
-
-def includes_similarity(sentence1, sentence2):
-    lower1, lower2 = sentence1.lower(), sentence2.lower()
-    return lower1 in lower2 or lower2 in lower1
-
+async def generate_text(prompt):
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "reply only with single line factoid answers."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content
 
 def llm_compare_sentences(answer1, answer2, question):
     prompt = f"""
@@ -173,18 +140,10 @@ Provide concise explanations for each score, focusing on key factors that influe
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "accuracy": {
-                            "type": "number"
-                        },
-                        "relevance": {
-                            "type": "number"
-                        },
-                        "bias": {
-                            "type": "number"
-                        },
-                        "explanation": {
-                            "type": "string"
-                        }
+                        "accuracy": {"type": "number"},
+                        "relevance": {"type": "number"},
+                        "bias": {"type": "number"},
+                        "explanation": {"type": "string"}
                     },
                     "required": ["accuracy", "relevance", "bias", "explanation"],
                     "additionalProperties": False
@@ -192,16 +151,6 @@ Provide concise explanations for each score, focusing on key factors that influe
             }
         })
 
-    return response.choices[0].message.content
-
-async def generate_text(prompt):
-    response = openai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "reply only with single line factoid answers."},
-            {"role": "user", "content": prompt}
-        ]
-    )
     return response.choices[0].message.content
 
 async def chat(prompt):
@@ -235,65 +184,91 @@ def fuzzy_compare_sentences(x, y):
         return "Sentences are different"
 
 def exact_similarity(x, y):
-    return x.lower() is y.lower()
-
+    return x.lower() == y.lower()
 
 def includes_similarity(x, y):
-    return x in y or y in x
-
+    return x.lower() in y.lower() or y.lower() in x.lower()
 
 def sentence_similarity(x, y):
-    response = {
+    return {
         'cosine': cosine_similarity(x, y),
         'fuzzy': fuzzy_compare_sentences(x, y),
         'exact': exact_similarity(x, y),
         'includes': includes_similarity(x, y),
+        'llm': llm_compare_sentences(x, y, "Compare these sentences")
     }
-    return response
+
+def flatten_similarity(similarity_dict):
+    flattened = {
+        "Cosine_Similarity": similarity_dict["cosine"],
+        "Exact_Match": similarity_dict["exact"],
+        "Fuzzy_Comparison": similarity_dict["fuzzy"],
+        "Includes_Match": similarity_dict["includes"]
+    }
+    
+
+    llm_comparison = json.loads(similarity_dict["llm"])
+    flattened.update({
+        "LLM_Accuracy": llm_comparison["accuracy"],
+        "LLM_Relevance": llm_comparison["relevance"],
+        "LLM_Bias": llm_comparison["bias"],
+        "LLM_Explanation": llm_comparison["explanation"]
+    })
+    
+    return flattened
+
+def save_to_jsonl(qa_tables, output_file):
+    with open(output_file, 'w', encoding='utf-8') as jsonlfile:
+        for table in qa_tables:
+            qa_dict = json.loads(table)
+            for qa in qa_dict['questions']:
+                jsonlfile.write(json.dumps(qa) + '\n')
 
 def process_jsonl(file):
-    jsonl_data = []
-    for line in file:
-        jsonl_data.append(json.loads(line.decode("utf-8")))
-    return jsonl_data
+    return [json.loads(line.decode("utf-8")) for line in file]
 
-if uploaded_file is not None:
-    pdf_path = f"/tmp/{uploaded_file.name}"
+def main():
+    st.title("EthosAI")
 
-    print(pdf_path)
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
 
-    with open(pdf_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+    if uploaded_file is not None:
+        pdf_path = f"/tmp/{uploaded_file.name}"
 
+        with open(pdf_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
 
-    qa_tables = process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini")
+        qa_tables = process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini")
 
+        jsonl_output_file = "/tmp/output.jsonl"
+        save_to_jsonl(qa_tables, jsonl_output_file)
 
-    jsonl_output_file = "/tmp/output.jsonl"
-    save_to_jsonl(qa_tables, jsonl_output_file)
+        with open(jsonl_output_file, "rb") as file:
+            jsonl_data = process_jsonl(file)
+            df = pd.json_normalize(jsonl_data)
+            st.write(df)
 
+            asyncio.run(process_questions(jsonl_data))
 
-    with open(jsonl_output_file, "rb") as file:
-        jsonl_data = process_jsonl(file)
-        df = pd.json_normalize(jsonl_data)
-        st.write(df)
+async def process_questions(jsonl_data):
+    results = []
+    table_container = st.empty()
 
-        async def main():
-            results = []
-            table_container = st.empty()
+    for pair in jsonl_data:
+        response = await generate_text(pair["question"])
+        similarity = sentence_similarity(response, pair["answer"])
+        flattened_similarity = flatten_similarity(similarity)
+        
+        result = {
+            "Question": pair["question"],
+            "Model_Response": response,
+            "Expected_Answer": pair["answer"],
+            **flattened_similarity 
+        }
+        results.append(result)
 
-            for pair in jsonl_data:
-                response = await generate_text(pair["question"])
-                similarity = sentence_similarity(response, pair["answer"])
-                similarity["llm"] = llm_compare_sentences(response, pair["answer"], pair["question"])
-                results.append({
-                    "Question": pair["question"],
-                    "Model Response": response,
-                    "Expected Answer": pair["answer"],
-                    "Similarity": similarity,
-                })
+        results_df = pd.DataFrame(results)
+        table_container.table(results_df)
 
-                results_df = pd.DataFrame(results)
-                table_container.table(results_df)
-
-        asyncio.run(main())
+if __name__ == "__main__":
+    main()

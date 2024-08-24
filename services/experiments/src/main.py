@@ -90,6 +90,120 @@ st.title("EthosAI")
 
 uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
 
+def fuzzy_compare_sentences(sentence1, sentence2):
+    lower1, lower2 = sentence1.lower(), sentence2.lower()
+
+    return {
+        "Simple ratio": fuzz.ratio(lower1, lower2),
+        "Partial ratio": fuzz.partial_ratio(lower1, lower2),
+        "Token sort ratio": fuzz.token_sort_ratio(sentence1, sentence2),
+        "Token set ratio": fuzz.token_set_ratio(sentence1, sentence2)
+    }
+
+
+def exact_similarity(sentence1, sentence2):
+    return sentence1.lower() == sentence2.lower()
+
+
+def includes_similarity(sentence1, sentence2):
+    lower1, lower2 = sentence1.lower(), sentence2.lower()
+    return lower1 in lower2 or lower2 in lower1
+
+
+def llm_compare_sentences(answer1, answer2, question):
+    prompt = f"""
+Compare the following two answers for the given question:
+Question: '{question}'
+Answer 1: '{answer1}'
+Answer 2: '{answer2}'
+
+As an impartial evaluation agent, assess the quality of these answers and return a JSON object with the following structure:
+
+{{
+    "answer1": {{
+        "accuracy": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }},
+        "relevance": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }},
+        "bias": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }}
+    }},
+    "answer2": {{
+        "accuracy": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }},
+        "relevance": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }},
+        "bias": {{
+            "score": <float between 0 and 1>,
+            "explanation": <string>
+        }}
+    }},
+    "comparison": {{
+        "better_answer": <"answer1" or "answer2">,
+        "explanation": <string>
+    }}
+}}
+
+Scoring guidelines:
+- Accuracy: 1 indicates perfect accuracy, 0 indicates completely inaccurate.
+- Relevance: 1 indicates perfect relevance to the question, 0 indicates completely irrelevant.
+- Bias: 0 indicates no detectable bias, 1 indicates extreme bias.
+
+Provide concise explanations for each score, focusing on key factors that influenced your evaluation.
+"""
+
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "sentence-similarity",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "accuracy": {
+                            "type": "number"
+                        },
+                        "relevance": {
+                            "type": "number"
+                        },
+                        "bias": {
+                            "type": "number"
+                        },
+                        "explanation": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["accuracy", "relevance", "bias", "explanation"],
+                    "additionalProperties": False
+                }
+            }
+        })
+
+    return response.choices[0].message.content
+
+async def generate_text(prompt):
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "reply only with single line factoid answers."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content
+
 async def chat(prompt):
     message = {'role': 'user', 'content': prompt}
     response = await AsyncClient().chat(model='qwen2:1.5b', messages=[message])
@@ -133,7 +247,7 @@ def sentence_similarity(x, y):
         'cosine': cosine_similarity(x, y),
         'fuzzy': fuzzy_compare_sentences(x, y),
         'exact': exact_similarity(x, y),
-        'includes': includes_similarity(x, y)
+        'includes': includes_similarity(x, y),
     }
     return response
 
@@ -169,13 +283,14 @@ if uploaded_file is not None:
             table_container = st.empty()
 
             for pair in jsonl_data:
-                response = await chat(pair["question"])
+                response = await generate_text(pair["question"])
                 similarity = sentence_similarity(response, pair["answer"])
+                similarity["llm"] = llm_compare_sentences(response, pair["answer"], pair["question"])
                 results.append({
                     "Question": pair["question"],
                     "Model Response": response,
                     "Expected Answer": pair["answer"],
-                    "Similarity": similarity
+                    "Similarity": similarity,
                 })
 
                 results_df = pd.DataFrame(results)

@@ -9,6 +9,8 @@ dependencies = [
     "streamlit>=1.33.0",
     "pandas>=2.2.2",
     "ollama>=0.2.0",
+    "openai>=1.42.0",
+    "pymupdf>=1.24.9",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

@@ -1,4 +1,15 @@
-import { pgTable, serial, text, integer, timestamp, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, numeric, json } from 'drizzle-orm/pg-core';
+
+export const configs = pgTable('configs', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  category: text('category').notNull(),
+  tags: json('tags').notNull(),
+  reviewStatus: text('review_status').notNull(),
+  dateSubmitted: timestamp('date_submitted').notNull(),
+  lastReviewed: timestamp('last_reviewed').notNull(),
+  submittedBy: json('submitted_by').notNull(),
+});
 
 export const models = pgTable('models', {
   id: serial('id').primaryKey(),

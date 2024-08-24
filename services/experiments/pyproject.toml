@@ -11,6 +11,10 @@ dependencies = [
     "ollama>=0.2.0",
     "openai>=1.42.0",
     "pymupdf>=1.24.9",
+    "fuzzywuzzy>=0.18.0",
+    "python-levenshtein>=0.25.1",
+    "tabulate>=0.9.0",
+    "python-dotenv>=1.0.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

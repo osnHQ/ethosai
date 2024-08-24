@@ -12,8 +12,11 @@ from functools import partial
 from numpy import dot
 from numpy.linalg import norm
 from ollama import AsyncClient
+from fuzzywuzzy import fuzz
+from dotenv import load_dotenv
 
-openai.api_key = os.environ['OPENAI_API_KEY']
+load_dotenv()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def extract_text_from_pdf(pdf_path):
     with pymupdf.open(pdf_path) as doc:
@@ -97,12 +100,42 @@ def generate_embedding(prompt):
     return response["embedding"]
 
 def cosine_similarity(a, b):
-    return dot(a, b) / (norm(a) * norm(b))
-
-def sentence_similarity(a, b):
     x = generate_embedding(a)
     y = generate_embedding(b)
-    return cosine_similarity(x, y)
+    return dot(x, y) / (norm(x) * norm(y))
+
+def fuzzy_compare_sentences(x, y):
+    ratio = fuzz.ratio(x.lower(), y.lower())
+    partial_ratio = fuzz.partial_ratio(x.lower(), y.lower())
+    token_sort_ratio = fuzz.token_sort_ratio(x, y)
+    token_set_ratio = fuzz.token_set_ratio(x, y)
+
+    print(f"Simple ratio: {ratio}")
+    print(f"Partial ratio: {partial_ratio}")
+    print(f"Token sort ratio: {token_sort_ratio}")
+    print(f"Token set ratio: {token_set_ratio}")
+
+    if ratio > 80 or partial_ratio > 90 or token_sort_ratio > 80 or token_set_ratio > 80:
+        return "Sentences are similar"
+    else:
+        return "Sentences are different"
+
+def exact_similarity(x, y):
+    return x.lower() is y.lower()
+
+
+def includes_similarity(x, y):
+    return x in y or y in x
+
+
+def sentence_similarity(x, y):
+    response = {
+        'cosine': cosine_similarity(x, y),
+        'fuzzy': fuzzy_compare_sentences(x, y),
+        'exact': exact_similarity(x, y),
+        'includes': includes_similarity(x, y)
+    }
+    return response
 
 def process_jsonl(file):
     jsonl_data = []

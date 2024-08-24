@@ -175,7 +175,7 @@ if uploaded_file is not None:
                     "Question": pair["question"],
                     "Model Response": response,
                     "Expected Answer": pair["answer"],
-                    "Similarity": f"{similarity:.4f}"
+                    "Similarity": similarity
                 })
 
                 results_df = pd.DataFrame(results)

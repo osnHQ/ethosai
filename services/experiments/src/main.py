@@ -77,6 +77,7 @@ def generate_qa_from_text(text, context, model="gpt-4o-mini"):
 
 async def generate_model_answer(prompt, context=""):
     prompt_with_context = f"{context} {prompt}"
+    print(f"Prompt with context: {prompt_with_context}")
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -91,6 +92,7 @@ async def generate_model_answer(prompt, context=""):
 
 
 def compare_sentences_llm(answer1, answer2, question, context=""):
+    print(context)
     prompt = f"""
 {context}
 Compare the following two answers for the given question:
@@ -295,9 +297,10 @@ def main():
 
     initialize_session_state()
 
-    context = ""
 
     uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+
+    st.session_state.context = st.text_input("Enter context for the questions", "")
 
     if uploaded_file is not None and not st.session_state.processed:
         pdf_path = f"/tmp/{uploaded_file.name}"
@@ -305,12 +308,8 @@ def main():
         with open(pdf_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        context = st.text_input("Enter context for the questions", "")
-
-        st.write(f"Context: {context}")
-
         qa_tables = process_pdf_in_parallel(
-            pdf_path, batch_size=5, max_workers=5, context=context, model="gpt-4o-mini"
+            pdf_path, batch_size=5, max_workers=5, context=st.session_state.context, model="gpt-4o-mini"
         )
 
         jsonl_output_file = "/tmp/output.jsonl"
@@ -338,7 +337,7 @@ def main():
             asyncio.run(
                 process_questions(
                     edited_df.to_dict("records"),
-                    context=context
+                    context=st.session_state.context
                 )
             )
 

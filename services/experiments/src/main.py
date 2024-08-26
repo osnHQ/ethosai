@@ -24,25 +24,25 @@ def extract_text_from_pdf(pdf_path):
         return [page.get_text() for page in doc]
 
 
-def process_pdf_batch(batch_text, context, model="gpt-4o-mini"):
-    return generate_qa_from_text(batch_text, context, model)
+def process_pdf_batch(batch_text, model="gpt-4o-mini"):
+    return generate_qa_from_text(batch_text, model)
 
 
-def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, context="", model="gpt-4o-mini"):
+def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"):
     pages = extract_text_from_pdf(pdf_path)
     batches = [
         "".join(pages[i : i + batch_size]) for i in range(0, len(pages), batch_size)
     ]
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        process_func = partial(process_pdf_batch, context=context, model=model)
+        process_func = partial(process_pdf_batch, model=model)
         results = list(executor.map(process_func, batches))
 
     return results
 
 
-def generate_qa_from_text(text, context, model="gpt-4o-mini"):
-    prompt = f"{context} Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
+def generate_qa_from_text(text, model="gpt-4o-mini"):
+    prompt = f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
     response = openai.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model=model,
@@ -285,7 +285,7 @@ async def process_questions(jsonl_data, context=""):
 
         csv = results_df.to_csv(index=False)
 
-        file_path = f"results/{uuid4().hex}.csv"
+        file_path = f"./results/{uuid4().hex}.csv"
         results_df.to_csv(file_path, index=False)
 
 
@@ -314,7 +314,7 @@ def main():
             f.write(uploaded_file.getbuffer())
 
         qa_tables = process_pdf_in_parallel(
-            pdf_path, batch_size=5, max_workers=5, context=st.session_state.context, model="gpt-4o-mini"
+            pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"
         )
 
         jsonl_output_file = "/tmp/output.jsonl"

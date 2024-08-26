@@ -1,6 +1,7 @@
 import concurrent.futures
 import os
 import json
+from uuid import uuid4
 import openai
 import pymupdf
 import streamlit as st
@@ -75,9 +76,7 @@ def generate_qa_from_text(text, context, model="gpt-4o-mini"):
     return response.choices[0].message.content
 
 
-async def generate_model_answer(prompt, context=""):
-    prompt_with_context = f"{context} {prompt}"
-    print(f"Prompt with context: {prompt_with_context}")
+async def generate_model_answer(prompt):
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -85,14 +84,13 @@ async def generate_model_answer(prompt, context=""):
                 "role": "system",
                 "content": "reply only with single line factoid answers.",
             },
-            {"role": "user", "content": prompt_with_context},
+            {"role": "user", "content": prompt},
         ],
     )
     return response.choices[0].message.content
 
 
 def compare_sentences_llm(answer1, answer2, question, context=""):
-    print(context)
     prompt = f"""
 {context}
 Compare the following two answers for the given question:
@@ -194,11 +192,6 @@ def compare_sentences_fuzzy(x, y):
     token_sort_ratio = fuzz.token_sort_ratio(x, y)
     token_set_ratio = fuzz.token_set_ratio(x, y)
 
-    print(f"Simple ratio: {ratio}")
-    print(f"Partial ratio: {partial_ratio}")
-    print(f"Token sort ratio: {token_sort_ratio}")
-    print(f"Token set ratio: {token_set_ratio}")
-
     if (
         ratio > 80
         or partial_ratio > 90
@@ -242,7 +235,7 @@ def flatten_similarity_results(similarity_dict):
             "LLM_Accuracy": llm_comparison["accuracy"],
             "LLM_Relevance": llm_comparison["relevance"],
             "LLM_Bias": llm_comparison["bias"],
-            "LLM_Explanation": llm_comparison["explanation"],
+            # "LLM_Explanation": llm_comparison["explanation"],
         }
     )
 
@@ -274,8 +267,8 @@ async def process_questions(jsonl_data, context=""):
 
     table_container = st.empty()
     
-    for pair in jsonl_data:
-        response = await generate_model_answer(pair["question"], context)
+    for pair, i in zip(jsonl_data, range(len(jsonl_data))):
+        response = await generate_model_answer(f"{context} {pair["question"]}")
         similarity = compare_sentences(response, pair["answer"], context=context)
         flattened_similarity = flatten_similarity_results(similarity)
 
@@ -290,6 +283,20 @@ async def process_questions(jsonl_data, context=""):
 
         table_container.table(results_df)
 
+        csv = results_df.to_csv(index=False)
+
+        file_path = f"results/{uuid4().hex}.csv"
+        results_df.to_csv(file_path, index=False)
+
+
+    st.download_button(
+        label="Download results as CSV",
+        data=csv,
+        file_name="qa_results.csv",
+        mime="text/csv",
+        key="download_csv {}".format(i),
+    )
+
 
 def main():
     st.set_page_config(layout="wide")
@@ -299,8 +306,6 @@ def main():
 
 
     uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
-
-    st.session_state.context = st.text_input("Enter context for the questions", "")
 
     if uploaded_file is not None and not st.session_state.processed:
         pdf_path = f"/tmp/{uploaded_file.name}"
@@ -332,6 +337,8 @@ def main():
             file_name="qa_data.csv",
             mime="text/csv",
         )
+
+        st.session_state.context = st.text_input("Enter context for the questions", "")
 
         if st.button("Process Questions"):
             asyncio.run(

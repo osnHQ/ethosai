@@ -6,7 +6,7 @@ import openai
 import pymupdf
 from functools import partial
 
-openai.api_key = os.environ['OPENAI_API_KEY']
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 def extract_text_from_pdf(pdf_path):
@@ -17,10 +17,12 @@ def extract_text_from_pdf(pdf_path):
 def generate_qa_from_text(text, model="gpt-4o-mini"):
     prompt = f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
     response = openai.chat.completions.create(
-        messages=[{
-            "role": "user",
-            "content": prompt,
-        }],
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
         model=model,
         response_format={
             "type": "json_schema",
@@ -35,23 +37,20 @@ def generate_qa_from_text(text, model="gpt-4o-mini"):
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "question": {
-                                        "type": "string"
-                                    },
-                                    "answer": {
-                                        "type": "string"
-                                    }
+                                    "question": {"type": "string"},
+                                    "answer": {"type": "string"},
                                 },
                                 "required": ["question", "answer"],
-                                "additionalProperties": False
-                            }
+                                "additionalProperties": False,
+                            },
                         },
                     },
                     "required": ["questions"],
-                    "additionalProperties": False
-                }
-            }
-        })
+                    "additionalProperties": False,
+                },
+            },
+        },
+    )
     return response.choices[0].message.content
 
 
@@ -59,18 +58,13 @@ def process_batch(batch_text, model):
     return generate_qa_from_text(batch_text, model)
 
 
-def process_pdf_in_parallel(pdf_path,
-                            batch_size=5,
-                            max_workers=5,
-                            model="gpt-4o-mini"):
+def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"):
     pages = extract_text_from_pdf(pdf_path)
     batches = [
-        "".join(pages[i:i + batch_size])
-        for i in range(0, len(pages), batch_size)
+        "".join(pages[i : i + batch_size]) for i in range(0, len(pages), batch_size)
     ]
 
-    with concurrent.futures.ThreadPoolExecutor(
-            max_workers=max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         process_func = partial(process_batch, model=model)
         results = list(executor.map(process_func, batches))
 
@@ -78,41 +72,36 @@ def process_pdf_in_parallel(pdf_path,
 
 
 def save_to_md(qa_tables, output_file):
-    with open(output_file, 'w', encoding='utf-8') as mdfile:
+    with open(output_file, "w", encoding="utf-8") as mdfile:
         mdfile.write("| Question | Answer |\n|----------|--------|\n")
         for table in qa_tables:
             qa_dict = json.loads(table)
-            for qa in qa_dict['questions']:
-                question = qa['question'].replace('|', '\\|')
-                answer = qa['answer'].replace('|', '\\|')
+            for qa in qa_dict["questions"]:
+                question = qa["question"].replace("|", "\\|")
+                answer = qa["answer"].replace("|", "\\|")
                 mdfile.write(f"| {question} | {answer} |\n")
 
 
 def save_to_csv(qa_tables, output_file):
-    with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
+    with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['question', 'answer'])
+        writer.writerow(["question", "answer"])
         for table in qa_tables:
             qa_dict = json.loads(table)
-            for qa in qa_dict['questions']:
-                writer.writerow([qa['question'], qa['answer']])
+            for qa in qa_dict["questions"]:
+                writer.writerow([qa["question"], qa["answer"]])
 
 
 def save_to_jsonl(qa_tables, output_file):
-    with open(output_file, 'w', encoding='utf-8') as jsonlfile:
+    with open(output_file, "w", encoding="utf-8") as jsonlfile:
         for table in qa_tables:
             qa_dict = json.loads(table)
-            for qa in qa_dict['questions']:
-                jsonlfile.write(json.dumps(qa) + '\n')
+            for qa in qa_dict["questions"]:
+                jsonlfile.write(json.dumps(qa) + "\n")
 
 
-def main(pdf_path,
-         output_prefix,
-         batch_size=5,
-         max_workers=5,
-         model="gpt-4o-mini"):
-    qa_tables = process_pdf_in_parallel(pdf_path, batch_size, max_workers,
-                                        model)
+def main(pdf_path, output_prefix, batch_size=5, max_workers=5, model="gpt-4o-mini"):
+    qa_tables = process_pdf_in_parallel(pdf_path, batch_size, max_workers, model)
 
     save_to_md(qa_tables, f"{output_prefix}.md")
     save_to_csv(qa_tables, f"{output_prefix}.csv")

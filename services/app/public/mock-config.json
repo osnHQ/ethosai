@@ -1,0 +1,169 @@
+{
+    "configs": [
+        {
+            "configFileName": "Best Movies of 21st Century",
+            "category": "Entertainment",
+            "tags": [
+                "Movies",
+                "Drama"
+            ],
+            "reviewStatus": "Pending",
+            "dateSubmitted": "2023-05-15",
+            "lastReviewed": "2023-05-15",
+            "submittedBy": {
+                "username": "Alex",
+                "avatarUrl": "public/avatar3.png"
+            },
+            "numOfReviews": 0
+        },
+        {
+            "configFileName": "Popular Music Artists",
+            "category": "Music",
+            "tags": [
+                "Pop",
+                "Rock"
+            ],
+            "reviewStatus": "Audited",
+            "dateSubmitted": "2024-01-08",
+            "lastReviewed": "2024-03-12",
+            "submittedBy": {
+                "username": "Sarah",
+                "avatarUrl": "public/avatar4.png"
+            },
+            "numOfReviews": 52
+        },
+        {
+            "configFileName": "Famous Historical Figures",
+            "category": "History",
+            "tags": [
+                "Leaders",
+                "Scientists"
+            ],
+            "reviewStatus": "Audited",
+            "dateSubmitted": "2022-09-27",
+            "lastReviewed": "2023-07-18",
+            "submittedBy": {
+                "username": "David",
+                "avatarUrl": "public/avatar5.png"
+            },
+            "numOfReviews": 87
+        },
+        {
+            "configFileName": "Top 10 Programming Languages",
+            "category": "Technology",
+            "tags": [
+                "Python",
+                "Java",
+                "C++"
+            ],
+            "reviewStatus": "Pending",
+            "dateSubmitted": "2024-07-23",
+            "lastReviewed": "2023-05-15",
+            "submittedBy": {
+                "username": "Emily",
+                "avatarUrl": "public/avatar6.png"
+            },
+            "numOfReviews": 0
+        },
+        {
+            "configFileName": "Best-Selling Books of All Time",
+            "category": "Literature",
+            "tags": [
+                "Fiction",
+                "Non-Fiction"
+            ],
+            "reviewStatus": "Audited",
+            "dateSubmitted": "2023-11-12",
+            "lastReviewed": "2024-02-21",
+            "submittedBy": {
+                "username": "Michael",
+                "avatarUrl": "public/avatar7.png"
+            },
+            "numOfReviews": 123
+        },
+        {
+            "configFileName": "Most Popular Tourist Destinations",
+            "category": "Travel",
+            "tags": [
+                "Europe",
+                "Asia",
+                "North America"
+            ],
+            "reviewStatus": "Pending",
+            "dateSubmitted": "2024-05-07",
+            "lastReviewed": "2023-05-15",
+            "submittedBy": {
+                "username": "Olivia",
+                "avatarUrl": "public/avatar8.png"
+            },
+            "numOfReviews": 0
+        },
+        {
+            "configFileName": "Top 100 Movies on IMDb",
+            "category": "Entertainment",
+            "tags": [
+                "Drama",
+                "Comedy",
+                "Action"
+            ],
+            "reviewStatus": "Audited",
+            "dateSubmitted": "2023-03-25",
+            "lastReviewed": "2024-01-15",
+            "submittedBy": {
+                "username": "Noah",
+                "avatarUrl": "public/avatar9.png"
+            },
+            "numOfReviews": 98
+        },
+        {
+            "configFileName": "Best-Selling Video Games of All Time",
+            "category": "Gaming",
+            "tags": [
+                "Action",
+                "Adventure",
+                "RPG"
+            ],
+            "reviewStatus": "Pending",
+            "dateSubmitted": "2024-08-10",
+            "lastReviewed": "2023-05-15",
+            "submittedBy": {
+                "username": "Ethan",
+                "avatarUrl": "public/avatar10.png"
+            },
+            "numOfReviews": 0
+        },
+        {
+            "configFileName": "Most Popular Social Media Platforms",
+            "category": "Technology",
+            "tags": [
+                "Facebook",
+                "Instagram",
+                "TikTok"
+            ],
+            "reviewStatus": "Audited",
+            "dateSubmitted": "2023-07-05",
+            "lastReviewed": "2024-03-29",
+            "submittedBy": {
+                "username": "Sophia",
+                "avatarUrl": "public/avatar11.png"
+            },
+            "numOfReviews": 65
+        },
+        {
+            "configFileName": "Top 10 Most Expensive Cars in the World",
+            "category": "Automotive",
+            "tags": [
+                "Luxury",
+                "Sports Cars"
+            ],
+            "reviewStatus": "Pending",
+            "dateSubmitted": "2024-06-18",
+            "lastReviewed": "2023-05-15",
+            "submittedBy": {
+                "username": "Liam",
+                "avatarUrl": "public/avatar12.png"
+            },
+            "numOfReviews": 0
+        }
+    ]
+}

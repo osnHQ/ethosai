@@ -21,7 +21,7 @@
 
           <div class="space-y-10">
 
-            <!-- file upload code -->
+            
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
               <div>
@@ -253,7 +253,7 @@ export default defineComponent({
     };
   },
   methods: {
-    // Tag method for adding relevant tags
+    
     addTag() {
       if (this.inputText.trim() !== '') {
         this.tags.push(this.inputText.trim());

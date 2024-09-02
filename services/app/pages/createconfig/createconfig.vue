@@ -2,6 +2,14 @@
   <div
     class="min-h-screen bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
     <div class="container mx-auto px-6 py-12">
+
+      <div v-if="notification.message" :class="[
+        'fixed top-5 right-5 px-4 py-2 rounded-md shadow-lg transition-all duration-300',
+        notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+      ]">
+        {{ notification.message }}
+      </div>
+
       <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden">
         <div class="px-8 py-10">
           <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">
@@ -16,7 +24,7 @@
             <!-- file upload code -->
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
-              <!-- File Upload Button -->
+
               <div>
                 <button @click="triggerFileInput"
                   class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-lg text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out">
@@ -39,7 +47,7 @@
                 </div>
 
               </div>
-              <!-- File Input -->
+
               <input ref="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
                 @change="handleFileUpload" />
 
@@ -48,7 +56,6 @@
                 <a href="#"
                   class="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline">
                   Download Example JSON Format</a>
-                <!-- Display the selected file name -->
 
               </div>
             </div>
@@ -56,39 +63,44 @@
 
 
             <div class="w-full flex flex-col items-start justify-start pt-0 px-0 gap-1">
-              <b class="text-[#424955]">Name of Configuration File</b>
+              <b class="text-gray-700">Name of Configuration File</b>
               <div class="w-full flex flex-row items-start justify-start pt-1 pb-1.5 text-silver">
-                <input
-                  class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-[#F3F4F6]"
+
+                <input v-model="configFileName"
+                  class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                   placeholder="Input text" type="text" />
               </div>
             </div>
 
             <div class="w-full flex flex-row items-start justify-start pt-0 px-0 pb-4 text-dimgray">
-              <div class="flex-1 text-[#565E6C]">Enter a name that can be easily recognizable by community. e.g. Capital
+
+              <div class="flex-1 text-gray-700">Enter a name that can be easily recognizable by community. e.g. Capital
                 cities of the world, Famous Oscar winners of 1990s, Best Cars of 20th century etc.</div>
             </div>
 
             <div class="w-[323px] flex flex-col items-start justify-start pt-0 px-0 pb-2.5 gap-1">
-              <b class="text-[#424955]">Enter a Category</b>
+
+              <b class="text-gray-700">Enter a Category</b>
               <div class="w-full flex flex-row items-start justify-between pt-1 pb-1.5 pr-3 gap-5">
                 <input
-                  class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-[#F3F4F6]"
+                  class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+
                   placeholder="Enter Category" type="text" />
               </div>
             </div>
 
 
+
             <div class="w-[1036px] flex flex-col items-start justify-start pt-0 px-0 pb-4 gap-8">
               <div class="w-[1010px] flex flex-col items-start justify-start gap-1">
 
-                <!-- Relevant tags portion -->
-                <b class="text-[#424955]">Enter relevant tags</b>
+                
+                <b class="text-gray-700">Enter relevant tags</b>
                 <div class="w-full flex flex-col items-start justify-start gap-10 text-gray-200 mq450:gap-5">
                   <div class="w-full flex flex-row flex-wrap items-start justify-start gap-1">
                     <input v-model="inputText" @keydown.enter="addTag"
-                      class="w-[312px] border-none outline-none text-black bg-[#F3F4F6] h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm max-w-full"
-                      placeholder="Input text and hit enter" type="text" />
+                      class="w-[312px] border-none outline-none text-black bg-light h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm max-w-full"
+                      placeholder="Input text" type="text" />
                     <div
                       class="flex-1 flex flex-row items-start text-[#34270D] justify-start gap-1 min-w-[333px] max-w-full mq450:flex-wrap">
                       <div v-for="(tag, index) in tags"
@@ -96,11 +108,15 @@
                       <button
                       @click="removeTag(index)"
                       class="ml-2 text-red-500 hover:text-red-700">x</button></div>
+
                     </div>
                   </div>
+                  
                   <div
                     class="w-[680px] flex flex-row flex-wrap items-start justify-start gap-12 text-lg text-gray-400 mq450:gap-7">
-                    <b class="flex-1 text-[#171A1F] mq450:min-w-full">Questions & Eval instructions / Answers for the
+
+                    <b class="flex-1 text-gray-900 mq450:min-w-full">Questions & Eval instructions / Answers for the
+
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
                       <img class="w-5" loading="lazy" alt="" src="public/info.png" />
@@ -109,19 +125,20 @@
                 </div>
               </div>
 
-              <!-- input Fields for New Q&A -->
+
               <div class="w-full flex flex-row flex-wrap items-start justify-start gap-7 ">
                 <div class="w-md flex flex-col items-start justify-start gap-1">
-                  <b class="text-[#424955]">Enter your Question</b>
+                  <b class="text-gray-700">Enter your Question</b>
                   <input v-model="newQuestion"
-                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-[#F3F4F6]"
-                    placeholder="Enter Question" type="text" />
+                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+                    placeholder="What's your Question" type="text" />
                 </div>
                 <div class="w-md flex flex-col items-start justify-start py-0 pr-3 pl-0 gap-1 min-w-[218px]">
-                  <b class="text-[#424955]">Enter your Answer</b>
+                  <b class="text-gray-700">Enter your Answer</b>
                   <input v-model="newAnswer"
-                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-[#F3F4F6]"
-                    placeholder="Enter Answer" type="text" />
+                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+                    placeholder="What's your Answer" type="text" />
+
                 </div>
                 <div class="flex-3 flex flex-col items-start justify-start py-0 pr-3 pl-0 gap-1 min-w-[218px]">
 
@@ -129,10 +146,11 @@
               </div>
 
 
-              <!-- button to add Q&A -->
+
               <div class="flex flex-row items-center justify-center w-full mt-[-20px] mq700:flex-wrap">
                 <button @click="addQA"
-                  class="cursor-pointer [border:none] py-[7px] px-3 bg-[#00BDD6] rounded overflow-hidden flex flex-row items-start justify-start whitespace-nowrap">
+                  class="cursor-pointer [border:none] py-[7px] px-3  bg-cyan-500 rounded overflow-hidden flex flex-row items-start justify-start whitespace-nowrap">
+
                   <div
                     class="relative text-sm leading-[22px] font-inter text-white text-left inline-block min-w-[98px]">
                     Add Q&A
@@ -140,14 +158,15 @@
                 </button>
               </div>
 
-              <!-- Display Added Q&A Cards in Grid -->
+
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
                 <div v-for="(qa, index) in qas" :key="index"
-                  class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-[#F3F4F6] rounded-md shadow-md">
+                  class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-light rounded-md shadow-md">
                   <div class="w-full flex flex-col items-start justify-start gap-1">
-                    <b class="text-[#424955]">Q{{ index + 1 }}. {{ qa.question }}</b>
+                    <b class="text-gray-700">Q{{ index + 1 }}. {{ qa.question }}</b>
                     <div class="flex ">
-                      <b class="text-[#424955] mr-2">Ans.</b>
+                      <b class="text-gray-700 mr-2">Ans.</b>
+
                       <p class="text-black">{{ qa.answer }}</p>
                     </div>
                   </div>
@@ -159,23 +178,33 @@
               </div>
             </div>
 
+
+
+
             <div class="w-full flex flex-col items-start justify-start gap-1">
-              <b class="text-[#424955]">Detailed Description / Notes</b>
-              <input
-                class="w-full self-stretch h-[35px] rounded flex flex-row items-start justify-start px-3 box-border py-12 font-inter text-sm text-silver min-w-[194px] text-black bg-[#F3F4F6]"
+              <b class="text-gray-700">Detailed Description / Notes</b>
+              <input v-model="description"
+                class="w-full self-stretch h-[35px] rounded flex flex-row items-start justify-start px-3 box-border py-12 font-inter text-sm text-silver min-w-[194px] text-black bg-light"
                 placeholder="Write description in detail for this config file." type="text" />
             </div>
 
+
             <div class="w-full flex flex-row items-center justify-center pt-3 gap-5 text-lg text-darkslategray-100">
-              <button @click="resetForm" class="rounded bg-[#FDF2F2] text-[#E05858] py-2 px-4">Discard changes</button>
+              <button @click="resetForm" class="rounded bg-red-50 text-red-500 py-2 px-4">Discard changes</button>
               <button @click="saveDraft"
-                class="rounded bg-[#FFFFFF] text-[#ED7D2D] py-2 px-4 border border-[#ED7D2D]">Save Draft</button>
-              <button @click="submitForAudit" class="rounded bg-[#00BDD6] text-white py-2 px-4">Submit for
+                class="rounded bg-white text-orange-500 py-2 px-4 border border-orange-500">Save Draft</button>
+              <button @click="submitForAudit" class="rounded bg-cyan-500 text-white py-2 px-4">Submit for
+
                 Audit</button>
             </div>
+
           </div>
 
-          <div class="mt-8 flex justify-end space-x-3">
+
+          <!-- Removing below div for now due to unsurity of their functionality -->
+
+          <!-- <div class="mt-8 flex justify-end space-x-3">
+
             <button
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
               Cancel
@@ -184,29 +213,38 @@
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
               Save Configuration
             </button>
-          </div>
+          </div> -->
+
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
 
+<script lang="ts">
+import { defineComponent } from 'vue';
 import ky from 'ky';
 
-export default {
+interface QA {
+  question: string;
+  answer: string;
+}
+
+export default defineComponent({
   data() {
     return {
-      // Input text holder for tags
-      inputText: '',
-      tags: [],
-
+      qas: [] as QA[],
       newQuestion: '',
       newAnswer: '',
-      qas: [],
       selectedFileName: '',
       fileTypeIcon: '',
+      notification: {
+        message: '',
+        type: '', // 'success' or 'error'
+      },
+      configFileName: '', 
+      description: '',
     };
   },
   methods: {
@@ -218,9 +256,18 @@ export default {
       }
     },
 
-    // Remove tag method for removing tags
+    
     removeTag(index) {
       this.tags.splice(index, 1);
+      
+    showNotification(message: string, type: 'success' | 'error') {
+      this.notification.message = message;
+      this.notification.type = type;
+
+      setTimeout(() => {
+        this.notification.message = '';
+        this.notification.type = '';
+      }, 8000);
     },
 
     addQA() {
@@ -228,43 +275,52 @@ export default {
         this.qas.push({ question: this.newQuestion, answer: this.newAnswer });
         this.newQuestion = '';
         this.newAnswer = '';
+
+        this.showNotification('Q&A added successfully!', 'success');
       } else {
-        alert('Please enter both a question and an answer.');
+        this.showNotification('Please enter both a question and an answer.', 'error');
       }
     },
 
-    removeQA(index) {
+    removeQA(index: number) {
       this.qas.splice(index, 1);
     },
 
-    editQA(index) {
+    editQA(index: number) {
       const qa = this.qas[index];
       this.newQuestion = qa.question;
       this.newAnswer = qa.answer;
-      this.qas.splice(index, 1); // Remove the old entry to replace with the updated one
+      this.qas.splice(index, 1); 
     },
 
     triggerFileInput() {
-      this.$refs.fileInput.click();
+      const fileInput = this.$refs.fileInput as HTMLInputElement | null;
+      fileInput?.click();
     },
 
-    handleFileUpload(event) {
-      const file = event.target.files[0];
+    handleFileUpload(event: Event) {
+      const input = event.target as HTMLInputElement;
+      const file = input.files?.[0];
       if (file) {
         this.selectedFileName = file.name;
-        this.fileTypeIcon = this.getFileTypeIcon(file.type); // Set the file type icon
+        this.fileTypeIcon = this.getFileTypeIcon(file.type); 
+
         console.log('Selected file:', file);
       }
     },
 
-    getFileTypeIcon(mimeType) {
-      const fileIcons = {
+
+    getFileTypeIcon(mimeType: string): string {
+      const fileIcons: Record<string, string> = {
+
         'application/json': '/json_icon.png',
         'text/csv': '/csv_icon.png',
         'text/plain': '/txt_icon.png',
       };
 
-      return fileIcons[mimeType];
+
+      return fileIcons[mimeType] || '';
+
     },
 
     resetForm() {
@@ -272,73 +328,74 @@ export default {
       this.newAnswer = '';
       this.qas = [];
       this.selectedFileName = '';
-      this.$refs.fileInput.value = '';
-      this.fileTypeIcon = '';
 
-      // Clear text inputs
-      const textInputs = document.querySelectorAll('input[type="text"]');
-      textInputs.forEach((input) => (input.value = ''));
+      this.fileTypeIcon = '';
+      this.configFileName = '';
+      this.description = '';
     },
 
     saveDraft() {
-      if (process.client) {
-        const draftData = {
+      const draftData = {
+        qas: this.qas,
+        newQuestion: this.newQuestion,
+        newAnswer: this.newAnswer,
+        selectedFileName: this.selectedFileName,
+        fileTypeIcon: this.fileTypeIcon,
+        configFileName: this.configFileName, 
+        description: this.description, 
+          };
+      localStorage.setItem('draftData', JSON.stringify(draftData));
+      this.showNotification('Draft saved successfully!', 'success');
+    },
+
+    loadDraft() {
+      const draftData = JSON.parse(localStorage.getItem('draftData') || '{}');
+      if (draftData) {
+        this.qas = draftData.qas || [];
+        this.newQuestion = draftData.newQuestion || '';
+        this.newAnswer = draftData.newAnswer || '';
+        this.selectedFileName = draftData.selectedFileName || '';
+        this.fileTypeIcon = draftData.fileTypeIcon || '';
+        this.configFileName = draftData.configFileName || ''; 
+        this.description = draftData.description || ''; 
+
+
+      }
+    },
+
+    async submitForAudit() {
+
+      try {
+        const payload = {
           qas: this.qas,
           newQuestion: this.newQuestion,
           newAnswer: this.newAnswer,
           selectedFileName: this.selectedFileName,
           fileTypeIcon: this.fileTypeIcon,
         };
-        localStorage.setItem('draftData', JSON.stringify(draftData));
-        alert('Draft saved successfully!');
-      }
-    },
 
-    loadDraft() {
-      if (process.client) {
-        const draftData = JSON.parse(localStorage.getItem('draftData'));
-        if (draftData) {
-          this.qas = draftData.qas || [];
-          this.newQuestion = draftData.newQuestion || '';
-          this.newAnswer = draftData.newAnswer || '';
-          this.selectedFileName = draftData.selectedFileName || '';
-          this.fileTypeIcon = draftData.fileTypeIcon || '';
+        // Mock API URL
+        const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+
+        const response = await ky.post(apiUrl, {
+          json: payload,
+        });
+
+        if (response.ok) {
+          this.showNotification('Submission successfull !', 'success');
+        } else {
+          throw new Error(`Error: ${response.status}`);
         }
+      } catch (error) {
+        console.error('Submission error:', error);
+        this.showNotification('Submission Failed!', 'error');
       }
     },
-
-    async submitForAudit() {
-  try {
-    const payload = {
-      qas: this.qas,
-      newQuestion: this.newQuestion,
-      newAnswer: this.newAnswer,
-      selectedFileName: this.selectedFileName,
-      fileTypeIcon: this.fileTypeIcon
-    };
-
-    // Replace with mock API URL for testing
-    const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
-
-    const response = await ky.post(apiUrl, {
-      json: payload,
-    });
-
-    if (response.ok) {
-      alert('Submission successful!');
-    } else {
-      throw new Error(`Error: ${response.status}`);
-    }
-  } catch (error) {
-    console.error('Submission error:', error);
-    alert('Submission failed!');
-  }
-},
-
   },
 
   mounted() {
-    this.loadDraft(); // Load the draft when the component is mounted on the client side
+    this.loadDraft();
   },
-};
+});
+
 </script>

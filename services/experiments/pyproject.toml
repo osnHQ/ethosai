@@ -22,7 +22,6 @@ dependencies = [
     "numpy>=2.1.0",
     "rouge-metric>=1.0.1",
     "sentence-transformers>=3.0.1",
-    "torch>=2.4.0",
     "bert-score>=0.3.13",
     "rouge-score>=0.1.2",
     "thinc>=9.0.0",

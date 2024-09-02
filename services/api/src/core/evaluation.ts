@@ -12,6 +12,7 @@ export type Env = {
   DATABASE_URL: string;
   NODE_ENV: string;
   OPENAI_API_KEY: string;
+  GEMINI_API_KEY: string;
 };
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();

@@ -95,8 +95,7 @@
               <div class="w-[1010px] flex flex-col items-start justify-start gap-1">
 
                 
-                <b class="text-gray-700">Enter relevant tags</b>
-                 <!-- tags -->
+                
                 <b class="text-gray-700">Enter relevant tags</b>
                 <div class="w-full flex flex-col items-start justify-start gap-10 text-gray-200 mq450:gap-5">
                   <div class="w-full flex flex-row flex-wrap items-start justify-start gap-1">

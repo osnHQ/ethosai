@@ -1,17 +1,30 @@
 <template>
-    <div class="flex items-center px-8 py-10">
-        <a href="/">
-    <img src="public/logo.png" alt="OpenQA.AI Logo" class="ml-[-20px] w-12 h-12 mr-3 md:ml-0 md:mr-0 md:w-20 md:h-20" />
-</a>
-        <!-- <nav class="space-x-8 border-white px-8 py-4 border rounded-full max-w-3xl mx-auto text-light"> -->
-            <nav class="space-x-3 text-[13px] border-white px-5 py-3 border rounded-full max-w-3xl mx-auto text-light md:space-x-8 md:text-[20px]  md:py-4">
+  <div class="container h-20 relative max-md:mb-10">
+    <!-- logo fixed with position -->
 
-            <NuxtLink to="/" class="hover:text-gray">Home</NuxtLink>
-            <NuxtLink to="https://openqas-organization.gitbook.io/openqa.ai-whitepaper-1" class="hover:text-gray">Whitepaper</NuxtLink>
-            <!-- <NuxtLink to="/" class="hover:text-gray">Blog</NuxtLink> -->
-            <NuxtLink to="https://www.linkedin.com/company/openqa-ai/jobs/" class="hover:text-gray">Careers</NuxtLink>
-            <NuxtLink to="mailto:openqaai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
-        </nav>
+    <a class="
+    max-md-hidden
+    absolute left-10 top-12" href="https://openqa.ai/">
+      <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
+    </a>
+
+    <!-- for mobile device -->
+     <div class="flex justify-center items-center md:hidden mt-5">
+      <a href="https://ethosai.one/">
+      <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
+    </a>
+     </div>
+    
+    <div class="flex max-md:justify-center lg:ml-140 max-md:ml-0 max-lg:justify-center max-lg:ml-18 px-1 py-10">
+
+      <nav class="space-x-8 border-white px-2 py-4 md-px-8 md-py-4 border rounded-full max-w-3xl text-light">
+        <NuxtLink to="/" class="hover:text-gray">Home</NuxtLink>
+        <NuxtLink to="https://ethos-ai.gitbook.io/ethosai-whitepaper" class="hover:text-gray">Whitepaper
+        </NuxtLink>
+        <!-- <NuxtLink to="/" class="hover:text-gray">Blog</NuxtLink> -->
+        <NuxtLink to="https://www.linkedin.com/company/ethosaione/jobs/" class="hover:text-gray">Careers</NuxtLink>
+        <NuxtLink to="mailto: contactethosai@gmail.com" class="hover:text-gray">Contact</NuxtLink>
+      </nav>
     </div>
+  </div>
 </template>
-

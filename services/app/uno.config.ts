@@ -33,4 +33,7 @@ export default defineConfig({
     transformerDirectives(),
     transformerVariantGroup(),
   ],
+  rules: [
+    ['aspect-1\\.59', { 'aspect-ratio': '1.59 / 1' }],
+  ],
 })

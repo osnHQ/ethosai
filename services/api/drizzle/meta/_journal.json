@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1723184245371,
+      "tag": "0000_flaky_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1724322291947,
+      "tag": "0001_legal_scarlet_witch",
+      "breakpoints": true
+    }
+  ]
+}

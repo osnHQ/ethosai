@@ -3,12 +3,14 @@ import { appDescription } from './constants/index';
 
 export default defineNuxtConfig({
   site: {
-    url: 'https://openqa.pages.dev',
+    url: 'https://ethosai.one',
   },
+
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/color-mode',
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
@@ -47,7 +49,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width,initial-scale=1',
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
-        { rel: 'icon', type: 'image/svg+xml', href: '/nuxt.svg' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/sqlogo.png' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
       meta: [
@@ -87,4 +89,6 @@ export default defineNuxtConfig({
       standalone: false,
     },
   },
+
+  compatibilityDate: '2024-07-10',
 });

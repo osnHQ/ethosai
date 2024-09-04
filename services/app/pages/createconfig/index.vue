@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import CreateConfig from "./CreateConfig.vue"
+import CreateConfig from "./createconfig.vue"
 
 const color = useColorMode()
 color.value === 'light'

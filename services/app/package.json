@@ -39,10 +39,13 @@
   "dependencies": {
     "@passwordless-id/webauthn": "^2.0.4",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
+    "chart.js": "^4.4.4",
     "flatpickr": "^4.6.13",
     "ky": "^1.7.0",
     "ollama": "^0.5.8",
     "openai": "^4.56.0",
+    "uplot": "^1.6.30",
+    "vue-chartjs": "^5.3.1",
     "vue-flatpickr-component": "^11.0.5",
     "vue3-google-signin": "^2.0.0"
   },

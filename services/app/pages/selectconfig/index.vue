@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import SelectConfig from "./SelectConfig.vue"
+import SelectConfig from "./selectconfig.vue"
 
 const color = useColorMode()
 color.value === 'light'

@@ -21,6 +21,7 @@
 
           <div class="space-y-10">
 
+            
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
               <div>
@@ -45,6 +46,7 @@
                 </div>
 
               </div>
+
               <input ref="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
                 @change="handleFileUpload" />
 
@@ -62,6 +64,7 @@
             <div class="w-full flex flex-col items-start justify-start pt-0 px-0 gap-1">
               <b class="text-gray-700">Name of Configuration File</b>
               <div class="w-full flex flex-row items-start justify-start pt-1 pb-1.5 text-silver">
+
                 <input v-model="configFileName"
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                   placeholder="Input text" type="text" />
@@ -69,44 +72,53 @@
             </div>
 
             <div class="w-full flex flex-row items-start justify-start pt-0 px-0 pb-4 text-dimgray">
+
               <div class="flex-1 text-gray-700">Enter a name that can be easily recognizable by community. e.g. Capital
                 cities of the world, Famous Oscar winners of 1990s, Best Cars of 20th century etc.</div>
             </div>
 
             <div class="w-[323px] flex flex-col items-start justify-start pt-0 px-0 pb-2.5 gap-1">
+
               <b class="text-gray-700">Enter a Category</b>
               <div class="w-full flex flex-row items-start justify-between pt-1 pb-1.5 pr-3 gap-5">
                 <input
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+
                   placeholder="Enter Category" type="text" />
               </div>
             </div>
 
-            <!-- tags -->
+
+
+
             <div class="w-[1036px] flex flex-col items-start justify-start pt-0 px-0 pb-4 gap-8">
               <div class="w-[1010px] flex flex-col items-start justify-start gap-1">
+
+                
+                
                 <b class="text-gray-700">Enter relevant tags</b>
                 <div class="w-full flex flex-col items-start justify-start gap-10 text-gray-200 mq450:gap-5">
                   <div class="w-full flex flex-row flex-wrap items-start justify-start gap-1">
-                    <input
+                    <input v-model="inputText" @keydown.enter="addTag"
                       class="w-[312px] border-none outline-none text-black bg-light h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm max-w-full"
                       placeholder="Input text" type="text" />
                     <div
                       class="flex-1 flex flex-row items-start text-[#34270D] justify-start gap-1 min-w-[333px] max-w-full mq450:flex-wrap">
-                      <div class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3">CapitalCities
-                      </div>
-                      <div class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3">London</div>
-                      <div class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3">Athens of Greece
-                      </div>
-                      <div class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3">Google Gemini
-                        Capitals</div>
-                      <div class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3">Llama Capital
-                        Cities</div>
+                      <div v-for="(tag, index) in tags"
+                      :key="index" class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag }}</span>
+                      <button
+                      @click="removeTag(index)"
+                      class="ml-2 text-red-500 hover:text-red-700">x</button></div>
+
+
                     </div>
                   </div>
+                  
                   <div
                     class="w-[680px] flex flex-row flex-wrap items-start justify-start gap-12 text-lg text-gray-400 mq450:gap-7">
+
                     <b class="flex-1 text-gray-900 mq450:min-w-full">Questions & Eval instructions / Answers for the
+
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
                       <img class="w-5" loading="lazy" alt="" src="public/info.png" />
@@ -114,6 +126,7 @@
                   </div>
                 </div>
               </div>
+
 
               <div class="w-full flex flex-row flex-wrap items-start justify-start gap-7 ">
                 <div class="w-md flex flex-col items-start justify-start gap-1">
@@ -127,6 +140,7 @@
                   <input v-model="newAnswer"
                     class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                     placeholder="What's your Answer" type="text" />
+
                 </div>
                 <div class="flex-3 flex flex-col items-start justify-start py-0 pr-3 pl-0 gap-1 min-w-[218px]">
 
@@ -134,15 +148,18 @@
               </div>
 
 
+
               <div class="flex flex-row items-center justify-center w-full mt-[-20px] mq700:flex-wrap">
                 <button @click="addQA"
                   class="cursor-pointer [border:none] py-[7px] px-3  bg-cyan-500 rounded overflow-hidden flex flex-row items-start justify-start whitespace-nowrap">
+
                   <div
                     class="relative text-sm leading-[22px] font-inter text-white text-left inline-block min-w-[98px]">
                     Add Q&A
                   </div>
                 </button>
               </div>
+
 
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
                 <div v-for="(qa, index) in qas" :key="index"
@@ -151,6 +168,7 @@
                     <b class="text-gray-700">Q{{ index + 1 }}. {{ qa.question }}</b>
                     <div class="flex ">
                       <b class="text-gray-700 mr-2">Ans.</b>
+
                       <p class="text-black">{{ qa.answer }}</p>
                     </div>
                   </div>
@@ -161,6 +179,7 @@
                 </div>
               </div>
             </div>
+
 
 
 
@@ -177,14 +196,17 @@
               <button @click="saveDraft"
                 class="rounded bg-white text-orange-500 py-2 px-4 border border-orange-500">Save Draft</button>
               <button @click="submitForAudit" class="rounded bg-cyan-500 text-white py-2 px-4">Submit for
+
                 Audit</button>
             </div>
 
           </div>
 
+
           <!-- Removing below div for now due to unsurity of their functionality -->
 
           <!-- <div class="mt-8 flex justify-end space-x-3">
+
             <button
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
               Cancel
@@ -200,6 +222,8 @@
     </div>
   </div>
 </template>
+
+
 
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -224,9 +248,23 @@ export default defineComponent({
       },
       configFileName: '', 
       description: '',
+      inputText: '',
+      tags: [] as string[],
     };
   },
   methods: {
+    
+    addTag() {
+      if (this.inputText.trim() !== '') {
+        this.tags.push(this.inputText.trim());
+        this.inputText = '';
+      }
+    },
+
+    
+    removeTag(index: number) {
+      this.tags.splice(index, 1); },
+      
     showNotification(message: string, type: 'success' | 'error') {
       this.notification.message = message;
       this.notification.type = type;
@@ -270,18 +308,23 @@ export default defineComponent({
       if (file) {
         this.selectedFileName = file.name;
         this.fileTypeIcon = this.getFileTypeIcon(file.type); 
+
         console.log('Selected file:', file);
       }
     },
 
+
     getFileTypeIcon(mimeType: string): string {
       const fileIcons: Record<string, string> = {
+
         'application/json': '/json_icon.png',
         'text/csv': '/csv_icon.png',
         'text/plain': '/txt_icon.png',
       };
 
+
       return fileIcons[mimeType] || '';
+
     },
 
     resetForm() {
@@ -289,6 +332,7 @@ export default defineComponent({
       this.newAnswer = '';
       this.qas = [];
       this.selectedFileName = '';
+
       this.fileTypeIcon = '';
       this.configFileName = '';
       this.description = '';
@@ -319,10 +363,12 @@ export default defineComponent({
         this.configFileName = draftData.configFileName || ''; 
         this.description = draftData.description || ''; 
 
+
       }
     },
 
     async submitForAudit() {
+
       try {
         const payload = {
           qas: this.qas,
@@ -355,4 +401,5 @@ export default defineComponent({
     this.loadDraft();
   },
 });
+
 </script>

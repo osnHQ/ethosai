@@ -1,10 +1,13 @@
 import { Hono } from "hono";
+import { cors } from 'hono/cors'
 import { HTTPException } from "hono/http-exception";
 import { apiReference } from '@scalar/hono-api-reference';
 import evaluationRouter from "./core/evaluation";
 import generalRouter from "./core/general";
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.use('/*', cors())
 
 app.route('/eval', evaluationRouter);
 app.route('/', generalRouter);

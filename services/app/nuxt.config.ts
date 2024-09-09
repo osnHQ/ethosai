@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'node-server',
+    preset: 'cloudflare-pages',
     esbuild: {
       options: {
         target: 'esnext',

@@ -37,7 +37,7 @@
 
                 <div class="flex flex-row gap-3 items-center mt-3">
                   <div v-if="fileTypeIcon" class="mt-2">
-                    <img :src="fileTypeIcon" alt="File Type Icon"
+                    <NuxtImg :src="fileTypeIcon" alt="File Type Icon"
                       class="w-16 h-16 object-cover border border-gray-300 rounded-md" />
                   </div>
                   <p v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">Selected file: {{
@@ -121,7 +121,7 @@
 
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
-                      <img class="w-5" loading="lazy" alt="" src="public/info.png" />
+                      <NuxtImg class="w-5" loading="lazy" alt="" src="public/info.png" />
                     </div>
                   </div>
                 </div>

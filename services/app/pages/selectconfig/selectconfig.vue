@@ -15,14 +15,14 @@
             <div
               class="flex gap-4 px-2.5 py-2 w-70 text-lg leading-7 text-white bg-orange-500 rounded-lg shadow max-md:mt-5"
             >
-              <img
+              <NuxtImg
                 loading="lazy"
                 src="public/Alarm.png"
                 alt=""
                 class="w-6 h-6 mt-1"
               />
               <div class="flex-auto pl-3 w-full my-auto">You have selected</div>
-              <img
+              <NuxtImg
                 loading="lazy"
                 src="public/rightarrowwhite.png"
                 alt=""
@@ -36,7 +36,7 @@
             >
               <div class="flex gap-5 max-md:flex-col max-md:gap-0">
                 <div class="flex flex-col w-[33%] max-md:ml-0 max-md:w-full">
-                  <img
+                  <NuxtImg
                     loading="lazy"
                     src="public/anthropiccard.png"
                     alt="Claude2 AI model illustration"
@@ -78,7 +78,7 @@
         <div
           class="flex gap-5 my-auto text-lg leading-7 text-white max-md:flex-wrap"
         >
-          <img
+          <NuxtImg
             loading="lazy"
             src="public/Alarm.png"
             alt=""
@@ -97,7 +97,7 @@
       </div>
       <div class="flex gap-5 justify-between mt-16 w-full text-sm leading-5 max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
             <div class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
-              <img loading="lazy" src="public/search.png" alt="" class="w-5" />
+              <NuxtImg loading="lazy" src="public/search.png" alt="" class="w-5" />
               <input type="text" placeholder="Search for the configurations here (name, tags, category etc.)" aria-label="Search for LLMs" class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-3.7 text-4 w-50" />
             </div>
             <select class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
@@ -114,7 +114,7 @@
             class="flex gap-5 justify-center px-3.5 py-3 bg-white rounded border border-solid border-neutral-300 text-zinc-900"
           >
           <input type="text" id="dateRange" value="14/04/2019 - 14/06/2024" class="grow w-full md:w-auto outline-none focus:outline-none focus:shadow-none" />
-          <img loading="lazy" src="public/downarrow.png" alt="" class=" w-5 h-5 " />
+          <NuxtImg loading="lazy" src="public/downarrow.png" alt="" class=" w-5 h-5 " />
           </div>
         </div>
         <div
@@ -150,7 +150,7 @@
             <td class="px-4 py-12">History</td>
             <td class="px-4 py-10">
               <div class="flex gap-2">
-                <img loading="lazy" src="public/avatar.png" alt="" class="w-9 aspect-square" />
+                <NuxtImg loading="lazy" src="public/avatar.png" alt="" class="w-9 aspect-square" />
                 <span class="my-auto">Brandon</span>
               </div>
             </td>
@@ -169,7 +169,7 @@
             <td class="px-4 py-12">Business</td>
             <td class="px-4 py-10">
               <div class="flex gap-2">
-                <img loading="lazy" src="public/avatar2.png" alt="" class="w-9 aspect-square" />
+                <NuxtImg loading="lazy" src="public/avatar2.png" alt="" class="w-9 aspect-square" />
                 <span class="my-auto">Paula</span>
               </div>
             </td>
@@ -188,7 +188,7 @@
             <td class="px-4 py-12">Entertainment</td>
             <td class="px-4 py-10">
               <div class="flex gap-2">
-                <img loading="lazy" src="public/avatar3.png" alt="" class="w-9 aspect-square" />
+                <NuxtImg loading="lazy" src="public/avatar3.png" alt="" class="w-9 aspect-square" />
                 <span class="my-auto">Username</span>
               </div>
             </td>
@@ -206,7 +206,7 @@
             <td class="px-4 py-12">Manufacturing</td>
             <td class="px-4 py-10">
               <div class="flex gap-2">
-                <img loading="lazy" src="public/avatar4.png" alt="" class="w-9 aspect-square" />
+                <NuxtImg loading="lazy" src="public/avatar4.png" alt="" class="w-9 aspect-square" />
                 <span class="my-auto">Username</span>
               </div>
             </td>
@@ -225,7 +225,7 @@
     </div>
       <nav class="flex gap-1 self-center mt-14 max-w-full text-sm leading-5 whitespace-nowrap text-zinc-400 w-[344px] max-md:mt-10" aria-label="Pagination">
         <a href="#" class="flex gap-0.5 text-white">
-          <img loading="lazy" src="public/paginationleft.png" alt="Previous page" class="w-5 h-5 mt-3.5 mr-2" />
+          <NuxtImg loading="lazy" src="public/paginationleft.png" alt="Previous page" class="w-5 h-5 mt-3.5 mr-2" />
           <span class="sr-only">Previous page</span>
         </a>
         <a href="#" aria-current="page" class="justify-center items-start px-4 py-3.5 bg-cyan-500 rounded text-white">
@@ -241,7 +241,7 @@
           4
         </a>
         <span class="flex gap-1">
-          <img loading="lazy" src="public/paginationdots.png" alt="" class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
+          <NuxtImg loading="lazy" src="public/paginationdots.png" alt="" class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
           <a href="#" class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
             10
           </a>
@@ -250,7 +250,7 @@
           </a>
         </span>
         <a href="#" class="flex gap-0.5 text-zinc-400">
-          <img loading="lazy" src="public/paginationright.png" alt="Next page" class="w-5 h-5 mt-3.5 ml-5" />
+          <NuxtImg loading="lazy" src="public/paginationright.png" alt="Next page" class="w-5 h-5 mt-3.5 ml-5" />
           <span class="sr-only">Next page</span>
         </a>
       </nav>

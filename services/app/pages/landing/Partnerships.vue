@@ -5,25 +5,25 @@
         </div>
     <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-7 mx-5">
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/gcloud.png" alt="Google Cloud" class="w-full h-auto" />
+        <NuxtImg src="/gcloud.png" alt="Google Cloud" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/corover.png" alt="Corover AI" class="w-full h-auto" />
+        <NuxtImg src="/corover.png" alt="Corover AI" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/chatgpt.png" alt="ChatGPT" class="w-full h-auto" />
+        <NuxtImg src="/chatgpt.png" alt="ChatGPT" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/aws.png" alt="AWS Partner" class="w-full h-auto" />
+        <NuxtImg src="/aws.png" alt="AWS Partner" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/microsoft.png" alt="Microsoft" class="w-full h-auto" />
+        <NuxtImg src="/microsoft.png" alt="Microsoft" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/bharatgpt.png" alt="Meta" class="w-full h-auto" />
+        <NuxtImg src="/bharatgpt.png" alt="Meta" class="w-full h-auto" />
       </div>
       <div class="flex items-center justify-center p-4">
-        <NuxtImg src="public/meta.png" alt="Meta" class="w-full h-auto" />
+        <NuxtImg src="/meta.png" alt="Meta" class="w-full h-auto" />
       </div>
     </div>
   </section>

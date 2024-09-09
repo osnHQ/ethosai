@@ -121,7 +121,7 @@
 
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
-                      <NuxtImg class="w-5" loading="lazy" alt="" src="public/info.png" />
+                      <NuxtImg class="w-5" loading="lazy" alt="" src="/info.png" />
                     </div>
                   </div>
                 </div>

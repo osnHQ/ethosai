@@ -15,9 +15,9 @@
                     <div class="purple-circle ml-130 mt-360 md-hidden lg-block max-sm:hidden"></div>
                     <!-- <div class="blurred-gradient ml-160 mt-1135 md-hidden lg-block max-sm:hidden"></div>
                     <div class="purple-circle ml-130 mt-1135 md-hidden lg-block max-sm:hidden"></div> -->
-                    <NuxtImg src="public/Stars.png" class="absolute w-200 left-80 md-hidden lg-block max-sm:hidden -z-1" alt="">
-                    <NuxtImg src="public/Stars.png" class="absolute w-350 top-150 md-hidden lg-block max-sm:hidden -z-1" alt="">
-                    <NuxtImg src="public/Stars.png" class="absolute w-350 top-460 md-hidden lg-block max-sm:hidden -z-1" alt="">
+                    <NuxtImg src="public/Stars.png" class="absolute w-200 left-80 md-hidden lg-block max-sm:hidden -z-1" alt="" />
+                    <NuxtImg src="public/Stars.png" class="absolute w-350 top-150 md-hidden lg-block max-sm:hidden -z-1" alt="" />
+                    <NuxtImg src="public/Stars.png" class="absolute w-350 top-460 md-hidden lg-block max-sm:hidden -z-1" alt="" />
 </template>
 
 <style>

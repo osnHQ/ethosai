@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@nuxtjs/sitemap',
+    '@nuxt/content',
   ],
 
   experimental: {

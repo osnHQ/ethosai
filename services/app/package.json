@@ -38,6 +38,7 @@
     "vue-tsc": "^2.1.4"
   },
   "dependencies": {
+    "@nuxt/image": "^1.8.0",
     "@passwordless-id/webauthn": "^2.1.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "flatpickr": "^4.6.13",

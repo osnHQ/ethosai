@@ -4,7 +4,7 @@
 
     <a class="
     max-md-hidden
-    absolute left-10 top-12" href="https://openqa.ai/">
+    absolute left-10 top-12" href="https://ethosai.one/">
       <img src="public/logo.png" class="w-35" alt="ethosAI Logo">
     </a>
 

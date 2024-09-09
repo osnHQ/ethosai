@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxtjs/sitemap',
     '@nuxt/content',
+    "@nuxt/image"
   ],
 
   experimental: {

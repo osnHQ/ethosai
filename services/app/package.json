@@ -44,7 +44,7 @@
     "flatpickr": "^4.6.13",
     "ky": "^1.7.2",
     "ollama": "^0.5.8",
-    "openai": "^4.57.1",
+    "openai": "^4.58.1",
     "vue-flatpickr-component": "^11.0.5",
     "vue3-google-signin": "^2.0.0"
   },

@@ -90,7 +90,7 @@ async def generate_model_answer(prompt):
     return response.choices[0].message.content
 
 
-def compare_sentences_llm(answer1, answer2, question, context=""):
+def compare_sentences_llm(ai_reply, correct_reply, question, context=""):
     prompt = f"""
 You will be given three inputs from {context}:
 
@@ -116,9 +116,9 @@ Return a JSON object with the following structure:
     "score_explanation": <string>
 }}
 
-Question: '{question}'
-Answer 1: '{answer1}'
-Answer 2: '{answer2}'
+Source Question: '{question}'
+AI Agent Reply: '{ai_reply}'
+Correct Reply: '{correct_reply}'
 """
 
     response = openai.chat.completions.create(

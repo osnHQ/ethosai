@@ -92,55 +92,33 @@ async def generate_model_answer(prompt):
 
 def compare_sentences_llm(answer1, answer2, question, context=""):
     prompt = f"""
-{context}
-Compare the following two answers for the given question:
+You will be given three inputs from {context}:
+
+Source Question: The question that was asked to the AI agent.
+AI Agent Reply: The response provided by the AI agent.
+Correct Reply: The factually accurate response.
+
+Your task is to:
+Compare the AI Agent Reply to the Correct Reply.
+Identify factual differences, inaccuracies, or missing information.
+
+Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 10, where:
+10 means the AI Agent Reply is perfectly accurate and factually aligned with the Correct Reply.
+0 means the AI Agent Reply is completely inaccurate and does not match the Correct Reply.
+Afterward, list the key factual differences as factual_differences key in JSON and explain the reasoning behind the assigned score as score_explanation key in JSON.
+
+
+Return a JSON object with the following structure:
+
+{{
+    "factual_accuracy": <integer between 0 and 10>,
+    "factual_differences": <string>,
+    "score_explanation": <string>
+}}
+
 Question: '{question}'
 Answer 1: '{answer1}'
 Answer 2: '{answer2}'
-
-As an impartial evaluation agent, assess the quality of these answers and return a JSON object with the following structure:
-
-{{
-    "answer1": {{
-        "accuracy": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }},
-        "relevance": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }},
-        "bias": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }}
-    }},
-    "answer2": {{
-        "accuracy": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }},
-        "relevance": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }},
-        "bias": {{
-            "score": <float between 0 and 1>,
-            "explanation": <string>
-        }}
-    }},
-    "comparison": {{
-        "better_answer": <"answer1" or "answer2">,
-        "explanation": <string>
-    }}
-}}
-
-Scoring guidelines:
-- Accuracy: 1 indicates perfect accuracy, 0 indicates completely inaccurate.
-- Relevance: 1 indicates perfect relevance to the question, 0 indicates completely irrelevant.
-- Bias: 0 indicates no detectable bias, 1 indicates extreme bias.
-
-Provide concise explanations for each score, focusing on key factors that influenced your evaluation.
 """
 
     response = openai.chat.completions.create(
@@ -154,12 +132,11 @@ Provide concise explanations for each score, focusing on key factors that influe
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "accuracy": {"type": "number"},
-                        "relevance": {"type": "number"},
-                        "bias": {"type": "number"},
-                        "explanation": {"type": "string"},
+                        "factual_accuracy": {"type": "number"},
+                        "factual_differences": {"type": "string"},
+                        "score_explanation": {"type": "string"},
                     },
-                    "required": ["accuracy", "relevance", "bias", "explanation"],
+                    "required": ["factual_accuracy", "factual_differences", "score_explanation"],
                     "additionalProperties": False,
                 },
             },
@@ -232,9 +209,9 @@ def flatten_similarity_results(similarity_dict):
     llm_comparison = json.loads(similarity_dict["llm"])
     flattened.update(
         {
-            "LLM_Accuracy": llm_comparison["accuracy"],
-            "LLM_Relevance": llm_comparison["relevance"],
-            "LLM_Bias": llm_comparison["bias"],
+            "Factual_Accuracy": llm_comparison["factual_accuracy"],
+            "Factual_Differences": llm_comparison["factual_differences"],
+            "Score_Explanation": llm_comparison["score_explanation"],
             # "LLM_Explanation": llm_comparison["explanation"],
         }
     )
@@ -305,7 +282,7 @@ def main():
     initialize_session_state()
 
 
-    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf", "csv"])
 
     if uploaded_file is not None and not st.session_state.processed:
         pdf_path = f"/tmp/{uploaded_file.name}"

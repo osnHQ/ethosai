@@ -99,12 +99,13 @@ AI Agent Reply: The response provided by the AI agent.
 Correct Reply: The factually accurate response.
 
 Your task is to:
-Compare the AI Agent Reply to the Correct Reply.
-Identify factual differences, inaccuracies, or missing information.
-
-Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 10, where:
-10 means the AI Agent Reply is perfectly accurate and factually aligned with the Correct Reply.
-0 means the AI Agent Reply is completely inaccurate and does not match the Correct Reply.
+1. Compare the AI Agent Reply to the Correct Reply.
+2. Identify factual differences, inaccuracies, or missing information.
+3. Do not penalize for additional clarifications or explanations provided by the AI Agent, as long as the response is factually accurate and relevant to the question.
+4. Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 10, where:
+  - 100 means the AI Agent Reply is perfectly accurate and factually aligned with the Correct Reply.
+  - 0 means the AI Agent Reply is completely inaccurate and does not match the Correct Reply.
+  
 Afterward, list the key factual differences as factual_differences key in JSON and explain the reasoning behind the assigned score as score_explanation key in JSON.
 
 

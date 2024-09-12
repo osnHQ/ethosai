@@ -115,7 +115,7 @@ Afterward, list the key factual differences as factual_differences key in JSON a
 Return a JSON object with the following structure:
 
 {{
-    "factual_accuracy": <integer between 0 and 10>,
+    "factual_accuracy": <integer between 0 and 100>,
     "factual_differences": <string>,
     "score_explanation": <string>
 }}

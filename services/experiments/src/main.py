@@ -82,7 +82,7 @@ async def generate_model_answer(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "reply only with single line factoid answers.",
+                "content": "reply very crisp factoid answer.",
             },
             {"role": "user", "content": prompt},
         ],
@@ -102,10 +102,13 @@ Your task is to:
 1. Compare the AI Agent Reply to the Correct Reply.
 2. Identify factual differences, inaccuracies, or missing information.
 3. Do not penalize for additional clarifications or explanations provided by the AI Agent, as long as the response is factually accurate and relevant to the question.
-4. Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 10, where:
+4. Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 100, where:
+  - For factual or numerical answers (e.g., dates, quantities, measurements): A score of 100 indicates the answer is exactly correct, while minor discrepancies (e.g., close but incorrect values) should result in a proportionally lower score. 
+  - For textual, descriptive, or interpretive answers: A score of 100 indicates that the answer is factually accurate and aligns with the expected information. Partial correctness (e.g., correct in some aspects but missing or wrong in others) should result in a lower score.
+  - 0 means the answer is completely incorrect.
   - 100 means the AI Agent Reply is perfectly accurate and factually aligned with the Correct Reply.
   - 0 means the AI Agent Reply is completely inaccurate and does not match the Correct Reply.
-  
+
 Afterward, list the key factual differences as factual_differences key in JSON and explain the reasoning behind the assigned score as score_explanation key in JSON.
 
 

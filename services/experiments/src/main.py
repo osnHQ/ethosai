@@ -282,27 +282,34 @@ def main():
     initialize_session_state()
 
 
-    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf", "csv"])
+    uploaded_file = st.file_uploader("Upload a PDF or CSV file", type=["pdf", "csv"])
 
     if uploaded_file is not None and not st.session_state.processed:
-        pdf_path = f"/tmp/{uploaded_file.name}"
+        file_extension = uploaded_file.name.split(".")[-1].lower()
 
-        with open(pdf_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        qa_tables = process_pdf_in_parallel(
-            pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"
-        )
-
-        jsonl_output_file = "/tmp/output.jsonl"
-        save_qa_to_jsonl(qa_tables, jsonl_output_file)
-
-        with open(jsonl_output_file, "rb") as file:
-            jsonl_data = load_jsonl(file)
-            st.session_state.df = pd.json_normalize(jsonl_data)
+        if file_extension == "csv":
+            st.session_state.df = pd.read_csv(uploaded_file)
             st.session_state.processed = True
 
-    if not st.session_state.df.empty:
+        elif file_extension == "pdf":
+            pdf_path = f"/tmp/{uploaded_file.name}"
+
+            with open(pdf_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+
+            qa_tables = process_pdf_in_parallel(
+                pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"
+            )
+
+            jsonl_output_file = "/tmp/output.jsonl"
+            save_qa_to_jsonl(qa_tables, jsonl_output_file)
+
+            with open(jsonl_output_file, "rb") as file:
+                jsonl_data = load_jsonl(file)
+                st.session_state.df = pd.json_normalize(jsonl_data)
+                st.session_state.processed = True
+
+    if st.session_state.processed and not st.session_state.df.empty:
         edited_df = st.data_editor(
             st.session_state.df, num_rows="dynamic", key="data_editor"
         )

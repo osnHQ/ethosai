@@ -5,14 +5,14 @@
         <header class="w-full flex flex-col items-start text-zinc-900">
           <h1 class="flex items-center gap-3 text-3xl font-semibold leading-10">
             <span>LLM Selector</span>
-            <img loading="lazy" src="public/loading.png" class="w-10 h-10" alt="Loading" />
+            <NuxtImg loading="lazy" src="/loading.png" class="w-10 h-10" alt="Loading" />
           </h1>
           <p class="mt-4 text-base leading-7 text-neutral-800">
             Choose an LLM to test your configuration files against our robust evaluation metrics.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full">
             <div class="flex items-center w-full sm:w-auto bg-gray-100 rounded-lg border border-gray-300">
-              <img loading="lazy" src="public/search.png" alt="Search icon" class="w-5 h-5 ml-3" />
+              <NuxtImg loading="lazy" src="/search.png" alt="Search icon" class="w-5 h-5 ml-3" />
               <input type="text" placeholder="Search for the LLMs here (by name, company etc)" aria-label="Search for LLMs" class="flex-grow p-3 bg-transparent text-black placeholder-gray-500 focus:outline-none rounded-r-lg" />
             </div>
             <select class="bg-white border border-gray-300 rounded-lg p-3 w-full sm:w-auto">
@@ -22,7 +22,7 @@
               <option>Filter by capabilities ( Text , Image , Video)</option>
             </select>
           </div>
-          <img loading="lazy" src="public/question.png" class="mt-4 w-6 h-6" alt="Help icon" />
+          <NuxtImg loading="lazy" src="/question.png" class="mt-4 w-6 h-6" alt="Help icon" />
         </header>
         <p class="self-end mt-4 text-sm leading-6 text-right text-black">
           Total <span class="font-bold text-cyan-500">14</span> LLMs
@@ -39,7 +39,7 @@
         </main>
         <nav class="flex gap-1 self-center mt-14 text-sm leading-5 text-zinc-400" aria-label="Pagination">
           <a href="#" class="flex items-center text-white">
-            <img loading="lazy" src="public/paginationleft.png" alt="Previous page" class="w-5 h-5 mr-2" />
+            <NuxtImg loading="lazy" src="/paginationleft.png" alt="Previous page" class="w-5 h-5 mr-2" />
             <span class="sr-only">Previous page</span>
           </a>
           <a href="#" aria-current="page" class="px-4 py-2 bg-cyan-500 rounded text-white">
@@ -55,7 +55,7 @@
             4
           </a>
           <span class="flex items-center gap-1">
-            <img loading="lazy" src="public/paginationdots.png" alt="Dots" class="w-5 h-5" />
+            <NuxtImg loading="lazy" src="/paginationdots.png" alt="Dots" class="w-5 h-5" />
             <a href="#" class="px-4 py-2 bg-white rounded border border-gray-300">
               10
             </a>
@@ -64,7 +64,7 @@
             </a>
           </span>
           <a href="#" class="flex items-center text-zinc-400">
-            <img loading="lazy" src="public/paginationright.png" alt="Next page" class="w-5 h-5 ml-2" />
+            <NuxtImg loading="lazy" src="/paginationright.png" alt="Next page" class="w-5 h-5 ml-2" />
             <span class="sr-only">Next page</span>
           </a>
         </nav>

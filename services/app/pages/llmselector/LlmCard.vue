@@ -1,7 +1,7 @@
 <template>
   <article class="flex flex-col overflow-hidden rounded-lg shadow-lg bg-white">
     <div class="flex-shrink-0">
-      <img :src="llm.image" :alt="llm.name" class="h-48 w-full object-cover">
+      <NuxtImg :src="llm.image" :alt="llm.name" class="h-48 w-full object-cover" />
     </div>
     <div class="flex flex-1 flex-col justify-between p-6">
       <div class="flex-1">

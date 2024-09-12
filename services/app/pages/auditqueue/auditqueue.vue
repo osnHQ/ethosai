@@ -11,7 +11,7 @@
                   <h1
                     class="flex gap-5 self-start text-3xl leading-10 text-zinc-900 max-md:flex-wrap max-md:max-w-full">
                     <span class="flex-auto">Audit Queue</span>
-                    <img loading="lazy" src="public/loading.png" alt="" class="w-10" />
+                    <NuxtImg loading="lazy" src="/loading.png" alt="" class="w-10" />
                   </h1>
                   <button class="justify-center px-6 py-2 text-lg leading-7 text-white bg-blue-500 rounded max-md:px-5"
                     @click="goToCreateConfig">
@@ -37,7 +37,7 @@
 
                 <div class="flex flex-row gap-3 items-center mt-3">
                   <div v-if="fileTypeIcon" class="mt-2">
-                    <img :src="fileTypeIcon" alt="File Type Icon"
+                    <NuxtImg :src="fileTypeIcon" alt="File Type Icon"
                       class="w-16 h-16 object-cover border border-gray-300 rounded-md" />
                   </div>
                   <p v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">Selected file: {{
@@ -59,7 +59,7 @@
           <div class="flex gap-2 flex-grow items-center">
             <div
               class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
-              <img loading="lazy" src="public/search.png" alt="" class="w-5" />
+              <NuxtImg loading="lazy" src="/search.png" alt="" class="w-5" />
               <input v-model="searchQuery" type="text"
                 placeholder="Search for the configurations here (name, tags, category etc.)"
                 class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-2 text-3 w-50" />
@@ -71,7 +71,7 @@
                 <Flatpickr v-model="dateRange" :config="flatpickrConfig"
                   class="grow w-full md:w-auto outline-none focus:outline-none focus:shadow-none" />
 
-                <img loading="lazy" src="public/downarrow.png" alt="" class="shrink-0 w-3.5 aspect-square" />
+                <NuxtImg loading="lazy" src="/downarrow.png" alt="" class="shrink-0 w-3.5 aspect-square" />
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@
 
         <div
           class="flex gap-5 items-start mt-3.5 text-sm leading-6 text-right text-cyan-500 max-md:flex-wrap max-md:max-w-full">
-          <img loading="lazy" src="public/question.png" alt="" class="shrink-0 w-6 aspect-square" />
+          <NuxtImg loading="lazy" src="/question.png" alt="" class="shrink-0 w-6 aspect-square" />
           <p class="flex-auto mt-3">
             Total <span class="font-bold text-cyan-500">551287</span> configs
           </p>
@@ -135,7 +135,7 @@
                 <td class="px-4 py-12">{{ config.lastReviewed }}</td>
                 <td class="px-4 py-10">
                   <div class="flex gap-2">
-                    <img :src="config.submittedBy.avatarUrl" alt="Avatar" class="w-9 aspect-square" />
+                    <NuxtImg :src="config.submittedBy.avatarUrl" alt="Avatar" class="w-9 aspect-square" />
                     <span class="my-auto">{{ config.submittedBy.username }}</span>
                   </div>
                 </td>
@@ -151,7 +151,7 @@
           class="flex gap-1 self-center mt-14 max-w-full text-sm leading-5 whitespace-nowrap text-zinc-400 w-[344px] max-md:mt-10"
           aria-label="Pagination">
           <a href="#" class="flex gap-0.5 text-white">
-            <img loading="lazy" src="public/paginationleft.png" alt="Previous page" class="w-5 h-5 mt-3.5 mr-2" />
+            <NuxtImg loading="lazy" src="/paginationleft.png" alt="Previous page" class="w-5 h-5 mt-3.5 mr-2" />
             <span class="sr-only">Previous page</span>
           </a>
           <a href="#" aria-current="page" class="justify-center items-start px-4 py-3.5 bg-cyan-500 rounded text-white">
@@ -170,7 +170,7 @@
             4
           </a>
           <span class="flex gap-1">
-            <img loading="lazy" src="public/paginationdots.png" alt=""
+            <NuxtImg loading="lazy" src="/paginationdots.png" alt=""
               class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
             <a href="#"
               class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
@@ -182,7 +182,7 @@
             </a>
           </span>
           <a href="#" class="flex gap-0.5 text-zinc-400">
-            <img loading="lazy" src="public/paginationright.png" alt="Next page" class="w-5 h-5 mt-3.5 ml-5" />
+            <NuxtImg loading="lazy" src="/paginationright.png" alt="Next page" class="w-5 h-5 mt-3.5 ml-5" />
             <span class="sr-only">Next page</span>
           </a>
         </nav>

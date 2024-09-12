@@ -1,3 +1,0 @@
-name = "ethos-app"
-compatibility_date = "2024-03-14"
-pages_build_output_dir = "./.nuxt/dist/"

@@ -10,3 +10,4 @@ package-lock.json
 package.json
 .env
 .env.local
+.vitepress

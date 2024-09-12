@@ -15,6 +15,8 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
     '@nuxtjs/sitemap',
+    '@nuxt/content',
+    "@nuxt/image"
   ],
 
   experimental: {
@@ -32,6 +34,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    preset: 'cloudflare-pages',
     esbuild: {
       options: {
         target: 'esnext',

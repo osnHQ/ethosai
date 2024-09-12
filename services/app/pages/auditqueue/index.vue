@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import AuditQueue from "./AuditQueue.vue";
+import AuditQueue from "./auditqueue.vue";
 const color = useColorMode();
 color.value === "light";
 color.preference = "light";

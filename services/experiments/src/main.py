@@ -6,12 +6,12 @@ import openai
 import pymupdf
 import streamlit as st
 import pandas as pd
-import ollama
+# import ollama
 import asyncio
 from functools import partial
-from numpy import dot
-from numpy.linalg import norm
-from ollama import AsyncClient
+# from numpy import dot
+# from numpy.linalg import norm
+# from ollama import AsyncClient
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
 
@@ -169,21 +169,21 @@ Provide concise explanations for each score, focusing on key factors that influe
     return response.choices[0].message.content
 
 
-async def chat_with_model(prompt):
-    message = {"role": "user", "content": prompt}
-    response = await AsyncClient().chat(model="qwen2:1.5b", messages=[message])
-    return response["message"]["content"]
+# async def chat_with_model(prompt):
+#     message = {"role": "user", "content": prompt}
+#     response = await AsyncClient().chat(model="qwen2:1.5b", messages=[message])
+#     return response["message"]["content"]
 
 
-def generate_embedding(prompt):
-    response = ollama.embeddings(model="qwen2:1.5b", prompt=prompt)
-    return response["embedding"]
+# def generate_embedding(prompt):
+#     response = ollama.embeddings(model="qwen2:1.5b", prompt=prompt)
+#     return response["embedding"]
 
 
-def calculate_cosine_similarity(a, b):
-    x = generate_embedding(a)
-    y = generate_embedding(b)
-    return dot(x, y) / (norm(x) * norm(y))
+# def calculate_cosine_similarity(a, b):
+#     x = generate_embedding(a)
+#     y = generate_embedding(b)
+#     return dot(x, y) / (norm(x) * norm(y))
 
 
 def compare_sentences_fuzzy(x, y):
@@ -213,7 +213,7 @@ def check_partial_match(x, y):
 
 def compare_sentences(x, y, context=""):
     return {
-        "cosine": calculate_cosine_similarity(x, y),
+        # "cosine": calculate_cosine_similarity(x, y),
         "fuzzy": compare_sentences_fuzzy(x, y),
         "exact": check_exact_match(x, y),
         "includes": check_partial_match(x, y),
@@ -223,9 +223,9 @@ def compare_sentences(x, y, context=""):
 
 def flatten_similarity_results(similarity_dict):
     flattened = {
-        "Cosine_Similarity": similarity_dict["cosine"],
-        "Exact_Match": similarity_dict["exact"],
+        # "Cosine_Similarity": similarity_dict["cosine"],
         "Fuzzy_Comparison": similarity_dict["fuzzy"],
+        "Exact_Match": similarity_dict["exact"],
         "Includes_Match": similarity_dict["includes"],
     }
 
@@ -266,7 +266,7 @@ async def process_questions(jsonl_data, context=""):
     results_df = pd.DataFrame(columns=columns)
 
     table_container = st.empty()
-    
+
     for pair, i in zip(jsonl_data, range(len(jsonl_data))):
         response = await generate_model_answer(f"{context} {pair["question"]}")
         similarity = compare_sentences(response, pair["answer"], context=context)
@@ -278,7 +278,7 @@ async def process_questions(jsonl_data, context=""):
             "Expected_Answer": pair["answer"],
             **flattened_similarity,
         }
-        
+
         results_df = pd.concat([results_df, pd.DataFrame([result])], ignore_index=True)
 
         table_container.table(results_df)

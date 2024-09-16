@@ -1,0 +1,114 @@
+{
+    "configs": [
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Best Movies of 21st Century",
+            "LLMs": "public/llms-image1.png",
+            "LLMName": "GPT-4o",
+            "status": "Pending",
+            "lastAccessed": "2023-05-15",
+            "accuracy": "56%",
+            "costOfRunningEval": "$150",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Popular Music Artists",
+            "LLMs": "public/llms-image2.png",
+            "LLMName": "GPT-4o",
+            "status": "Audited",
+            "lastAccessed": "2024-03-12",
+            "accuracy": "92%",
+            "costOfRunningEval": "$320",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Famous Historical Figures",
+            "LLMs": "public/llms-image3.png",
+            "LLMName": "GPT-4o",
+            "status": "Audited",
+            "lastAccessed": "2023-07-18",
+            "accuracy": "88%",
+            "costOfRunningEval": "$410",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Top 10 Programming Languages",
+            "LLMs": "public/llms-image4.png",
+            "LLMName": "Llama2",
+            "status": "Pending",
+            "lastAccessed": "2023-05-15",
+            "accuracy": "N/A",
+            "costOfRunningEval": "$230",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Best-Selling Books of All Time",
+            "LLMs": "public/llms-image5.png",
+            "LLMName": "GPT-4o",
+            "status": "Audited",
+            "lastAccessed": "2024-02-21",
+            "accuracy": "94%",
+            "costOfRunningEval": "$280",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Most Popular Tourist Destinations",
+            "LLMs": "public/llms-image6.png",
+            "LLMName": "Claude 2",
+            "status": "Pending",
+            "lastAccessed": "2023-05-15",
+            "accuracy": "N/A",
+            "costOfRunningEval": "$360",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Top 100 Movies on IMDb",
+            "LLMs": "public/llms-image7.png",
+            "LLMName": "GPT-4o",
+            "status": "Audited",
+            "lastAccessed": "2024-01-15",
+            "accuracy": "90%",
+            "costOfRunningEval": "$500",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Best-Selling Video Games of All Time",
+            "LLMs": "public/llms-image8.png",
+            "LLMName": "Llama2",
+            "status": "Pending",
+            "lastAccessed": "2023-05-15",
+            "accuracy": "N/A",
+            "costOfRunningEval": "$600",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Most Popular Social Media Platforms",
+            "LLMs": "public/llms-image9.png",
+            "LLMName": "Llama2",
+            "status": "Audited",
+            "lastAccessed": "2024-03-29",
+            "accuracy": "85%",
+            "costOfRunningEval": "$450",
+            "action": "view"
+        },
+        {
+            "evalID": "MIS20200911",
+            "configFileName": "Top 10 Most Expensive Cars in the World",
+            "LLMs": "public/llms-image10.png",
+            "LLMName": "Llama2",
+            "status": "Pending",
+            "lastAccessed": "2023-05-15",
+            "accuracy": "N/A",
+            "costOfRunningEval": "$710",
+            "action": "view"
+        }
+    ]
+}

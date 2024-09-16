@@ -1,0 +1,1 @@
+ALTER TABLE "configs" ADD COLUMN "file_contents" text DEFAULT 'No file uploaded' NOT NULL;

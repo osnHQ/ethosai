@@ -25,11 +25,12 @@ export const configs = pgTable('configs', {
   category: text('category').notNull(),
   tags: json('tags').notNull(),
   reviewStatus: text('review_status').notNull(),
-  rating: numeric('rating').notNull(),
-  reviews: json('reviews').notNull(),
+  rating: integer('rating').notNull().default(0), 
   dateSubmitted: timestamp('date_submitted').notNull(),
   lastReviewed: timestamp('last_reviewed').notNull(),
   submittedBy: json('submitted_by').notNull(),
+  qas: json('qas').notNull().default([]),
+  fileContents: text('file_contents').notNull().default('No file uploaded'), 
 });
 
 export const models = pgTable('models', {

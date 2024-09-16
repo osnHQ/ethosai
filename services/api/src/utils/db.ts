@@ -2,15 +2,23 @@ import { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { models, configs } from "../db/schema";
 import { eq } from "drizzle-orm";
 
+type QAPair = {
+    question: string;
+    answer: string;
+};
 type Config = {
-    id: number;
+    id?: number;
     name: string;
     category: string;
     tags: string[];
     reviewStatus: string;
     dateSubmitted: Date;
     lastReviewed: Date;
-    submittedBy: Date;
+    submittedBy: string;
+    rating?: number;    
+    reviews?: string;  
+    qas: QAPair[]; 
+    fileContents: string;
 }
 
 export async function createConfig(db: NeonHttpDatabase, config: Config) {
@@ -22,7 +30,11 @@ export async function createConfig(db: NeonHttpDatabase, config: Config) {
         dateSubmitted: config.dateSubmitted,
         lastReviewed: config.lastReviewed,
         submittedBy: config.submittedBy,
-    });
+        rating: config.rating || 0,  
+        qas: config.qas.length ? config.qas : [],  
+        fileContents: config.fileContents ?? "No file uploaded",
+        });
+        
 }
 
 export async function getModelByName(db: NeonHttpDatabase, modelName: string) {

@@ -1,0 +1,1 @@
+ALTER TABLE "configs" ADD COLUMN "qas" json DEFAULT '[]'::json NOT NULL;

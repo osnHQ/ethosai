@@ -162,8 +162,9 @@
 
 
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
-                <div v-for="(qa, index) in questionAnswerPairs" :key="index">
+                <div v-for="(qa, index) in questionAnswerPairs" :key="index"
                   class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-light rounded-md shadow-md">
+
                   <div class="w-full flex flex-col items-start justify-start gap-1">
                     <b class="text-gray-700">Q{{ index + 1 }}. {{ qa.question }}</b>
                     <div class="flex ">

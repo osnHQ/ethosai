@@ -162,7 +162,7 @@
 
 
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
-                <div v-for="(qa, index) in qas" :key="index"
+                <div v-for="(qa, index) in questionAnswerPairs" :key="index">
                   class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-light rounded-md shadow-md">
                   <div class="w-full flex flex-col items-start justify-start gap-1">
                     <b class="text-gray-700">Q{{ index + 1 }}. {{ qa.question }}</b>
@@ -224,7 +224,6 @@
 </template>
 
 
-
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
@@ -243,7 +242,7 @@ interface ConfigResponse {
 export default defineComponent({
   data() {
     return {
-      qas: [] as QA[],
+      questionAnswerPairs: [] as QA[],
       newQuestion: '',
       newAnswer: '',
       selectedFileName: '',
@@ -252,11 +251,12 @@ export default defineComponent({
         message: '',
         type: '',
       },
-      configFileName: '',
-      description: '',
-      inputText: '',
-      tags: [] as string[],
-      uploadedFile: null as File | null,
+      config: {
+        description: '',
+        inputText: '',
+        tags: [] as string[],
+        uploadedFile: null as File | null,
+      },
     };
   },
   setup() {
@@ -265,13 +265,13 @@ export default defineComponent({
   },
   methods: {
     addTag() {
-      if (this.inputText.trim() !== '') {
-        this.tags.push(this.inputText.trim());
-        this.inputText = '';
+      if (this.config.inputText.trim() !== '') {
+        this.config.tags.push(this.config.inputText.trim());
+        this.config.inputText = '';
       }
     },
     removeTag(index: number) {
-      this.tags.splice(index, 1);
+      this.config.tags.splice(index, 1);
     },
     showNotification(message: string, type: 'success' | 'error') {
       this.notification.message = message;
@@ -283,7 +283,7 @@ export default defineComponent({
     },
     addQA() {
       if (this.newQuestion && this.newAnswer) {
-        this.qas.push({ question: this.newQuestion, answer: this.newAnswer });
+        this.questionAnswerPairs.push({ question: this.newQuestion, answer: this.newAnswer });
         this.newQuestion = '';
         this.newAnswer = '';
         this.showNotification('Q&A added successfully!', 'success');
@@ -292,13 +292,13 @@ export default defineComponent({
       }
     },
     removeQA(index: number) {
-      this.qas.splice(index, 1);
+      this.questionAnswerPairs.splice(index, 1);
     },
     editQA(index: number) {
-      const qa = this.qas[index];
+      const qa = this.questionAnswerPairs[index];
       this.newQuestion = qa.question;
       this.newAnswer = qa.answer;
-      this.qas.splice(index, 1);
+      this.questionAnswerPairs.splice(index, 1);
     },
     triggerFileInput() {
       const fileInput = this.$refs.fileInput as HTMLInputElement | null;
@@ -310,7 +310,7 @@ export default defineComponent({
       if (file) {
         this.selectedFileName = file.name;
         this.fileTypeIcon = this.getFileTypeIcon(file.type);
-        this.uploadedFile = file;
+        this.config.uploadedFile = file;
       }
     },
     getFileTypeIcon(mimeType: string): string {
@@ -324,24 +324,24 @@ export default defineComponent({
     resetForm() {
       this.newQuestion = '';
       this.newAnswer = '';
-      this.qas = [];
+      this.questionAnswerPairs = [];
       this.selectedFileName = '';
       this.fileTypeIcon = '';
-      this.configFileName = '';
-      this.description = '';
-      this.tags = [];
-      this.uploadedFile = null;
+      this.config = {
+        description: '',
+        inputText: '',
+        tags: [],
+        uploadedFile: null,
+      };
     },
     saveDraft() {
       const draftData = {
-        qas: this.qas,
+        questionAnswerPairs: this.questionAnswerPairs,
         newQuestion: this.newQuestion,
         newAnswer: this.newAnswer,
         selectedFileName: this.selectedFileName,
         fileTypeIcon: this.fileTypeIcon,
-        configFileName: this.configFileName,
-        description: this.description,
-        tags: this.tags,
+        config: this.config,  // Now saving the entire config object
       };
       localStorage.setItem('draftData', JSON.stringify(draftData));
       this.showNotification('Draft saved successfully!', 'success');
@@ -349,31 +349,35 @@ export default defineComponent({
     loadDraft() {
       const draftData = JSON.parse(localStorage.getItem('draftData') || '{}');
       if (draftData) {
-        this.qas = draftData.qas || [];
+        this.questionAnswerPairs = draftData.questionAnswerPairs || [];
         this.newQuestion = draftData.newQuestion || '';
         this.newAnswer = draftData.newAnswer || '';
         this.selectedFileName = draftData.selectedFileName || '';
         this.fileTypeIcon = draftData.fileTypeIcon || '';
-        this.configFileName = draftData.configFileName || '';
-        this.description = draftData.description || '';
-        this.tags = draftData.tags || [];
+        if (draftData.config) {
+          this.config = {
+            description: draftData.config.description || '',
+            inputText: draftData.config.inputText || '',
+            tags: draftData.config.tags || [],
+            uploadedFile: draftData.config.uploadedFile || null,
+          };
+        }
       }
     },
     async submitForAudit() {
       try {
-        if (!this.uploadedFile) {
+        if (!this.config.uploadedFile) {
           throw new Error('No file selected for upload');
         }
 
         const formData = new FormData();
-        formData.append('file', this.uploadedFile);
+        formData.append('file', this.config.uploadedFile);
 
         const payload = {
-
           name: this.configFileName,
-          category: this.description,
-          tags: this.tags,
-          qas: this.qas,
+          category: this.config.description,
+          tags: this.config.tags,
+          questionAnswerPairs: this.questionAnswerPairs,
           reviewStatus: 'Pending',
           dateSubmitted: new Date().toISOString(),
           lastReviewed: null,
@@ -381,7 +385,7 @@ export default defineComponent({
         };
 
         formData.append('metadata', JSON.stringify(payload));
-        formData.append('qas', JSON.stringify(this.qas));
+        formData.append('questionAnswerPairs', JSON.stringify(this.questionAnswerPairs));
 
         const apiUrl = 'http://localhost:8787/configs';
 
@@ -394,7 +398,6 @@ export default defineComponent({
         const data: ConfigResponse = await response.json();
 
         if (data.id) {
-          console.log('Saving configId to local storage:', data.id);
           localStorage.setItem('configId', data.id.toString());
 
           this.router.push({ name: 'llmselector' }).then(() => {

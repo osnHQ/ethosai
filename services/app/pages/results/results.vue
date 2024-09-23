@@ -14,18 +14,14 @@
                                         class="flex gap-5 self-start text-3xl leading-10 text-zinc-900 max-md:flex-wrap max-md:max-w-full">
                                         <span class="flex-auto">Recent Results</span>
                                     </h1>
-
                                 </div>
                                 <p class="mt-2 text-base leading-7 text-neutral-800 max-md:max-w-full">
                                     Explore the latest evaluation results for your LLM tests. </p>
                             </div>
                         </div>
-
                     </div>
 
-
-                    <div class="flex w-full h-full border border-gray-100 rounded-lg shadow-md"
-                        style="background-color: #fbfbfb;">
+                    <div class="flex w-full h-full border border-gray-100 rounded-lg shadow-md bg-gray-50">
                         <!-- Left Column (30%) -->
                         <div class="w-1/3 p-4 space-y-4">
                             <!-- Card 1 -->
@@ -35,7 +31,6 @@
                                     <p class="text-xl font-bold">56%</p>
                                     <p class="text-xs text-green-600">↓ 5% since last week</p>
                                 </div>
-
                                 <div class="w-1/2 h-full ml-2">
                                     <BarChartC :barColor="'#8353E2'" />
                                 </div>
@@ -48,13 +43,10 @@
                                     <p class="text-xl font-bold">56%</p>
                                     <p class="text-xs text-red-600">↓ 5% since last week</p>
                                 </div>
-
                                 <div class="w-1/2 h-full ml-2">
                                     <BarChartC :barColor="'#4069E5'" />
                                 </div>
                             </div>
-
-
 
                             <!-- Card 3 -->
                             <div class="bg-red-100 p-3 rounded-lg shadow-md flex items-center justify-between">
@@ -63,12 +55,10 @@
                                     <p class="text-xl font-bold">56%</p>
                                     <p class="text-xs text-green-600">↓ 5% since last week</p>
                                 </div>
-
                                 <div class="w-1/2 h-full ml-2">
                                     <BarChartC :barColor="'#E05858'" />
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="w-2/3 p-4">
@@ -82,12 +72,10 @@
                         <div
                             class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
                             <img loading="lazy" src="public/search.png" alt="" class="w-5" />
-                            <input v-model="searchQuery" type="text" placeholder="Search by the Config File Names."
+                            <input v-model="searchQuery" type="text" placeholder="Search by Config File Names."
                                 class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-2 text-3 w-50" />
                         </div>
-                        <div class="flex items-center text-zinc-900 flex-grow pl-2 ">
-
-
+                        <div class="flex items-center text-zinc-900 flex-grow pl-2">
                             <select v-model="selectedLLM"
                                 class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
                                 <option value="">Filter by LLMs</option>
@@ -95,24 +83,19 @@
                                     {{ llm }}
                                 </option>
                             </select>
-
-
                         </div>
                         <div class="flex">
-                            <label for="dateRange" class="text-[#323842] ">Select date range</label>
+                            <label for="dateRange" class="text-[#323842]">Select date range</label>
                             <div
                                 class="flex items-center mr-2 w-3/4 justify-center pr-2 py-2 bg-white rounded border border-solid border-neutral-300 text-zinc-900">
                                 <Flatpickr v-model="dateRange" :config="flatpickrConfig"
                                     class="grow w-full md:w-auto outline-none focus:outline-none focus:shadow-none" />
-
                                 <img loading="lazy" src="public/downarrow.png" alt=""
                                     class="shrink-0 w-3.5 aspect-square" />
                             </div>
                         </div>
                     </div>
-
                 </div>
-
 
                 <div
                     class="flex gap-5 items-start mt-3.5 text-sm leading-6 text-right text-cyan-500 max-md:flex-wrap max-md:max-w-full">
@@ -128,7 +111,7 @@
                             <tr class="font-semibold text-gray-600 bg-gray-50">
                                 <th class="px-4 py-4 font-bold text-left">Eval ID</th>
                                 <th class="px-4 py-4 font-bold text-left">Config File Name</th>
-                                <th class="px-4 py-4 font-bold text-left">LLMs</th>
+                                <th class="px-4 py-4 font-bold text-left">LLM Logo</th>
                                 <th class="px-4 py-4 font-bold text-left">Status</th>
                                 <th class="px-4 py-5 font-bold text-left">Last Accessed</th>
                                 <th class="px-4 py-5 font-bold text-left">Accuracy</th>
@@ -141,7 +124,7 @@
                                 <td class="px-4 py-4 font-bold">{{ config.evalID }}</td>
                                 <td class="px-4 py-4">{{ config.configFileName }}</td>
                                 <td class="px-4 py-4">
-                                    <img :src="config.LLMs" alt="LLMs Image" class="w-10 aspect-square" />
+                                    <img :src="config.LLMLogo" alt="LLM Logo" class="w-10 aspect-square" />
                                 </td>
                                 <td class="px-4 py-4">{{ config.status }}</td>
                                 <td class="px-4 py-4">{{ config.lastAccessed }}</td>
@@ -201,21 +184,22 @@
 </template>
 
 
+
 <script lang="ts">
-import BarChartC from '@/components/BarChart.vue'; 
+import BarChartC from '@/components/BarChart.vue';
 import ky from 'ky';
 import { defineComponent, computed, ref, onMounted } from 'vue';
 import type { Ref } from 'vue';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import Flatpickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css'; 
+import 'flatpickr/dist/flatpickr.css';
 
 interface Config {
     evalID: string;
     configFileName: string;
-    LLMs: string;
-    LLMName: string; 
+    LLMLogo: string;
+    LLMName: string;
     status: string;
     lastAccessed: string;
     accuracy: string;
@@ -232,10 +216,10 @@ export default defineComponent({
         const configs = ref<Config[]>([]);
         const searchQuery = ref('');
         const dateRange = ref(['2019/04/14', '2024/06/14']);
-        const selectedLLM = ref(''); 
-        const llms = ref<string[]>([]); 
+        const selectedLLM = ref('');
+        const llmLogos = ref<string[]>([]);
         const flatpickrConfig = ref({
-            mode: 'range' as 'range', 
+            mode: 'range' as 'range',
             dateFormat: 'Y/m/d',
             defaultDate: ['2019/04/14', '2024/06/14'],
         });
@@ -247,7 +231,7 @@ export default defineComponent({
             const end = endDate ? new Date(endDate) : new Date('9999-12-31');
 
             return configs.value.filter(config => {
-                const matchesLLM = selectedLLM.value ? config.LLMName === selectedLLM.value : true;
+                const matchesLLM = !selectedLLM.value || config.LLMName === selectedLLM.value;
                 const matchesSearchQuery = config.configFileName
                     .toLowerCase()
                     .includes(searchQuery.value.toLowerCase());
@@ -256,6 +240,7 @@ export default defineComponent({
 
                 return matchesLLM && matchesSearchQuery && matchesDateRange;
             });
+
         });
 
         const fetchConfigs = async () => {
@@ -263,13 +248,11 @@ export default defineComponent({
                 const response = await ky.get('/mock-config2.json').json<{ configs: Config[] }>();
                 configs.value = response.configs;
 
-                const llmSet = new Set<string>();
+                const logoSet = new Set<string>();
                 configs.value.forEach(config => {
-                    llmSet.add(config.LLMName); 
+                    logoSet.add(config.LLMLogo);
                 });
-                llms.value = Array.from(llmSet); 
-
-                console.log('Configs fetched successfully:', configs.value);
+                llmLogos.value = Array.from(logoSet);
             } catch (error) {
                 console.error('Failed to fetch configs:', error);
             }
@@ -338,8 +321,8 @@ export default defineComponent({
             flatpickrConfig,
             uPlotContainer,
             filteredConfigs,
-            selectedLLM, 
-            llms, 
+            selectedLLM,
+            llmLogos,
             initChart,
         };
     },

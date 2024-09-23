@@ -125,16 +125,13 @@ evaluationRouter.post('/evaluateCsv',
   .where(sql`${configs.id} = ${configId}`)
   .limit(1);
 
-  console.log('DB Query Result:', result); 
 const config = result[0];
     
     
       if (!config) {
-        console.log('Config not found');
         return c.json({ error: 'Configuration not found' }, 404);
       }
 
-      console.log('Config found:', config);
 
       const content = config.fileContents;
       const rawRecords = parseCSV(content); 

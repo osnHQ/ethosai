@@ -119,10 +119,10 @@ generalRouter.post('/configs', async (c: Context) => {
         const db = createDbConnection(c.env.DATABASE_URL);
         const formData = await c.req.formData();
         const metadata = JSON.parse(formData.get('metadata') as string);
-        const qas = JSON.parse(formData.get('qas') as string);
+        const questionAnswerPairs = JSON.parse(formData.get('questionAnswerPairs') as string);
         const uploadedFile = formData.get('file') as File;
 
-        if (!metadata || !qas || !uploadedFile) {
+        if (!metadata || !questionAnswerPairs || !uploadedFile) {
             return c.json({ error: "Missing required fields or file" }, 400);
         }
 
@@ -138,7 +138,7 @@ generalRouter.post('/configs', async (c: Context) => {
             submittedBy: metadata.submittedBy,
             rating: metadata.rating || 0,
             reviews: metadata.reviews || "",
-            qas: qas,
+            questionAnswerPairs: questionAnswerPairs,  // Updated field name
             fileContents: fileContent, 
         };
 

@@ -57,7 +57,6 @@ export default {
 
     onMounted(() => {
       configId.value = localStorage.getItem('configId'); 
-      console.log('Config ID from local storage:', configId.value);
     });
     const selectedLlm = ref(null);
 
@@ -104,7 +103,6 @@ export default {
         model: "gpt-4o-mini", 
       };
 
-      console.log('Payload:', payload);
 
       try {
         const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
@@ -117,7 +115,6 @@ export default {
 
         if (response.ok) {
           const result = await response.json();
-          console.log('Evaluation result:', result);
         } else {
           console.error('Failed to run evaluation');
         }

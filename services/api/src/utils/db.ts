@@ -17,7 +17,7 @@ type Config = {
     submittedBy: string;
     rating?: number;    
     reviews?: string;  
-    qas: QAPair[]; 
+    questionAnswerPairs: QAPair[]; 
     fileContents: string;
 }
 
@@ -31,7 +31,7 @@ export async function createConfig(db: NeonHttpDatabase, config: Config) {
         lastReviewed: config.lastReviewed,
         submittedBy: config.submittedBy,
         rating: config.rating || 0,  
-        qas: config.qas.length ? config.qas : [],  
+        questionAnswerPairs: config.questionAnswerPairs.length ? config.questionAnswerPairs : [],
         fileContents: config.fileContents ?? "No file uploaded",
         });
         

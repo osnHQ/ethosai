@@ -29,7 +29,7 @@ export const configs = pgTable('configs', {
   dateSubmitted: timestamp('date_submitted').notNull(),
   lastReviewed: timestamp('last_reviewed').notNull(),
   submittedBy: json('submitted_by').notNull(),
-  qas: json('qas').notNull().default([]),
+  questionAnswerPairs: json('questionAnswerPairs').notNull().default([]), 
   fileContents: text('file_contents').notNull().default('No file uploaded'), 
 });
 

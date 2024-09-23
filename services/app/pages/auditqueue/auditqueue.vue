@@ -196,7 +196,7 @@
 import ky from 'ky';
 import { defineComponent, computed } from 'vue';
 import Flatpickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css'; // Optional: Use a different theme
+import 'flatpickr/dist/flatpickr.css'; 
 
 interface Config {
   configFileName: string;
@@ -240,12 +240,9 @@ export default defineComponent({
     filteredConfigs() {
       const [startDate, endDate] = this.dateRange;
     
-    // If dateRange is undefined or improperly formatted, default to a wide range
     const start = startDate ? new Date(startDate) : new Date('0000-01-01');
     const end = endDate ? new Date(endDate) : new Date('9999-12-31');
 
-    // Add a debug log to check date ranges
-    console.log('Selected Date Range:', start, end);
 
       return this.configs.filter(config => {
         const matchesCategory = this.selectedCategory ? config.category === this.selectedCategory : true;
@@ -277,7 +274,6 @@ export default defineComponent({
         this.categories = Array.from(categoriesSet);
         this.reviewStatuses = Array.from(reviewStatusesSet);
 
-        console.log(this.categories, this.reviewStatuses);
 
       } catch (error) {
         console.error('Failed to fetch configs:', error);
@@ -299,7 +295,6 @@ export default defineComponent({
       if (file) {
         this.selectedFileName = file.name;
         this.fileTypeIcon = this.getFileTypeIcon(file.type);
-        console.log('Selected file:', file);
       }
     },
 

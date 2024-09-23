@@ -1,0 +1,1 @@
+ALTER TABLE "configs" RENAME COLUMN "qas" TO "question_answer_pairs";

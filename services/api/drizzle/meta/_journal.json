@@ -15,6 +15,41 @@
       "when": 1724322291947,
       "tag": "0001_legal_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1725798117361,
+      "tag": "0002_noisy_tomas",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1725995823038,
+      "tag": "0003_ordinary_joshua_kane",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1726032845545,
+      "tag": "0004_married_lake",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1727060211182,
+      "tag": "0005_small_shiver_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1727061065517,
+      "tag": "0006_glorious_red_hulk",
+      "breakpoints": true
     }
   ]
 }

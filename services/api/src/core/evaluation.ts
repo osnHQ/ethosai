@@ -7,6 +7,8 @@ import { evaluateQuestion } from "./process";
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
 import { generateReport } from "../utils/openai";
+import { configs } from "../db/schema";
+import { sql } from 'drizzle-orm';
 
 export type Env = {
   DATABASE_URL: string;
@@ -106,24 +108,39 @@ evaluationRouter.post('/evaluateBatch',
 );
 
 evaluationRouter.post('/evaluateCsv',
-  zValidator('form', z.object({
-    file: z.instanceof(File),
-    model: z.string(),
+  zValidator('json', z.object({
+    configId: z.number(),   
+    model: z.string(),    
   })),
   async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
     const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-    
-    const { file, model } = c.req.valid('form');
-    const content = await file.text();
-    const rawRecords = parseCSV(content);
 
-    const records = rawRecords.map((record: Record<string, string>) => ({
-      content: record['content'],
-      answer: record['answer'],
-    }));
+    const { configId, model } = c.req.valid('json');
 
     try {
+      const result = await db
+  .select()
+  .from(configs)
+  .where(sql`${configs.id} = ${configId}`)
+  .limit(1);
+
+const config = result[0];
+    
+    
+      if (!config) {
+        return c.json({ error: 'Configuration not found' }, 404);
+      }
+
+
+      const content = config.fileContents;
+      const rawRecords = parseCSV(content); 
+
+      const records = rawRecords.map((record: Record<string, string>) => ({
+        content: record['content'],
+        answer: record['answer'],
+      }));
+
       const recordsWithIds = await getRecordsWithIds(db, records);
 
       const results = await Promise.all(
@@ -136,10 +153,11 @@ evaluationRouter.post('/evaluateCsv',
       return c.json(results.map((result, index) => ({ ...result, ...JSON.parse(reports[index]) })));
 
     } catch (error) {
-      console.error(error);
+      console.error("Error evaluating CSV:", error);
       return new HTTPException(500, { message: "Batch CSV evaluation failed" }).getResponse();
     }
   }
 );
+
 
 export default evaluationRouter;

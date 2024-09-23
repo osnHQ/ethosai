@@ -4,7 +4,8 @@
             Join the World's Largest AI Auditing Network
         </div>
 
-        <div class="mx-auto px-4 pt-2 pb-4 max-w-5xl font-medium text-3xl text-center text-light md:text-4xl leading-relaxed">
+        <div
+            class="mx-auto px-4 pt-2 pb-4 max-w-5xl font-medium text-3xl text-center text-light md:text-4xl leading-relaxed">
             Terrabytes of labeled eval files to ensure your AI models are unbiased, accurate, and fully accountable
         </div>
 

@@ -52,9 +52,14 @@ import ProgressBar from './ProgressBar.vue';
 const props = defineProps({
   result: {
     type: Object,
-    required: true,
+    default: () => ({
+      accuracy: 0,
+      relevance: 0,
+      bias: 0,
+    }),
   },
 });
+
 
 const accuracy = ref(props.result.accuracy || 0);
 const relevance = ref(props.result.relevance || 0);

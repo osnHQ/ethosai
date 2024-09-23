@@ -21,7 +21,7 @@
 
           <div class="space-y-10">
 
-            
+
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
               <div>
@@ -49,6 +49,7 @@
 
               <input ref="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
                 @change="handleFileUpload" />
+
 
               <div class="text-sm text-gray-500 dark:text-gray-400">
                 <p>JSON, CSV, or TXT supported</p>
@@ -83,7 +84,6 @@
               <div class="w-full flex flex-row items-start justify-between pt-1 pb-1.5 pr-3 gap-5">
                 <input
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
-
                   placeholder="Enter Category" type="text" />
               </div>
             </div>
@@ -94,8 +94,8 @@
             <div class="w-[1036px] flex flex-col items-start justify-start pt-0 px-0 pb-4 gap-8">
               <div class="w-[1010px] flex flex-col items-start justify-start gap-1">
 
-                
-                
+
+
                 <b class="text-gray-700">Enter relevant tags</b>
                 <div class="w-full flex flex-col items-start justify-start gap-10 text-gray-200 mq450:gap-5">
                   <div class="w-full flex flex-row flex-wrap items-start justify-start gap-1">
@@ -104,16 +104,16 @@
                       placeholder="Input text" type="text" />
                     <div
                       class="flex-1 flex flex-row items-start text-[#34270D] justify-start gap-1 min-w-[333px] max-w-full mq450:flex-wrap">
-                      <div v-for="(tag, index) in tags"
-                      :key="index" class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag }}</span>
-                      <button
-                      @click="removeTag(index)"
-                      class="ml-2 text-red-500 hover:text-red-700">x</button></div>
+                      <div v-for="(tag, index) in tags" :key="index"
+                        class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag
+                          }}</span>
+                        <button @click="removeTag(index)" class="ml-2 text-red-500 hover:text-red-700">x</button>
+                      </div>
 
 
                     </div>
                   </div>
-                  
+
                   <div
                     class="w-[680px] flex flex-row flex-wrap items-start justify-start gap-12 text-lg text-gray-400 mq450:gap-7">
 
@@ -121,7 +121,7 @@
 
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
-                      <NuxtImg class="w-5" loading="lazy" alt="" src="/info.png" />
+                      <img class="w-5" loading="lazy" alt="" src="public/info.png" />
                     </div>
                   </div>
                 </div>
@@ -162,8 +162,9 @@
 
 
               <div class="w-full flex flex-wrap items-start justify-start gap-5 ">
-                <div v-for="(qa, index) in qas" :key="index"
+                <div v-for="(qa, index) in questionAnswerPairs" :key="index"
                   class="w-[30%] flex flex-col items-start justify-start gap-3 p-4 bg-light rounded-md shadow-md">
+
                   <div class="w-full flex flex-col items-start justify-start gap-1">
                     <b class="text-gray-700">Q{{ index + 1 }}. {{ qa.question }}</b>
                     <div class="flex ">
@@ -224,9 +225,9 @@
 </template>
 
 
-
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 import ky from 'ky';
 
 interface QA {
@@ -234,50 +235,56 @@ interface QA {
   answer: string;
 }
 
+interface ConfigResponse {
+  message: string;
+  id: number;
+}
+
 export default defineComponent({
   data() {
     return {
-      qas: [] as QA[],
+      questionAnswerPairs: [] as QA[],
       newQuestion: '',
       newAnswer: '',
       selectedFileName: '',
       fileTypeIcon: '',
       notification: {
         message: '',
-        type: '', // 'success' or 'error'
+        type: '',
       },
-      configFileName: '', 
-      description: '',
-      inputText: '',
-      tags: [] as string[],
+      config: {
+        description: '',
+        inputText: '',
+        tags: [] as string[],
+        uploadedFile: null as File | null,
+      },
     };
   },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
   methods: {
-    
     addTag() {
-      if (this.inputText.trim() !== '') {
-        this.tags.push(this.inputText.trim());
-        this.inputText = '';
+      if (this.config.inputText.trim() !== '') {
+        this.config.tags.push(this.config.inputText.trim());
+        this.config.inputText = '';
       }
     },
-
-    
     removeTag(index: number) {
-      this.tags.splice(index, 1); },
-      
+      this.config.tags.splice(index, 1);
+    },
     showNotification(message: string, type: 'success' | 'error') {
       this.notification.message = message;
       this.notification.type = type;
-
       setTimeout(() => {
         this.notification.message = '';
         this.notification.type = '';
       }, 8000);
     },
-
     addQA() {
       if (this.newQuestion && this.newAnswer) {
-        this.qas.push({ question: this.newQuestion, answer: this.newAnswer });
+        this.questionAnswerPairs.push({ question: this.newQuestion, answer: this.newAnswer });
         this.newQuestion = '';
         this.newAnswer = '';
         this.showNotification('Q&A added successfully!', 'success');
@@ -285,110 +292,123 @@ export default defineComponent({
         this.showNotification('Please enter both a question and an answer.', 'error');
       }
     },
-
     removeQA(index: number) {
-      this.qas.splice(index, 1);
+      this.questionAnswerPairs.splice(index, 1);
     },
-
     editQA(index: number) {
-      const qa = this.qas[index];
+      const qa = this.questionAnswerPairs[index];
       this.newQuestion = qa.question;
       this.newAnswer = qa.answer;
-      this.qas.splice(index, 1); 
+      this.questionAnswerPairs.splice(index, 1);
     },
-
     triggerFileInput() {
       const fileInput = this.$refs.fileInput as HTMLInputElement | null;
       fileInput?.click();
     },
-
     handleFileUpload(event: Event) {
       const input = event.target as HTMLInputElement;
       const file = input.files?.[0];
       if (file) {
         this.selectedFileName = file.name;
-        this.fileTypeIcon = this.getFileTypeIcon(file.type); 
-
-        console.log('Selected file:', file);
+        this.fileTypeIcon = this.getFileTypeIcon(file.type);
+        this.config.uploadedFile = file;
       }
     },
-
-
     getFileTypeIcon(mimeType: string): string {
       const fileIcons: Record<string, string> = {
-
         'application/json': '/json_icon.png',
         'text/csv': '/csv_icon.png',
         'text/plain': '/txt_icon.png',
       };
-
-
       return fileIcons[mimeType] || '';
-
     },
-
     resetForm() {
       this.newQuestion = '';
       this.newAnswer = '';
-      this.qas = [];
+      this.questionAnswerPairs = [];
       this.selectedFileName = '';
-
       this.fileTypeIcon = '';
-      this.configFileName = '';
-      this.description = '';
+      this.config = {
+        description: '',
+        inputText: '',
+        tags: [],
+        uploadedFile: null,
+      };
     },
-
     saveDraft() {
       const draftData = {
-        qas: this.qas,
+        questionAnswerPairs: this.questionAnswerPairs,
         newQuestion: this.newQuestion,
         newAnswer: this.newAnswer,
         selectedFileName: this.selectedFileName,
         fileTypeIcon: this.fileTypeIcon,
-        configFileName: this.configFileName, 
-        description: this.description, 
-          };
+        config: this.config,  // Now saving the entire config object
+      };
       localStorage.setItem('draftData', JSON.stringify(draftData));
       this.showNotification('Draft saved successfully!', 'success');
     },
-
     loadDraft() {
       const draftData = JSON.parse(localStorage.getItem('draftData') || '{}');
       if (draftData) {
-        this.qas = draftData.qas || [];
+        this.questionAnswerPairs = draftData.questionAnswerPairs || [];
         this.newQuestion = draftData.newQuestion || '';
         this.newAnswer = draftData.newAnswer || '';
         this.selectedFileName = draftData.selectedFileName || '';
         this.fileTypeIcon = draftData.fileTypeIcon || '';
-        this.configFileName = draftData.configFileName || ''; 
-        this.description = draftData.description || ''; 
-
-
+        if (draftData.config) {
+          this.config = {
+            description: draftData.config.description || '',
+            inputText: draftData.config.inputText || '',
+            tags: draftData.config.tags || [],
+            uploadedFile: draftData.config.uploadedFile || null,
+          };
+        }
       }
     },
-
     async submitForAudit() {
-
       try {
+        if (!this.config.uploadedFile) {
+          throw new Error('No file selected for upload');
+        }
+
+        const formData = new FormData();
+        formData.append('file', this.config.uploadedFile);
+
         const payload = {
-          qas: this.qas,
-          newQuestion: this.newQuestion,
-          newAnswer: this.newAnswer,
-          selectedFileName: this.selectedFileName,
-          fileTypeIcon: this.fileTypeIcon,
+          name: this.configFileName,
+          category: this.config.description,
+          tags: this.config.tags,
+          questionAnswerPairs: this.questionAnswerPairs,
+          reviewStatus: 'Pending',
+          dateSubmitted: new Date().toISOString(),
+          lastReviewed: null,
+          submittedBy: 'user123',
         };
 
-        // Mock API URL
-        const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+        formData.append('metadata', JSON.stringify(payload));
+        formData.append('questionAnswerPairs', JSON.stringify(this.questionAnswerPairs));
 
-        const response = await ky.post(apiUrl, {
-          json: payload,
-        });
+        const apiUrl = 'http://localhost:8787/configs';
 
-        if (response.ok) {
-          this.showNotification('Submission successfull !', 'success');
+        const response = await ky.post(apiUrl, { body: formData });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data: ConfigResponse = await response.json();
+
+        if (data.id) {
+          localStorage.setItem('configId', data.id.toString());
+
+          this.router.push({ name: 'llmselector' }).then(() => {
+            window.location.reload();
+          });
+
+          this.showNotification('Submission successful!', 'success');
+          this.resetForm();
         } else {
-          throw new Error(`Error: ${response.status}`);
+          throw new Error('Config ID is missing in the response');
         }
       } catch (error) {
         console.error('Submission error:', error);
@@ -396,10 +416,8 @@ export default defineComponent({
       }
     },
   },
-
   mounted() {
     this.loadDraft();
   },
 });
-
 </script>

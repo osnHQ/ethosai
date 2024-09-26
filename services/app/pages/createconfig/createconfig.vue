@@ -120,9 +120,9 @@
                     <b class="flex-1 text-gray-900 mq450:min-w-full">Questions & Eval instructions / Answers for the
 
                       Prompt Eval File</b>
-                    <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
-                      <img class="w-5" loading="lazy" alt="" src="/info.png" />
-                    </div>
+                    <!-- <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
+                      <img class="w-5" loading="lazy" alt="" src="public/info.png" />
+                    </div> -->
                   </div>
                 </div>
               </div>

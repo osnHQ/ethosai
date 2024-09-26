@@ -25,16 +25,16 @@
   
       <div class="mb-8 md:mb-14 flex flex-nowrap md:ml-2">
         <a href="#" @click.prevent="setActive('General')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'General', 'text-gray-500': activeLink !== 'General'}" class="text-sm md:ml-8 mr-4 md:mr-24 text-sm text-gray-500 font-semibold">General</a>
+        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'General', 'text-gray-500': activeLink !== 'General'}" class="text-sm md:ml-8 mr-4 md:mr-24 text-gray-500 font-semibold">General</a>
 
         <a href="#" @click.prevent="setActive('Security')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Security', 'text-gray-500': activeLink !== 'Security'}" class="text-sm mr-4 md:mr-24 text-sm text-gray-500 font-semibold">Security</a>
+        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Security', 'text-gray-500': activeLink !== 'Security'}" class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">Security</a>
 
         <a href="#" @click.prevent="setActive('Notifications')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Notifications', 'text-gray-500': activeLink !== 'Notifications'}" class="text-sm mr-4 md:mr-24 text-sm text-gray-500 font-semibold">Notifications</a>
+        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Notifications', 'text-gray-500': activeLink !== 'Notifications'}" class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">Notifications</a>
 
         <a href="#" @click.prevent="setActive('Account Deletion')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Account Deletion', 'text-gray-500': activeLink !== 'Account Deletion'}" class="text-sm md:mr-24 text-sm text-gray-500 font-semibold">Account Deletion</a>
+        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Account Deletion', 'text-gray-500': activeLink !== 'Account Deletion'}" class="text-sm md:mr-24 text-gray-500 font-semibold">Account Deletion</a>
       </div>
 
       

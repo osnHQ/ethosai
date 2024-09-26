@@ -17,7 +17,7 @@
     </div>
     <div class="mx-auto mt-8 p-8">
         <div class="text-center text-sm text-violet-500 uppercase tracking-wider">
-            <NuxtImg src="/animations/EthosAIFlow.svg" alt="ethosAI Flow" class="rounded mx-auto d-block" />
+            <img src="/animations/EthosAIFlow.svg" alt="ethosAI Flow" class="rounded mx-auto d-block" />
         </div>
     </div>
 </template>

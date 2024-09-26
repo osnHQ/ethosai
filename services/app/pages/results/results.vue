@@ -71,7 +71,7 @@
                     <div class="flex gap-2 flex-grow items-center">
                         <div
                             class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
-                            <img loading="lazy" src="public/search.png" alt="" class="w-5" />
+                            <img loading="lazy" src="/search.png" alt="" class="w-5" />
                             <input v-model="searchQuery" type="text" placeholder="Search by Config File Names."
                                 class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-2 text-3 w-50" />
                         </div>
@@ -90,7 +90,7 @@
                                 class="flex items-center mr-2 w-3/4 justify-center pr-2 py-2 bg-white rounded border border-solid border-neutral-300 text-zinc-900">
                                 <Flatpickr v-model="dateRange" :config="flatpickrConfig"
                                     class="grow w-full md:w-auto outline-none focus:outline-none focus:shadow-none" />
-                                <img loading="lazy" src="public/downarrow.png" alt=""
+                                <img loading="lazy" src="/downarrow.png" alt=""
                                     class="shrink-0 w-3.5 aspect-square" />
                             </div>
                         </div>
@@ -99,7 +99,7 @@
 
                 <div
                     class="flex gap-5 items-start mt-3.5 text-sm leading-6 text-right text-cyan-500 max-md:flex-wrap max-md:max-w-full">
-                    <img loading="lazy" src="public/question.png" alt="" class="shrink-0 w-6 aspect-square" />
+                    <img loading="lazy" src="/question.png" alt="" class="shrink-0 w-6 aspect-square" />
                     <p class="flex-auto mt-3">
                         Total <span class="font-bold text-cyan-500">14</span> evals in the list
                     </p>
@@ -140,7 +140,7 @@
                 <nav class="flex gap-1 self-center mt-14 max-w-full text-sm leading-5 whitespace-nowrap text-zinc-400 w-[344px] max-md:mt-10"
                     aria-label="Pagination">
                     <a href="#" class="flex gap-0.5 text-white">
-                        <img loading="lazy" src="public/paginationleft.png" alt="Previous page"
+                        <img loading="lazy" src="/paginationleft.png" alt="Previous page"
                             class="w-5 h-5 mt-3.5 mr-2" />
                         <span class="sr-only">Previous page</span>
                     </a>
@@ -161,7 +161,7 @@
                         4
                     </a>
                     <span class="flex gap-1">
-                        <img loading="lazy" src="public/paginationdots.png" alt=""
+                        <img loading="lazy" src="/paginationdots.png" alt=""
                             class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
                         <a href="#"
                             class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
@@ -173,7 +173,7 @@
                         </a>
                     </span>
                     <a href="#" class="flex gap-0.5 text-zinc-400">
-                        <img loading="lazy" src="public/paginationright.png" alt="Next page"
+                        <img loading="lazy" src="/paginationright.png" alt="Next page"
                             class="w-5 h-5 mt-3.5 ml-5" />
                         <span class="sr-only">Next page</span>
                     </a>

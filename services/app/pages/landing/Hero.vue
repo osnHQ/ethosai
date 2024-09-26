@@ -34,7 +34,7 @@
 
 <!-- 
         <div class="max-w-lg max-md-hidden sm:hidden w-1/2 lg:flex items-center justify-center">
-            <NuxtImg src="/Hero Image.png" alt="" />
+            <img src="/Hero Image.png" alt="" />
         </div> -->
         <div class="max-w-lg max-md-hidden sm:hidden w-1/2 lg:flex items-center justify-left mr-10 mt-20">
     <LottieAnimation :animationData="animationData" :width="'90%'" :height="'100%'" />

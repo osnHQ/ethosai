@@ -5,13 +5,13 @@
     <a class="
     max-md-hidden
     absolute left-10 top-12" href="https://ethosai.one/">
-      <NuxtImg src="/logo.png" class="w-35" alt="ethosAI Logo" />
+      <img src="/logo.png" class="w-35" alt="ethosAI Logo" />
     </a>
 
     <!-- for mobile device -->
      <div class="flex justify-center items-center md:hidden mt-5">
       <a href="https://ethosai.one/">
-      <NuxtImg src="/logo.png" class="w-35" alt="ethosAI Logo" />
+      <img src="/logo.png" class="w-35" alt="ethosAI Logo" />
     </a>
      </div>
     

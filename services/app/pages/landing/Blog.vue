@@ -13,7 +13,7 @@
     <div class="blog-wrapper">
         <div class="blog-card">
             <div class="card-img">
-                <!-- <NuxtImg src="/blog1.jpeg" /> -->
+                <!-- <img src="/blog1.jpeg" /> -->
             </div>
             <div class="card-details">
                 <span><i class="fa fa-calendar"></i>AUG 4</span><span><i class="fa fa-heart"></i>102</span>
@@ -27,7 +27,7 @@
         </div>
         <div class="blog-card">
             <div class="card-img">
-                <!-- <NuxtImg src="/blog2.jpeg" /> -->
+                <!-- <img src="/blog2.jpeg" /> -->
             </div>
             <div class="card-details">
                 <span><i class="fa fa-calendar"></i>JAN 3</span><span><i class="fa fa-heart"></i>119</span>
@@ -41,7 +41,7 @@
         </div>
         <div class="blog-card">
             <div class="card-img">
-                <!-- <NuxtImg src="/blog3.jpeg" /> -->
+                <!-- <img src="/blog3.jpeg" /> -->
             </div>
             <div class="card-details">
                 <span><i class="fa fa-calendar"></i>AUG 19</span><span><i class="fa fa-heart"></i>265</span>

@@ -5,7 +5,7 @@
         <header class="w-full flex flex-col items-start text-zinc-900">
           <h1 class="flex items-center gap-3 text-3xl font-semibold leading-10">
             <span>LLM Selector</span>
-            <img loading="lazy" src="/loading.png" class="w-10 h-10" alt="Loading" />
+            <NuxtImg loading="lazy" src="/loading.png" class="w-10 h-10" alt="Loading" />
           </h1>
           <p class="mt-4 text-base leading-7 text-neutral-800">
             Choose an LLM to test your configuration files against our robust evaluation metrics.

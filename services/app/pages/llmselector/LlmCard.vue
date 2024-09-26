@@ -4,7 +4,7 @@
     :class="{ 'border-4 border-indigo-600': selected }" <!-- Highlight selected LLM -->
   >
     <div class="flex-shrink-0">
-      <img :src="llm.image" :alt="llm.name" class="h-48 w-full object-cover" />
+      <NuxtImg :src="llm.image" :alt="llm.name" class="h-48 w-full object-cover" />
     </div>
     <div class="flex flex-1 flex-col justify-between p-6">
       <div class="flex-1">

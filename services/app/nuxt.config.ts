@@ -19,6 +19,10 @@ export default defineNuxtConfig({
     "@nuxt/image"
   ],
 
+  image: {
+    provider: 'ipx'
+  },
+
   experimental: {
     // when using generate, payload js assets included in sw precache manifest
     // but missing on offline, disabling extraction it until fixed

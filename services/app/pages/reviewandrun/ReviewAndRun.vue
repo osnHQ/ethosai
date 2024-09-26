@@ -9,7 +9,7 @@
       </p>
       <section class="flex gap-5 self-stretch px-6 py-5 mt-8 w-full bg-cyan-500 rounded-lg max-md:flex-wrap max-md:pl-5 max-md:max-w-full">
         <div class="flex flex-auto gap-5 my-auto text-lg leading-7 text-white max-md:flex-wrap">
-          <img loading="lazy" src="/Alarm.png" alt="" class="w-7 h-5 mt-4" />
+          <NuxtImg loading="lazy" src="/Alarm.png" alt="" class="w-7 h-5 mt-4" />
           <p class="flex-auto max-md:max-w-full">
             Please go through the details carefully before running the config against the selected LLM as it takes time and cost for this!
           </p>
@@ -24,21 +24,21 @@
             <div class="flex flex-col grow items-start py-7 pr-20 pl-8 mx-auto w-full text-sm font-bold leading-5 bg-white rounded-md shadow max-md:px-5 max-md:mt-6">
               <h2 class="text-xl leading-8 text-zinc-900">Best cars of 20th century</h2>
               <div class="flex gap-2 mt-6 text-sky-600">
-                <img loading="lazy" src="/attachment.png" alt="" class="w-4.5" />
+                <NuxtImg loading="lazy" src="/attachment.png" alt="" class="w-4.5" />
                 <p class="flex-auto">Config File (JSON)</p>
               </div>
               <div class="flex gap-5 mt-7">
                 <div class="w-50 flex flex-col flex-1 text-zinc-400">
                   <div class="flex gap-2 whitespace-nowrap">
-                    <img loading="lazy" src="/trending.png" alt="" class="w-4.5" />
+                    <NuxtImg loading="lazy" src="/trending.png" alt="" class="w-4.5" />
                     <p>Category</p>
                   </div>
                   <div class="flex gap-2 mt-6">
-                    <img loading="lazy" src="/calendar.png" alt="" class="w-4.5" />
+                    <NuxtImg loading="lazy" src="/calendar.png" alt="" class="w-4.5" />
                     <p class="my-auto">Created on</p>
                   </div>
                   <div class="flex gap-2 mt-8">
-                    <img loading="lazy" src="/info2.png" alt="" class="w-4.5 h-4" />
+                    <NuxtImg loading="lazy" src="/info2.png" alt="" class="w-4.5 h-4" />
                     <p class="my-auto">Audit Status</p>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
             <article class="mt-24 w-full bg-white rounded shadow-sm max-md:mt-10 max-md:max-w-full">
               <div class="flex gap-5 max-md:flex-col">
                 <div class="flex flex-col w-[37%] max-md:ml-0 max-md:w-full">
-                  <img loading="lazy" src="/anthropiccard.png" alt="Claude2 AI model representation" class="grow w-full aspect-[1.72] max-md:mt-5" />
+                  <NuxtImg loading="lazy" src="/anthropiccard.png" alt="Claude2 AI model representation" class="grow w-full aspect-[1.72] max-md:mt-5" />
                 </div>
                 <div class="flex flex-col ml-5 w-[63%] max-md:ml-0 max-md:w-full">
                   <div class="flex flex-col self-stretch my-auto text-zinc-900 max-md:mt-10 max-md:max-w-full">
@@ -83,7 +83,7 @@
                 <div class="flex flex-col ml-5 w-[33%] max-md:ml-0 max-md:w-full">
                   <div class="flex flex-col grow justify-end pb-3.5 mx-auto w-full rounded max-md:mt-7">
                     <div class="flex gap-1.5 py-4.5 justify-start px-4 py-2 text-xs font-semibold leading-5 text-white bg-cyan-500 rounded">
-                      <img loading="lazy" src="/user.png" alt="" class="w-5" />
+                      <NuxtImg loading="lazy" src="/user.png" alt="" class="w-5" />
                       <p class="my-auto">Creator</p>
                     </div>
                     <div class="flex gap-2 self-center mt-2.5 text-cyan-500">
@@ -95,7 +95,7 @@
                 <div class="flex flex-col ml-5 w-[33%] max-md:ml-0 max-md:w-full">
                   <div class="flex flex-col grow justify-end pb-3.5 mx-auto w-full bg-cyan-50 rounded max-md:mt-7">
                     <div class="flex gap-1.5 justify-end px-4 py-2 text-xs font-semibold leading-5 text-white bg-violet-500 rounded">
-                      <img loading="lazy" src="/users.png" alt="" class="w-5 h-5 mt-2" />
+                      <NuxtImg loading="lazy" src="/users.png" alt="" class="w-5 h-5 mt-2" />
                       <p class="my-auto">Auditor Staking</p>
                     </div>
                     <div class="flex gap-2 self-center mt-2.5 text-cyan-500 whitespace-nowrap">
@@ -107,7 +107,7 @@
                 <div class="flex flex-col ml-5 w-[33%] max-md:ml-0 max-md:w-full">
                   <div class="flex flex-col grow pb-4 mx-auto w-full bg-gray-50 rounded max-md:mt-7">
                     <div class="flex gap-1.5 px-4 py-4.4 text-xs font-semibold leading-5 text-white bg-blue-600 rounded">
-                      <img loading="lazy" src="/file.png" alt="" class="w-5 h-5" />
+                      <NuxtImg loading="lazy" src="/file.png" alt="" class="w-5 h-5" />
                       <p class="my-auto">LLM Depin</p>
                     </div>
                     <div class="flex gap-2 self-center mt-2 text-cyan-500 whitespace-nowrap">
@@ -123,7 +123,7 @@
             <div class="flex grow gap-3 items-start max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
               <div class="flex flex-col pb-4 mt-3 bg-gray-50">
                 <div class="flex gap-2 justify-end items-start px-3 py-1.5 text-lg font-semibold leading-7 text-white bg-blue-600 rounded">
-                  <img loading="lazy" src="/user.png" alt="" class="self-start w-6" />
+                  <NuxtImg loading="lazy" src="/user.png" alt="" class="self-start w-6" />
                   <p class="my-auto">Total Cost</p>
                 </div>
                 <div class="flex gap-3 self-center mt-2.5 text-cyan-500 whitespace-nowrap">
@@ -131,7 +131,7 @@
                   <p class="text-3xl font-bold leading-10">0.78</p>
                 </div>
               </div>
-              <img loading="lazy" src="/questioncyan.png" alt="" class="w-9" />
+              <NuxtImg loading="lazy" src="/questioncyan.png" alt="" class="w-9" />
               <div class="flex flex-col justify-center self-stretch text-sm text-white rounded shadow bg-black bg-opacity-0">
                 <div class="flex flex-col px-3 pt-5 pb-3 bg-cyan-500 rounded">
                   <h4 class="text-base font-bold leading-7">

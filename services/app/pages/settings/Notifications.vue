@@ -24,17 +24,14 @@
     <div class="ml-6 md:ml-8 w-3/4 md:mr-8 mt-2">
   
       <div class="mb-8 md:mb-14 flex flex-nowrap md:ml-2">
-        <a href="#" @click.prevent="setActive('General')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'General', 'text-gray-500': activeLink !== 'General'}" class="text-sm md:ml-8 mr-4 md:mr-24 text-sm text-gray-500 font-semibold">General</a>
-
-        <a href="#" @click.prevent="setActive('Security')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Security', 'text-gray-500': activeLink !== 'Security'}" class="text-sm mr-4 md:mr-24 text-sm text-gray-500 font-semibold">Security</a>
-
-        <a href="#" @click.prevent="setActive('Notifications')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Notifications', 'text-gray-500': activeLink !== 'Notifications'}" class="text-sm mr-4 md:mr-24 text-sm text-gray-500 font-semibold">Notifications</a>
-
-        <a href="#" @click.prevent="setActive('Account Deletion')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Account Deletion', 'text-gray-500': activeLink !== 'Account Deletion'}" class="text-sm md:mr-24 text-sm text-gray-500 font-semibold">Account Deletion</a>
+        <a
+      v-for="(tab, index) in tabs" :key="index" href="#" @click.prevent="setActive(tab)" :class="{
+        'text-blue-500 border-b-2 border-blue-500': activeLink === tab,
+        'text-gray-500': activeLink !== tab
+      }"
+      class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">
+      {{ tab }}
+    </a>
       </div>
 
       
@@ -59,12 +56,12 @@
             <p class="text-gray-500 text-xs mb-4">New AI LLM added of Eval added</p>
 
             <label class="font-semibold text-sm block mb-2">
-              <input type="checkbox" class="">
+              <input type="checkbox">
                 Tips and tutorials
             </label>
 
             <label class="font-semibold text-sm">
-              <input type="checkbox" class="">
+              <input type="checkbox">
                 Feature updates on Eval AI
             </label>
 
@@ -81,17 +78,17 @@
 
           <div>
             <label class="block font-semibold text-sm mb-4">
-              <input type="radio" name="subscription" value="news">
+              <input type="radio" name="subscription" value="none">
               Do not notify me
             </label>
 
             <label class="block font-semibold text-sm mb-4">
-              <input type="radio" name="subscription" value="news">
+              <input type="radio" name="subscription" value="all">
               Notify for all
             </label>
 
             <label class="block font-semibold text-sm mb-4">
-              <input type="radio" name="subscription" value="news">
+              <input type="radio" name="subscription" value="approval-only">
               Notify for only approval of requests
             </label>
 
@@ -107,10 +104,10 @@
 <script setup>
 import { ref } from 'vue';
 
-// Define a reactive reference for the active link
-const activeLink = ref('General'); // Default active link
 
-// Define a method to set the active link
+const activeLink = ref('Notifications'); 
+const tabs = ['General', 'Security', 'Notifications', 'Account Deletion'];
+
 const setActive = (link) => {
 activeLink.value = link;
 };

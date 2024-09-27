@@ -44,7 +44,7 @@
 <script>
 import LlmCard from './LlmCard.vue';
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'LlmSelector',
@@ -52,12 +52,7 @@ export default {
     LlmCard,
   },
   setup() {
-    const route = useRoute();
-    const configId = ref(null); 
-
-    onMounted(() => {
-      configId.value = localStorage.getItem('configId'); 
-    });
+    const router = useRouter();
     const selectedLlm = ref(null);
 
     const llms = [
@@ -95,31 +90,11 @@ export default {
       selectedLlm.value = llm;
     };
 
-    const runEvaluation = async () => {
-      if (!selectedLlm.value) return;
+    const runEvaluation = () => {
+      if (selectedLlm.value) {
+        localStorage.setItem('selectedLlm', JSON.stringify(selectedLlm.value));
 
-      const payload = {
-        configId: Number(configId.value), 
-        model: "gpt-4o-mini", 
-      };
-
-
-      try {
-        const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-        } else {
-          console.error('Failed to run evaluation');
-        }
-      } catch (error) {
-        console.error('Error in evaluation:', error);
+        router.push({ name: 'reviewandrun' });
       }
     };
 
@@ -128,7 +103,6 @@ export default {
       selectedLlm,
       selectLlm,
       runEvaluation,
-      configId, 
     };
   },
 };

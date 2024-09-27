@@ -109,6 +109,23 @@ generalRouter.get("/configs", async (c) => {
     return c.json(allConfigs);
 });
 
+generalRouter.get("/configs/:id", async (c) => {
+    try {
+      const db = createDbConnection(c.env.DATABASE_URL); 
+      const configId = Number(c.req.param("id")); 
+      const config = await db.select().from(configs).where(eq(configs.id, configId)).limit(1);
+  
+      if (config.length === 0) {
+        throw new HTTPException(404, { message: "Config not found" });
+      }
+  
+      return c.json(config[0]);
+    } catch (error) {
+      console.error('Error fetching config:', error);
+      return c.json({ message: "Internal Server Error" }, 500); 
+    }
+  });
+
 async function readFileContent(file: File): Promise<string> {
     const textContent = await file.text();
     return textContent;
@@ -138,7 +155,7 @@ generalRouter.post('/configs', async (c: Context) => {
             submittedBy: metadata.submittedBy,
             rating: metadata.rating || 0,
             reviews: metadata.reviews || "",
-            questionAnswerPairs: questionAnswerPairs,  // Updated field name
+            questionAnswerPairs: questionAnswerPairs,  
             fileContents: fileContent, 
         };
 

@@ -1,37 +1,51 @@
 import concurrent.futures
-import os
 import json
-from uuid import uuid4
-import openai
-import pymupdf
-import streamlit as st
-import pandas as pd
-# import ollama
+import logging
+import os
 import asyncio
 from functools import partial
-# from numpy import dot
-# from numpy.linalg import norm
-# from ollama import AsyncClient
-from fuzzywuzzy import fuzz
+from pathlib import Path
+from typing import Any, Dict, List
+
+import pandas as pd
+import pymupdf
+import streamlit as st
 from dotenv import load_dotenv
+from rapidfuzz import fuzz
+from uuid import uuid4
+
+import openai
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    logger.error("OPENAI_API_KEY not found in environment variables.")
+    st.error("API key not found. Please set the OPENAI_API_KEY in the .env file.")
+    st.stop()
 
+openai.api_key = OPENAI_API_KEY
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
 
-
-def process_pdf_batch(batch_text, model="gpt-4o-mini"):
+def process_pdf_batch(batch_text: str, model: str = "gpt-4o-mini") -> str:
     return generate_qa_from_text(batch_text, model)
 
-
-def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"):
+def process_pdf_in_parallel(pdf_path: str, batch_size: int = 5, max_workers: int = 5, model: str = "gpt-4o-mini") -> List[str]:
     pages = extract_text_from_pdf(pdf_path)
     batches = [
-        "".join(pages[i : i + batch_size]) for i in range(0, len(pages), batch_size)
+        "".join(pages[i: i + batch_size]) for i in range(0, len(pages), batch_size)
     ]
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -40,8 +54,7 @@ def process_pdf_in_parallel(pdf_path, batch_size=5, max_workers=5, model="gpt-4o
 
     return results
 
-
-def generate_qa_from_text(text, model="gpt-4o-mini"):
+def generate_qa_from_text(text: str, model: str = "gpt-4o-mini") -> str:
     prompt = f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
     response = openai.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
@@ -75,22 +88,17 @@ def generate_qa_from_text(text, model="gpt-4o-mini"):
     )
     return response.choices[0].message.content
 
-
-async def generate_model_answer(prompt):
+async def generate_model_answer(prompt: str) -> str:
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {
-                "role": "system",
-                "content": "reply very crisp factoid answer.",
-            },
+            {"role": "system", "content": "reply very crisp factoid answer."},
             {"role": "user", "content": prompt},
         ],
     )
     return response.choices[0].message.content
 
-
-def compare_sentences_llm(ai_reply, correct_reply, question, context=""):
+def compare_sentences_llm(ai_reply: str, correct_reply: str, question: str, context: str = "") -> str:
     prompt = f"""
 You will be given three inputs from {context}:
 
@@ -111,7 +119,6 @@ Your task is to:
 
 Afterward, list the key factual differences as factual_differences key in JSON and explain the reasoning behind the assigned score as score_explanation key in JSON.
 
-
 Return a JSON object with the following structure:
 
 {{
@@ -124,7 +131,6 @@ Source Question: '{question}'
 AI Agent Reply: '{ai_reply}'
 Correct Reply: '{correct_reply}'
 """
-
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
@@ -146,28 +152,9 @@ Correct Reply: '{correct_reply}'
             },
         },
     )
-
     return response.choices[0].message.content
 
-
-# async def chat_with_model(prompt):
-#     message = {"role": "user", "content": prompt}
-#     response = await AsyncClient().chat(model="qwen2:1.5b", messages=[message])
-#     return response["message"]["content"]
-
-
-# def generate_embedding(prompt):
-#     response = ollama.embeddings(model="qwen2:1.5b", prompt=prompt)
-#     return response["embedding"]
-
-
-# def calculate_cosine_similarity(a, b):
-#     x = generate_embedding(a)
-#     y = generate_embedding(b)
-#     return dot(x, y) / (norm(x) * norm(y))
-
-
-def compare_sentences_fuzzy(x, y):
+def compare_sentences_fuzzy(x: str, y: str) -> str:
     ratio = fuzz.ratio(x.lower(), y.lower())
     partial_ratio = fuzz.partial_ratio(x.lower(), y.lower())
     token_sort_ratio = fuzz.token_sort_ratio(x, y)
@@ -183,28 +170,22 @@ def compare_sentences_fuzzy(x, y):
     else:
         return "Sentences are different"
 
-
-def check_exact_match(x, y):
+def check_exact_match(x: str, y: str) -> bool:
     return x.lower() == y.lower()
 
-
-def check_partial_match(x, y):
+def check_partial_match(x: str, y: str) -> bool:
     return x.lower() in y.lower() or y.lower() in x.lower()
 
-
-def compare_sentences(x, y, context=""):
+def compare_sentences(x: str, y: str, context: str = "") -> Dict[str, Any]:
     return {
-        # "cosine": calculate_cosine_similarity(x, y),
         "fuzzy": compare_sentences_fuzzy(x, y),
         "exact": check_exact_match(x, y),
         "includes": check_partial_match(x, y),
         "llm": compare_sentences_llm(x, y, "Compare these sentences", context=context),
     }
 
-
-def flatten_similarity_results(similarity_dict):
+def flatten_similarity_results(similarity_dict: Dict[str, Any]) -> Dict[str, Any]:
     flattened = {
-        # "Cosine_Similarity": similarity_dict["cosine"],
         "Fuzzy_Comparison": similarity_dict["fuzzy"],
         "Exact_Match": similarity_dict["exact"],
         "Includes_Match": similarity_dict["includes"],
@@ -216,40 +197,36 @@ def flatten_similarity_results(similarity_dict):
             "Factual_Accuracy": llm_comparison["factual_accuracy"],
             "Factual_Differences": llm_comparison["factual_differences"],
             "Score_Explanation": llm_comparison["score_explanation"],
-            # "LLM_Explanation": llm_comparison["explanation"],
         }
     )
 
     return flattened
 
-
-def save_qa_to_jsonl(qa_tables, output_file):
+def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
     with open(output_file, "w", encoding="utf-8") as jsonlfile:
         for table in qa_tables:
             qa_dict = json.loads(table)
             for qa in qa_dict["questions"]:
                 jsonlfile.write(json.dumps(qa) + "\n")
 
-
-def load_jsonl(file):
+def load_jsonl(file) -> List[Dict[str, str]]:
     return [json.loads(line.decode("utf-8")) for line in file]
 
-
-def initialize_session_state():
+def initialize_session_state() -> None:
     if "df" not in st.session_state:
         st.session_state.df = pd.DataFrame(columns=["question", "answer"])
     if "processed" not in st.session_state:
         st.session_state.processed = False
 
-
-async def process_questions(jsonl_data, context=""):
+async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "") -> None:
     columns = ["Question", "Model_Response", "Expected_Answer"]
     results_df = pd.DataFrame(columns=columns)
 
     table_container = st.empty()
+    total = len(jsonl_data)
 
-    for pair, i in zip(jsonl_data, range(len(jsonl_data))):
-        response = await generate_model_answer(f"{context} {pair["question"]}")
+    for i, pair in enumerate(jsonl_data, start=1):
+        response = await generate_model_answer(f"{context} {pair['question']}")
         similarity = compare_sentences(response, pair["answer"], context=context)
         flattened_similarity = flatten_similarity_results(similarity)
 
@@ -269,22 +246,19 @@ async def process_questions(jsonl_data, context=""):
         file_path = f"./results/{uuid4().hex}.csv"
         results_df.to_csv(file_path, index=False)
 
-
     st.download_button(
         label="Download results as CSV",
         data=csv,
         file_name="qa_results.csv",
         mime="text/csv",
-        key="download_csv {}".format(i),
+        key="download_csv"
     )
 
-
-def main():
+def main() -> None:
     st.set_page_config(layout="wide")
     st.title("EthosAI")
 
     initialize_session_state()
-
 
     uploaded_file = st.file_uploader("Upload a PDF or CSV file", type=["pdf", "csv"])
 
@@ -335,7 +309,6 @@ def main():
                     context=st.session_state.context
                 )
             )
-
 
 if __name__ == "__main__":
     main()

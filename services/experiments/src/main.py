@@ -26,15 +26,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    logger.error("OPENAI_API_KEY not found in environment variables.")
-    st.error("API key not found. Please set the OPENAI_API_KEY in the .env file.")
-    st.stop()
-
-openai.api_key = OPENAI_API_KEY
-
 def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
@@ -88,9 +79,9 @@ def generate_qa_from_text(text: str, model: str = "gpt-4o-mini") -> str:
     )
     return response.choices[0].message.content
 
-async def generate_model_answer(prompt: str) -> str:
+async def generate_model_answer(prompt: str, model: str = "gpt-4o-mini") -> str:
     response = openai.chat.completions.create(
-        model="gpt-4o-mini",
+        model=model,
         messages=[
             {"role": "system", "content": "reply very crisp factoid answer."},
             {"role": "user", "content": prompt},
@@ -98,7 +89,7 @@ async def generate_model_answer(prompt: str) -> str:
     )
     return response.choices[0].message.content
 
-def compare_sentences_llm(ai_reply: str, correct_reply: str, question: str, context: str = "") -> str:
+def compare_sentences_llm(ai_reply: str, correct_reply: str, question: str, context: str = "", model: str = "gpt-4o-mini") -> str:
     prompt = f"""
 You will be given three inputs from {context}:
 
@@ -132,7 +123,7 @@ AI Agent Reply: '{ai_reply}'
 Correct Reply: '{correct_reply}'
 """
     response = openai.chat.completions.create(
-        model="gpt-4o-mini",
+        model=model,
         messages=[{"role": "user", "content": prompt}],
         response_format={
             "type": "json_schema",
@@ -176,12 +167,12 @@ def check_exact_match(x: str, y: str) -> bool:
 def check_partial_match(x: str, y: str) -> bool:
     return x.lower() in y.lower() or y.lower() in x.lower()
 
-def compare_sentences(x: str, y: str, context: str = "") -> Dict[str, Any]:
+def compare_sentences(x: str, y: str, context: str = "", model: str = "gpt-4o-mini") -> Dict[str, Any]:
     return {
         "fuzzy": compare_sentences_fuzzy(x, y),
         "exact": check_exact_match(x, y),
         "includes": check_partial_match(x, y),
-        "llm": compare_sentences_llm(x, y, "Compare these sentences", context=context),
+        "llm": compare_sentences_llm(x, y, "Compare these sentences", context=context, model=model),
     }
 
 def flatten_similarity_results(similarity_dict: Dict[str, Any]) -> Dict[str, Any]:
@@ -218,7 +209,7 @@ def initialize_session_state() -> None:
     if "processed" not in st.session_state:
         st.session_state.processed = False
 
-async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "") -> None:
+async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "", model: str = "gpt-4o-mini") -> None:
     columns = ["Question", "Model_Response", "Expected_Answer"]
     results_df = pd.DataFrame(columns=columns)
 
@@ -226,8 +217,8 @@ async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "")
     total = len(jsonl_data)
 
     for i, pair in enumerate(jsonl_data, start=1):
-        response = await generate_model_answer(f"{context} {pair['question']}")
-        similarity = compare_sentences(response, pair["answer"], context=context)
+        response = (await generate_model_answer(f"{context} {pair['question']}", model=model)).strip('.')
+        similarity = compare_sentences(response, pair["answer"], context=context, model=model)
         flattened_similarity = flatten_similarity_results(similarity)
 
         result = {
@@ -260,6 +251,26 @@ def main() -> None:
 
     initialize_session_state()
 
+    st.sidebar.title("Configuration")
+
+    load_dotenv()
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+    if OPENAI_API_KEY:
+        openai.api_key = OPENAI_API_KEY
+    else:
+        api_key_input = st.sidebar.text_input("OpenAI API Key", type="password")
+        if api_key_input:
+            openai.api_key = api_key_input
+        else:
+            st.error("Please enter your OpenAI API key in the sidebar.")
+            st.stop()
+
+    model = st.sidebar.selectbox("Select Model", ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4"])
+    batch_size = st.sidebar.number_input("Batch Size", min_value=1, max_value=10, value=5)
+    max_workers = st.sidebar.number_input("Max Workers", min_value=1, max_value=10, value=5)
+    context = st.sidebar.text_input("Enter context for the questions", "")
+
     uploaded_file = st.file_uploader("Upload a PDF or CSV file", type=["pdf", "csv"])
 
     if uploaded_file is not None and not st.session_state.processed:
@@ -276,7 +287,7 @@ def main() -> None:
                 f.write(uploaded_file.getbuffer())
 
             qa_tables = process_pdf_in_parallel(
-                pdf_path, batch_size=5, max_workers=5, model="gpt-4o-mini"
+                pdf_path, batch_size=batch_size, max_workers=max_workers, model=model
             )
 
             jsonl_output_file = "/tmp/output.jsonl"
@@ -300,13 +311,12 @@ def main() -> None:
             mime="text/csv",
         )
 
-        st.session_state.context = st.text_input("Enter context for the questions", "")
-
         if st.button("Process Questions"):
             asyncio.run(
                 process_questions(
                     edited_df.to_dict("records"),
-                    context=st.session_state.context
+                    context=context,
+                    model=model
                 )
             )
 

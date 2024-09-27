@@ -6,12 +6,12 @@ authors = [
     { name = "Lulzx", email = "wiserishabh@gmail.com" }
 ]
 dependencies = [
-    "streamlit>=1.33.0",
-    "pandas>=2.2.2",
-    "openai>=1.42.0",
-    "pymupdf>=1.24.9",
+    "streamlit>=1.38.0",
+    "pandas>=2.2.3",
+    "openai>=1.50.0",
+    "pymupdf>=1.24.10",
     "python-dotenv>=1.0.1",
-    "rapidfuzz>=2.0.0"
+    "rapidfuzz>=3.10.0"
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

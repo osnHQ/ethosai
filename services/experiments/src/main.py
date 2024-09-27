@@ -19,24 +19,26 @@ import openai
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("app.log"),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
+
 
 def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
 
+
 def process_pdf_batch(batch_text: str, model: str = "gpt-4o-mini") -> str:
     return generate_qa_from_text(batch_text, model)
 
-def process_pdf_in_parallel(pdf_path: str, batch_size: int = 5, max_workers: int = 5, model: str = "gpt-4o-mini") -> List[str]:
+
+def process_pdf_in_parallel(
+    pdf_path: str, batch_size: int = 5, max_workers: int = 5, model: str = "gpt-4o-mini"
+) -> List[str]:
     pages = extract_text_from_pdf(pdf_path)
     batches = [
-        "".join(pages[i: i + batch_size]) for i in range(0, len(pages), batch_size)
+        "".join(pages[i : i + batch_size]) for i in range(0, len(pages), batch_size)
     ]
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -44,6 +46,7 @@ def process_pdf_in_parallel(pdf_path: str, batch_size: int = 5, max_workers: int
         results = list(executor.map(process_func, batches))
 
     return results
+
 
 def generate_qa_from_text(text: str, model: str = "gpt-4o-mini") -> str:
     prompt = f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
@@ -79,6 +82,7 @@ def generate_qa_from_text(text: str, model: str = "gpt-4o-mini") -> str:
     )
     return response.choices[0].message.content
 
+
 async def generate_model_answer(prompt: str, model: str = "gpt-4o-mini") -> str:
     response = openai.chat.completions.create(
         model=model,
@@ -89,7 +93,14 @@ async def generate_model_answer(prompt: str, model: str = "gpt-4o-mini") -> str:
     )
     return response.choices[0].message.content
 
-def compare_sentences_llm(ai_reply: str, correct_reply: str, question: str, context: str = "", model: str = "gpt-4o-mini") -> str:
+
+def compare_sentences_llm(
+    ai_reply: str,
+    correct_reply: str,
+    question: str,
+    context: str = "",
+    model: str = "gpt-4o-mini",
+) -> str:
     prompt = f"""
 You will be given three inputs from {context}:
 
@@ -137,13 +148,18 @@ Correct Reply: '{correct_reply}'
                         "factual_differences": {"type": "string"},
                         "score_explanation": {"type": "string"},
                     },
-                    "required": ["factual_accuracy", "factual_differences", "score_explanation"],
+                    "required": [
+                        "factual_accuracy",
+                        "factual_differences",
+                        "score_explanation",
+                    ],
                     "additionalProperties": False,
                 },
             },
         },
     )
     return response.choices[0].message.content
+
 
 def compare_sentences_fuzzy(x: str, y: str) -> str:
     ratio = fuzz.ratio(x.lower(), y.lower())
@@ -161,19 +177,27 @@ def compare_sentences_fuzzy(x: str, y: str) -> str:
     else:
         return "Sentences are different"
 
+
 def check_exact_match(x: str, y: str) -> bool:
     return x.lower() == y.lower()
+
 
 def check_partial_match(x: str, y: str) -> bool:
     return x.lower() in y.lower() or y.lower() in x.lower()
 
-def compare_sentences(x: str, y: str, context: str = "", model: str = "gpt-4o-mini") -> Dict[str, Any]:
+
+def compare_sentences(
+    x: str, y: str, context: str = "", model: str = "gpt-4o-mini"
+) -> Dict[str, Any]:
     return {
         "fuzzy": compare_sentences_fuzzy(x, y),
         "exact": check_exact_match(x, y),
         "includes": check_partial_match(x, y),
-        "llm": compare_sentences_llm(x, y, "Compare these sentences", context=context, model=model),
+        "llm": compare_sentences_llm(
+            x, y, "Compare these sentences", context=context, model=model
+        ),
     }
+
 
 def flatten_similarity_results(similarity_dict: Dict[str, Any]) -> Dict[str, Any]:
     flattened = {
@@ -193,6 +217,7 @@ def flatten_similarity_results(similarity_dict: Dict[str, Any]) -> Dict[str, Any
 
     return flattened
 
+
 def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
     with open(output_file, "w", encoding="utf-8") as jsonlfile:
         for table in qa_tables:
@@ -200,8 +225,10 @@ def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
             for qa in qa_dict["questions"]:
                 jsonlfile.write(json.dumps(qa) + "\n")
 
+
 def load_jsonl(file) -> List[Dict[str, str]]:
     return [json.loads(line.decode("utf-8")) for line in file]
+
 
 def initialize_session_state() -> None:
     if "df" not in st.session_state:
@@ -209,7 +236,10 @@ def initialize_session_state() -> None:
     if "processed" not in st.session_state:
         st.session_state.processed = False
 
-async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "", model: str = "gpt-4o-mini") -> None:
+
+async def process_questions(
+    jsonl_data: List[Dict[str, str]], context: str = "", model: str = "gpt-4o-mini"
+) -> None:
     columns = ["Question", "Model_Response", "Expected_Answer"]
     results_df = pd.DataFrame(columns=columns)
 
@@ -217,8 +247,12 @@ async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "",
     total = len(jsonl_data)
 
     for i, pair in enumerate(jsonl_data, start=1):
-        response = (await generate_model_answer(f"{context} {pair['question']}", model=model)).strip('.')
-        similarity = compare_sentences(response, pair["answer"], context=context, model=model)
+        response = (
+            await generate_model_answer(f"{context} {pair['question']}", model=model)
+        ).strip(".")
+        similarity = compare_sentences(
+            response, pair["answer"], context=context, model=model
+        )
         flattened_similarity = flatten_similarity_results(similarity)
 
         result = {
@@ -242,8 +276,9 @@ async def process_questions(jsonl_data: List[Dict[str, str]], context: str = "",
         data=csv,
         file_name="qa_results.csv",
         mime="text/csv",
-        key="download_csv"
+        key="download_csv",
     )
+
 
 def main() -> None:
     st.set_page_config(layout="wide")
@@ -266,9 +301,15 @@ def main() -> None:
             st.error("Please enter your OpenAI API key in the sidebar.")
             st.stop()
 
-    model = st.sidebar.selectbox("Select Model", ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4"])
-    batch_size = st.sidebar.number_input("Batch Size", min_value=1, max_value=10, value=5)
-    max_workers = st.sidebar.number_input("Max Workers", min_value=1, max_value=10, value=5)
+    model = st.sidebar.selectbox(
+        "Select Model", ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4"]
+    )
+    batch_size = st.sidebar.number_input(
+        "Batch Size", min_value=1, max_value=10, value=5
+    )
+    max_workers = st.sidebar.number_input(
+        "Max Workers", min_value=1, max_value=10, value=5
+    )
     context = st.sidebar.text_input("Enter context for the questions", "")
 
     uploaded_file = st.file_uploader("Upload a PDF or CSV file", type=["pdf", "csv"])
@@ -314,11 +355,10 @@ def main() -> None:
         if st.button("Process Questions"):
             asyncio.run(
                 process_questions(
-                    edited_df.to_dict("records"),
-                    context=context,
-                    model=model
+                    edited_df.to_dict("records"), context=context, model=model
                 )
             )
+
 
 if __name__ == "__main__":
     main()

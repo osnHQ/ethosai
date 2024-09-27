@@ -24,18 +24,15 @@
     <div class="ml-6 md:ml-8 w-3/4 md:mr-8 mt-2">
   
       <div class="mb-8 md:mb-14 flex flex-nowrap md:ml-2">
-        <a href="#" @click.prevent="setActive('General')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'General', 'text-gray-500': activeLink !== 'General'}" class="text-sm md:ml-8 mr-4 md:mr-24 text-gray-500 font-semibold">General</a>
-
-        <a href="#" @click.prevent="setActive('Security')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Security', 'text-gray-500': activeLink !== 'Security'}" class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">Security</a>
-
-        <a href="#" @click.prevent="setActive('Notifications')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Notifications', 'text-gray-500': activeLink !== 'Notifications'}" class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">Notifications</a>
-
-        <a href="#" @click.prevent="setActive('Account Deletion')"
-        :class="{'text-blue-500 border-b-2 border-blue-500': activeLink === 'Account Deletion', 'text-gray-500': activeLink !== 'Account Deletion'}" class="text-sm md:mr-24 text-gray-500 font-semibold">Account Deletion</a>
-      </div>
+    <a
+      v-for="(tab, index) in tabs" :key="index" href="#" @click.prevent="setActive(tab)" :class="{
+        'text-blue-500 border-b-2 border-blue-500': activeLink === tab,
+        'text-gray-500': activeLink !== tab
+      }"
+      class="text-sm mr-4 md:mr-24 text-gray-500 font-semibold">
+      {{ tab }}
+    </a>
+  </div>
 
       
 
@@ -87,10 +84,10 @@
 <script setup>
 import { ref } from 'vue';
 
-// Define a reactive reference for the active link
-const activeLink = ref('General'); // Default active link
 
-// Define a method to set the active link
+const activeLink = ref('Account Deletion'); 
+const tabs = ['General', 'Security', 'Notifications', 'Account Deletion'];
+
 const setActive = (link) => {
 activeLink.value = link;
 };

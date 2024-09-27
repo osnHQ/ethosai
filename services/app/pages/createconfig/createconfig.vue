@@ -66,7 +66,7 @@
               <b class="text-gray-700">Name of Configuration File</b>
               <div class="w-full flex flex-row items-start justify-start pt-1 pb-1.5 text-silver">
 
-                <input v-model="config.configFileName"
+                <input v-model="config.fileName"
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                   placeholder="Input text" type="text" />
               </div>
@@ -252,7 +252,7 @@ export default defineComponent({
         type: '',
       },
       config: {
-        configFileName: '',
+        fileName: '',
         description: '',
         inputText: '',
         tags: [] as string[],
@@ -329,7 +329,7 @@ export default defineComponent({
       this.selectedFileName = '';
       this.fileTypeIcon = '';
       this.config = {
-        configFileName: '',
+        fileName: '',
         description: '',
         inputText: '',
         tags: [],
@@ -343,7 +343,7 @@ export default defineComponent({
         newAnswer: this.newAnswer,
         selectedFileName: this.selectedFileName,
         fileTypeIcon: this.fileTypeIcon,
-        config: this.config,  // Now saving the entire config object
+        config: this.config,  
       };
       localStorage.setItem('draftData', JSON.stringify(draftData));
       this.showNotification('Draft saved successfully!', 'success');
@@ -358,7 +358,7 @@ export default defineComponent({
         this.fileTypeIcon = draftData.fileTypeIcon || '';
         if (draftData.config) {
           this.config = {
-            configFileName: draftData.config.configFileName || '',
+            fileName: draftData.config.configFileName || '',
             description: draftData.config.description || '',
             inputText: draftData.config.inputText || '',
             tags: draftData.config.tags || [],
@@ -377,7 +377,7 @@ export default defineComponent({
         formData.append('file', this.config.uploadedFile);
 
         const payload = {
-          name: this.config.configFileName,
+          name: this.config.fileName,
           category: this.config.description,
           tags: this.config.tags,
           questionAnswerPairs: this.questionAnswerPairs,

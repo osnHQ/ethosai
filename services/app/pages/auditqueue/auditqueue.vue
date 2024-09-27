@@ -76,7 +76,7 @@
             </div>
           </div>
           <div class="flex gap-x-5 items-center text-zinc-900 flex-grow">
-            <!-- Category Filter -->
+            
             <select v-model="selectedCategory"
               class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
               <option value="">Filter by category</option>
@@ -85,7 +85,7 @@
               </option>
             </select>
 
-            <!-- Review Status Filter -->
+            
             <select v-model="selectedReviewStatus"
               class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
               <option value="">Filter by status (audited, unaudited, under rev)</option>
@@ -122,40 +122,40 @@
             </thead>
             <tbody>
   <tr v-for="config in filteredConfigs" :key="config.id" class="bg-white">
-    <!-- Display config name -->
+   
     <td class="px-4 py-12 font-bold">{{ config.name }}</td>
     
-    <!-- Display config category -->
+    
     <td class="px-4 py-12">{{ config.category || 'N/A' }}</td>
     
-    <!-- Display config tags -->
+    
     <td class="px-4 py-11">
       <div class="flex gap-1 text-xs leading-5 text-blue-500">
         <span v-for="tag in config.tags" :key="tag" class="px-2 py-2.5 bg-sky-50 rounded-2xl">{{ tag }}</span>
       </div>
     </td>
     
-    <!-- Display review status -->
+    
     <td class="px-4 py-12">{{ config.reviewStatus }}</td>
     
-    <!-- Display date submitted -->
+    
     <td class="px-4 py-12">{{ new Date(config.dateSubmitted).toLocaleDateString() }}</td>
     
-    <!-- Display last reviewed date -->
+    
     <td class="px-4 py-12">{{ new Date(config.lastReviewed).toLocaleDateString() }}</td>
     
-    <!-- Display submitted by (just the username, no avatar image) -->
+    
     <td class="px-4 py-10">
       <div class="flex gap-2">
-        <!-- Display only username since submittedBy is just a string -->
+        
         <span class="my-auto">{{ config.submittedBy }}</span>
       </div>
     </td>
     
-    <!-- Display number of reviews -->
+    
     <td class="pl-10 py-12">{{ config.numOfReviews || 0 }}</td>
     
-    <!-- Link for View/Start Review -->
+    
     <td class="px-8 py-12 text-center text-cyan-500 max-md:px-5">
       <a href="#" class="hover:underline">View/Start Review</a>
     </td>

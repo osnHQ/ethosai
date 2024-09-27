@@ -19,7 +19,7 @@
         </button>
       </section>
 
-      <!-- Config Data Section -->
+      
       <section v-if="configData" class="mt-20 w-full max-w-300 max-md:mt-10 max-md:max-w-full border border-neutral-300 border-dashed border-2 px-10 py-3">
         <div class="flex gap-5 max-md:flex-col">
           <aside class="flex flex-col w-[35%] max-md:ml-0 max-md:w-full">
@@ -56,7 +56,7 @@
             </div>
           </aside>
 
-          <!-- Selected LLM Info -->
+          
           <div class="flex flex-col ml-5 w-[65%] max-md:ml-0 max-md:w-full">
             <article v-if="selectedLlm" class="mt-24 w-full bg-white rounded shadow-sm max-md:mt-10 max-md:max-w-full">
               <div class="flex gap-5 max-md:flex-col">
@@ -80,7 +80,7 @@
         </div>
       </section>
 
-      <!-- Action Buttons -->
+      
       <div class="flex gap-4 mt-14 ml-24 text-lg leading-7 max-md:flex-wrap max-md:mt-10">
         <button @click="editSelection" class="px-5 py-2 text-white bg-amber-700 rounded">Edit the selection</button>
         <button @click="saveDraft" class="px-5 py-2 text-blue-700 bg-white rounded border border-blue-700 border-solid">

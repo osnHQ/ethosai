@@ -184,7 +184,6 @@
 </template>
 
 
-
 <script lang="ts">
 import BarChartC from '@/components/BarChart.vue';
 import ky from 'ky';
@@ -218,6 +217,7 @@ export default defineComponent({
         const dateRange = ref(['2019/04/14', '2024/06/14']);
         const selectedLLM = ref('');
         const llmLogos = ref<string[]>([]);
+        const llms = ref<string[]>([]); 
         const flatpickrConfig = ref({
             mode: 'range' as 'range',
             dateFormat: 'Y/m/d',
@@ -240,7 +240,6 @@ export default defineComponent({
 
                 return matchesLLM && matchesSearchQuery && matchesDateRange;
             });
-
         });
 
         const fetchConfigs = async () => {
@@ -249,10 +248,13 @@ export default defineComponent({
                 configs.value = response.configs;
 
                 const logoSet = new Set<string>();
+                const llmSet = new Set<string>(); 
                 configs.value.forEach(config => {
                     logoSet.add(config.LLMLogo);
+                    llmSet.add(config.LLMName); 
                 });
                 llmLogos.value = Array.from(logoSet);
+                llms.value = Array.from(llmSet); 
             } catch (error) {
                 console.error('Failed to fetch configs:', error);
             }
@@ -323,6 +325,7 @@ export default defineComponent({
             filteredConfigs,
             selectedLLM,
             llmLogos,
+            llms,
             initChart,
         };
     },

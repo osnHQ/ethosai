@@ -76,7 +76,7 @@
             </div>
           </div>
           <div class="flex gap-x-5 items-center text-zinc-900 flex-grow">
-            <!-- Category Filter -->
+            
             <select v-model="selectedCategory"
               class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
               <option value="">Filter by category</option>
@@ -85,7 +85,7 @@
               </option>
             </select>
 
-            <!-- Review Status Filter -->
+            
             <select v-model="selectedReviewStatus"
               class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
               <option value="">Filter by status (audited, unaudited, under rev)</option>
@@ -121,30 +121,47 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="config in filteredConfigs" :key="config.configFileName" class="bg-white">
-                <td class="px-4 py-12 font-bold">{{ config.configFileName }}</td>
-                <td class="px-4 py-12">{{ config.category }}</td>
-                <td class="px-4 py-11">
-                  <div class="flex gap-1 text-xs leading-5 text-blue-500">
-                    <span v-for="tag in config.tags" :key="tag" class="px-2 py-2.5 bg-sky-50 rounded-2xl">{{ tag
-                      }}</span>
-                  </div>
-                </td>
-                <td class="px-4 py-12">{{ config.reviewStatus }}</td>
-                <td class="px-4 py-12">{{ config.dateSubmitted }}</td>
-                <td class="px-4 py-12">{{ config.lastReviewed }}</td>
-                <td class="px-4 py-10">
-                  <div class="flex gap-2">
-                    <NuxtImg :src="config.submittedBy.avatarUrl" alt="Avatar" class="w-9 aspect-square" />
-                    <span class="my-auto">{{ config.submittedBy.username }}</span>
-                  </div>
-                </td>
-                <td class="pl-10 py-12">{{ config.numOfReviews }}</td>
-                <td class="px-8 py-12 text-center text-cyan-500 max-md:px-5">
-                  <a href="#" class="hover:underline">View/Start Review</a>
-                </td>
-              </tr>
-            </tbody>
+  <tr v-for="config in filteredConfigs" :key="config.id" class="bg-white">
+   
+    <td class="px-4 py-12 font-bold">{{ config.name }}</td>
+    
+    
+    <td class="px-4 py-12">{{ config.category || 'N/A' }}</td>
+    
+    
+    <td class="px-4 py-11">
+      <div class="flex gap-1 text-xs leading-5 text-blue-500">
+        <span v-for="tag in config.tags" :key="tag" class="px-2 py-2.5 bg-sky-50 rounded-2xl">{{ tag }}</span>
+      </div>
+    </td>
+    
+    
+    <td class="px-4 py-12">{{ config.reviewStatus }}</td>
+    
+    
+    <td class="px-4 py-12">{{ new Date(config.dateSubmitted).toLocaleDateString() }}</td>
+    
+    
+    <td class="px-4 py-12">{{ new Date(config.lastReviewed).toLocaleDateString() }}</td>
+    
+    
+    <td class="px-4 py-10">
+      <div class="flex gap-2">
+        
+        <span class="my-auto">{{ config.submittedBy }}</span>
+      </div>
+    </td>
+    
+    
+    <td class="pl-10 py-12">{{ config.numOfReviews || 0 }}</td>
+    
+    
+    <td class="px-8 py-12 text-center text-cyan-500 max-md:px-5">
+      <a href="#" class="hover:underline">View/Start Review</a>
+    </td>
+  </tr>
+</tbody>
+
           </table>
         </div>
         <nav
@@ -194,21 +211,24 @@
 
 <script lang="ts">
 import ky from 'ky';
-import { defineComponent, computed } from 'vue';
+import { defineComponent } from 'vue';
 import Flatpickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css'; 
 
+interface SubmittedBy {
+  avatarUrl: string;
+  username: string;
+}
+
 interface Config {
-  configFileName: string;
+  id: number;
+  name: string;
   category: string;
   tags: string[];
   reviewStatus: string;
   dateSubmitted: string;
   lastReviewed: string;
-  submittedBy: {
-    username: string;
-    avatarUrl: string;
-  };
+  submittedBy: SubmittedBy; 
   numOfReviews: number;
 }
 
@@ -218,63 +238,77 @@ export default defineComponent({
   },
   data() {
     return {
-
       configs: [] as Config[],
       categories: [] as string[],
       reviewStatuses: [] as string[],
       selectedFileName: '',
       fileTypeIcon: '',
-      dateRange: ['2019/04/14', '2024/06/14'], 
+      dateRange: ['2019-04-14T00:00:00Z', '2024-12-31T23:59:59Z'],
       selectedCategory: '',
       selectedReviewStatus: '',
       searchQuery: '',
       flatpickrConfig: {
         mode: 'range',
         dateFormat: 'Y/m/d',
-        defaultDate: ['2019/04/14', '2024/06/14'],
+        defaultDate: ['2019-04-14T00:00:00Z', '2024-12-31T23:59:59Z'],
       } as Record<string, any>
     };
   },
 
   computed: {
-    filteredConfigs() {
-      const [startDate, endDate] = this.dateRange;
+  filteredConfigs() {
+    const [startDate, endDate] = this.dateRange;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
     
-    const start = startDate ? new Date(startDate) : new Date('0000-01-01');
-    const end = endDate ? new Date(endDate) : new Date('9999-12-31');
-
-
-      return this.configs.filter(config => {
-        const matchesCategory = this.selectedCategory ? config.category === this.selectedCategory : true;
-        const matchesReviewStatus = this.selectedReviewStatus ? config.reviewStatus === this.selectedReviewStatus : true;
-        const matchesSearchQuery = config.configFileName.toLowerCase().includes(this.searchQuery.toLowerCase());
-        const submittedDate = new Date(config.dateSubmitted);
-        const matchesDateRange = submittedDate >= start && submittedDate <= end;
-
-        return matchesCategory && matchesReviewStatus && matchesSearchQuery && matchesDateRange;
-      });
+    if (!this.selectedCategory && !this.selectedReviewStatus && !this.searchQuery) {
+      return this.configs; 
     }
-  },
+
+    const filtered = this.configs.filter(config => {
+      const matchesCategory = this.selectedCategory 
+        ? config.category.toLowerCase() === this.selectedCategory.toLowerCase() 
+        : true;
+
+      const matchesReviewStatus = this.selectedReviewStatus 
+        ? config.reviewStatus === this.selectedReviewStatus 
+        : true;
+
+      const matchesSearchQuery = this.searchQuery
+        ? config.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        : true;
+
+      const submittedDate = new Date(config.dateSubmitted);
+      const matchesDateRange = submittedDate >= start && submittedDate <= end;
+
+
+      return matchesCategory && matchesReviewStatus && matchesSearchQuery && matchesDateRange;
+    });
+
+    return filtered;
+  }
+},
+
   created() {
     this.fetchConfigs();
   },
+
   methods: {
     async fetchConfigs() {
       try {
-        const response = await ky.get('/mock-config.json').json<{ configs: Config[] }>();
-        this.configs = response.configs;
+        const response = await ky.get('http://localhost:8787/configs').json<Config[]>();
+        this.configs = response;
 
         const categoriesSet = new Set<string>();
         const reviewStatusesSet = new Set<string>();
         this.configs.forEach(config => {
-          categoriesSet.add(config.category);
+          categoriesSet.add(config.category || 'N/A'); 
           reviewStatusesSet.add(config.reviewStatus);
         });
 
         this.categories = Array.from(categoriesSet);
         this.reviewStatuses = Array.from(reviewStatusesSet);
-
-
       } catch (error) {
         console.error('Failed to fetch configs:', error);
       }
@@ -306,8 +340,7 @@ export default defineComponent({
       };
 
       return fileIcons[mimeType] || '';
-    },
-
+    }
   },
 });
 </script>

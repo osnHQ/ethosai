@@ -66,7 +66,7 @@
               <b class="text-gray-700">Name of Configuration File</b>
               <div class="w-full flex flex-row items-start justify-start pt-1 pb-1.5 text-silver">
 
-                <input v-model="configFileName"
+                <input v-model="config.fileName"
                   class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                   placeholder="Input text" type="text" />
               </div>
@@ -99,13 +99,12 @@
                 <b class="text-gray-700">Enter relevant tags</b>
                 <div class="w-full flex flex-col items-start justify-start gap-10 text-gray-200 mq450:gap-5">
                   <div class="w-full flex flex-row flex-wrap items-start justify-start gap-1">
-                    <input v-model="inputText" @keydown.enter="addTag"
+                    <input v-model="config.inputText" @keydown.enter="addTag"
                       class="w-[312px] border-none outline-none text-black bg-light h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm max-w-full"
                       placeholder="Input text" type="text" />
                     <div
                       class="flex-1 flex flex-row items-start text-[#34270D] justify-start gap-1 min-w-[333px] max-w-full mq450:flex-wrap">
-                      <div v-for="(tag, index) in tags" :key="index"
-                        class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag
+                      <div v-for="(tag, index) in config.tags" :key="index"                        class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag
                           }}</span>
                         <button @click="removeTag(index)" class="ml-2 text-red-500 hover:text-red-700">x</button>
                       </div>
@@ -186,7 +185,7 @@
 
             <div class="w-full flex flex-col items-start justify-start gap-1">
               <b class="text-gray-700">Detailed Description / Notes</b>
-              <input v-model="description"
+              <input v-model="config.description"
                 class="w-full self-stretch h-[35px] rounded flex flex-row items-start justify-start px-3 box-border py-12 font-inter text-sm text-silver min-w-[194px] text-black bg-light"
                 placeholder="Write description in detail for this config file." type="text" />
             </div>
@@ -253,6 +252,7 @@ export default defineComponent({
         type: '',
       },
       config: {
+        fileName: '',
         description: '',
         inputText: '',
         tags: [] as string[],
@@ -329,6 +329,7 @@ export default defineComponent({
       this.selectedFileName = '';
       this.fileTypeIcon = '';
       this.config = {
+        fileName: '',
         description: '',
         inputText: '',
         tags: [],
@@ -342,7 +343,7 @@ export default defineComponent({
         newAnswer: this.newAnswer,
         selectedFileName: this.selectedFileName,
         fileTypeIcon: this.fileTypeIcon,
-        config: this.config,  // Now saving the entire config object
+        config: this.config,  
       };
       localStorage.setItem('draftData', JSON.stringify(draftData));
       this.showNotification('Draft saved successfully!', 'success');
@@ -357,6 +358,7 @@ export default defineComponent({
         this.fileTypeIcon = draftData.fileTypeIcon || '';
         if (draftData.config) {
           this.config = {
+            fileName: draftData.config.configFileName || '',
             description: draftData.config.description || '',
             inputText: draftData.config.inputText || '',
             tags: draftData.config.tags || [],
@@ -375,7 +377,7 @@ export default defineComponent({
         formData.append('file', this.config.uploadedFile);
 
         const payload = {
-          name: this.configFileName,
+          name: this.config.fileName,
           category: this.config.description,
           tags: this.config.tags,
           questionAnswerPairs: this.questionAnswerPairs,

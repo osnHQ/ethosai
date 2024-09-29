@@ -5,13 +5,12 @@ import os
 import asyncio
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Dict, List
 
 import pandas as pd
 import pymupdf
 import streamlit as st
 from dotenv import load_dotenv
-from rapidfuzz import fuzz
 from uuid import uuid4
 
 from openai import AsyncOpenAI
@@ -28,10 +27,11 @@ def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
 
-async def generate_qa_from_text(text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini") -> str:
-    prompt = (
-        f"Generate interesting yet general questions to ask in an exam, short one or few word answer factual factoid question answer set from the following text as a table: {text}"
-    )
+
+async def generate_qa_from_text(
+    text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
+) -> str:
+    prompt = f"Generate short one or few word answer factual factoid question answer set from the following text as a table: {text}"
     try:
         response = await client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
@@ -68,37 +68,51 @@ async def generate_qa_from_text(text: str, client: AsyncOpenAI, model: str = "gp
         logger.error(f"Error generating QA from text: {e}")
         return ""
 
-def process_pdf_batch(batch_text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini") -> str:
+
+def process_pdf_batch(
+    batch_text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
+) -> str:
     return asyncio.run(generate_qa_from_text(batch_text, client, model))
 
+
 def process_pdf_in_parallel(
-    pdf_path: str, batch_size: int = 5, max_workers: int = 50, model: str = "gpt-4o-mini", client: AsyncOpenAI = None
+    pdf_path: str,
+    batch_size: int = 5,
+    max_workers: int = 50,
+    model: str = "gpt-4o-mini",
+    client: AsyncOpenAI = None,
 ) -> List[str]:
     pages = extract_text_from_pdf(pdf_path)
     batches = [
         "".join(pages[i : i + batch_size]) for i in range(0, len(pages), batch_size)
     ]
-    
+
     total_batches = len(batches)
     progress_bar = st.progress(0)
-    
+
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         process_func = partial(process_pdf_batch, client=client, model=model)
         futures = [executor.submit(process_func, batch) for batch in batches]
-        
+
         for i, future in enumerate(concurrent.futures.as_completed(futures)):
             results.append(future.result())
             progress_bar.progress((i + 1) / total_batches)
 
     return results
 
-async def generate_model_answer(prompt: str, client: AsyncOpenAI, model: str = "gpt-4o-mini") -> str:
+
+async def generate_model_answer(
+    prompt: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
+) -> str:
     try:
         response = await client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "reply very crisp factoid answer."},
+                {
+                    "role": "system",
+                    "content": "reply with a one or few words short factoid answer.",
+                },
                 {"role": "user", "content": prompt},
             ],
         )
@@ -107,45 +121,43 @@ async def generate_model_answer(prompt: str, client: AsyncOpenAI, model: str = "
         logger.error(f"Error generating model answer: {e}")
         return ""
 
+
 async def compare_sentences_llm(
-    ai_reply: str,
-    correct_reply: str,
+    model_answer: str,
+    expert_answer: str,
     question: str,
     context: str = "",
     client: AsyncOpenAI = None,
     model: str = "gpt-4o-mini",
 ) -> str:
     prompt = f"""
-You will be given three inputs from {context}:
+You are comparing a submitted answer to an expert answer on a given question. Here is the data:
+  [BEGIN DATA]
+  [Context]: {context}
+  [Question]: {question}
+  [Expert]: {expert_answer}
+  [Submission]: {model_answer}
+  [END DATA]
 
-Source Question: The question that was asked to the AI agent.
-AI Agent Reply: The response provided by the AI agent.
-Correct Reply: The factually accurate response.
+  Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.
+  The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:
+  (A) The submitted answer is a subset of the expert answer and is fully consistent with it.
+  (B) The submitted answer is a superset of the expert answer and is fully consistent with it.
+  (C) The submitted answer contains all the same details as the expert answer.
+  (D) There is a disagreement between the submitted answer and the expert answer.
+  (E) The answers differ, but these differences don't matter from the perspective of factuality.
+choice_scores:
+  "A": 0.4
+  "B": 0.6
+  "C": 1
+  "D": 0
+  "E": 1
 
-Your task is to:
-1. Compare the AI Agent Reply to the Correct Reply.
-2. Identify factual differences, inaccuracies, or missing information.
-3. Do not penalize for additional clarifications or explanations provided by the AI Agent, as long as the response is factually accurate and relevant to the question.
-4. Provide a factual accuracy score as factual_accuracy key in JSON response between 0 and 100, where:
-  - For factual or numerical answers (e.g., dates, quantities, measurements): A score of 100 indicates the answer is exactly correct, while minor discrepancies (e.g., close but incorrect values) should result in a proportionally lower score. 
-  - For textual, descriptive, or interpretive answers: A score of 100 indicates that the answer is factually accurate and aligns with the expected information. Partial correctness (e.g., correct in some aspects but missing or wrong in others) should result in a lower score.
-  - 0 means the answer is completely incorrect.
-  - 100 means the AI Agent Reply is perfectly accurate and factually aligned with the Correct Reply.
-  - 0 means the AI Agent Reply is completely inaccurate and does not match the Correct Reply.
-
-Afterward, list the key factual differences as factual_differences key in JSON and explain the reasoning behind the assigned score as score_explanation key in JSON.
-
-Return a JSON object with the following structure:
-
-{{
-    "factual_accuracy": <integer between 0 and 100>,
-    "factual_differences": <string>,
-    "score_explanation": <string>
-}}
-
-Source Question: '{question}'
-AI Agent Reply: '{ai_reply}'
-Correct Reply: '{correct_reply}'
+  return the answer as a json object with the following structure:
+  {{
+    "choice": <string>,
+    "score": <float>
+  }}
 """
     try:
         response = await client.chat.completions.create(
@@ -154,95 +166,33 @@ Correct Reply: '{correct_reply}'
             response_format={
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "sentence-similarity",
+                    "name": "choice-scoring",
                     "strict": True,
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "factual_accuracy": {"type": "number"},
-                            "factual_differences": {"type": "string"},
-                            "score_explanation": {"type": "string"},
+                            "choice": {"type": "string"},
+                            "score": {"type": "number"},
                         },
                         "required": [
-                            "factual_accuracy",
-                            "factual_differences",
-                            "score_explanation",
+                            "choice",
+                            "score",
                         ],
                         "additionalProperties": False,
                     },
                 },
             },
         )
-        return response.choices[0].message.content
+        response = response.choices[0].message.content
+        return json.loads(response)
     except Exception as e:
         logger.error(f"Error comparing sentences with LLM: {e}")
-        return json.dumps({
-            "factual_accuracy": 0,
-            "factual_differences": "Error occurred during comparison.",
-            "score_explanation": str(e),
-        })
-
-def compare_sentences_fuzzy(x: str, y: str) -> str:
-    ratio = fuzz.ratio(x.lower(), y.lower())
-    partial_ratio = fuzz.partial_ratio(x.lower(), y.lower())
-    token_sort_ratio = fuzz.token_sort_ratio(x, y)
-    token_set_ratio = fuzz.token_set_ratio(x, y)
-
-    if (
-        ratio > 80
-        or partial_ratio > 90
-        or token_sort_ratio > 80
-        or token_set_ratio > 80
-    ):
-        return "Sentences are similar"
-    else:
-        return "Sentences are different"
-
-def check_exact_match(x: str, y: str) -> bool:
-    return x.lower() == y.lower()
-
-def check_partial_match(x: str, y: str) -> bool:
-    return x.lower() in y.lower() or y.lower() in x.lower()
-
-async def compare_sentences(
-    x: str, y: str, context: str = "", client: AsyncOpenAI = None, model: str = "gpt-4o-mini"
-) -> Dict[str, Any]:
-    llm_result = await compare_sentences_llm(
-        x, y, "Compare these sentences", context=context, client=client, model=model
-    )
-    return {
-        "fuzzy": compare_sentences_fuzzy(x, y),
-        "exact": check_exact_match(x, y),
-        "includes": check_partial_match(x, y),
-        "llm": llm_result,
-    }
-
-def flatten_similarity_results(similarity_dict: Dict[str, Any]) -> Dict[str, Any]:
-    flattened = {
-        "Fuzzy_Comparison": similarity_dict["fuzzy"],
-        "Exact_Match": similarity_dict["exact"],
-        "Includes_Match": similarity_dict["includes"],
-    }
-
-    try:
-        llm_comparison = json.loads(similarity_dict["llm"])
-    except json.JSONDecodeError as e:
-        logger.error(f"Error decoding JSON from LLM comparison: {e}")
-        llm_comparison = {
-            "factual_accuracy": 0,
-            "factual_differences": "Invalid JSON format.",
-            "score_explanation": str(e),
-        }
-
-    flattened.update(
-        {
-            "Factual_Accuracy": llm_comparison.get("factual_accuracy", 0),
-            "Factual_Differences": llm_comparison.get("factual_differences", ""),
-            "Score_Explanation": llm_comparison.get("score_explanation", ""),
-        }
-    )
-
-    return flattened
+        return json.dumps(
+            {
+                "choice": f"error: {str(e)}",
+                "score": 0,
+            }
+        )
 
 def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
     with open(output_file, "w", encoding="utf-8") as jsonlfile:
@@ -255,8 +205,10 @@ def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
                 logger.error(f"Error saving QA to JSONL: {e}")
                 continue
 
+
 def load_jsonl(file) -> List[Dict[str, str]]:
     return [json.loads(line.decode("utf-8")) for line in file]
+
 
 def initialize_session_state() -> None:
     if "df" not in st.session_state:
@@ -266,7 +218,10 @@ def initialize_session_state() -> None:
 
 
 async def process_questions(
-    jsonl_data: List[Dict[str, str]], context: str = "", client=None, model: str = "gpt-4o-mini"
+    jsonl_data: List[Dict[str, str]],
+    context: str = "",
+    client=None,
+    model: str = "gpt-4o-mini",
 ) -> None:
     columns = ["Question", "Model_Response", "Expected_Answer"]
     results_df = pd.DataFrame(columns=columns)
@@ -281,20 +236,25 @@ async def process_questions(
         async with semaphore:
             try:
                 response = (
-                    await generate_model_answer(f"{context} {pair['question']}", client, model=model)
+                    await generate_model_answer(
+                        f"{context}, {pair['question']}", client, model=model
+                    )
                 ).strip(".")
-                
-                similarity = await compare_sentences(
-                    response, pair["answer"], context=context, client=client, model=model
+
+                similarity = await compare_sentences_llm(
+                    model_answer=response,
+                    expert_answer=pair["answer"],
+                    question=pair["question"],
+                    context=context,
+                    client=client,
+                    model=model
                 )
-                
-                flattened_similarity = flatten_similarity_results(similarity)
 
                 result = {
                     "Question": pair["question"],
                     "Model_Response": response,
                     "Expected_Answer": pair["answer"],
-                    **flattened_similarity,
+                    **similarity,
                 }
                 return result
             except Exception as e:
@@ -302,12 +262,8 @@ async def process_questions(
                     "Question": pair["question"],
                     "Model_Response": "Error",
                     "Expected_Answer": pair["answer"],
-                    "Fuzzy_Comparison": "",
-                    "Exact_Match": "",
-                    "Includes_Match": "",
-                    "Factual_Accuracy": 0,
-                    "Factual_Differences": "",
-                    "Score_Explanation": str(e),
+                    "Choice": f"Error: {str(e)}",
+                    "Score": 0,
                 }
 
     tasks = [process_single_question(pair) for pair in jsonl_data]
@@ -317,7 +273,7 @@ async def process_questions(
         result = await task
         results.append(result)
         results_df = pd.DataFrame(results)
-        
+
         progress_bar.progress(i / total)
         table_container.table(results_df)
 
@@ -386,7 +342,11 @@ def main() -> None:
                 f.write(uploaded_file.getbuffer())
 
             qa_tables = process_pdf_in_parallel(
-                pdf_path, batch_size=batch_size, max_workers=max_workers, model=model, client=client
+                pdf_path,
+                batch_size=batch_size,
+                max_workers=max_workers,
+                model=model,
+                client=client,
             )
 
             jsonl_output_file = "/tmp/output.jsonl"
@@ -413,9 +373,13 @@ def main() -> None:
         if st.button("Process Questions"):
             asyncio.run(
                 process_questions(
-                    edited_df.to_dict("records"), context=context, client=client, model=model
+                    edited_df.to_dict("records"),
+                    context=context,
+                    client=client,
+                    model=model,
                 )
             )
+
 
 if __name__ == "__main__":
     main()

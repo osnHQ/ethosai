@@ -167,37 +167,61 @@ export default {
       
     };
 
-    const runEvaluation = async () => {
-      if (!selectedLlm.value || !configId.value) {
-        console.error('Missing selected LLM or config ID.');
-        return;
-      }
+    // Frontend code
+const runEvaluation = async () => {
+  if (!selectedLlm.value || !configId.value) {
+    console.error('Missing selected LLM or config ID.');
+    return;
+  }
+  
+  const payload = {
+    configId: Number(configId.value),
+    model: 'gpt-4o-mini', 
+  };
 
-      const payload = {
-        configId: Number(configId.value),
-        model: 'gpt-4o-mini', 
-      };
+  try {
+    const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
 
-      try {
-        const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+    if (response.ok) {
+      // Get the filename from the Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      console.log("Content-Disposition Header:", contentDisposition); // Log for debugging
+      
+      const filenameMatch = contentDisposition && contentDisposition.match(/filename="?(.+)"?/i);
+      const filename = filenameMatch ? filenameMatch[1] : 'evaluation_results.csv';
 
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Evaluation result:', result); 
-         router.push({ name: 'auditqueue' });
-        } else {
-          console.error('Failed to run evaluation');
-        }
-      } catch (error) {
-        console.error('Error in evaluation:', error);
-      }
-    };
+      // Get the blob from the response
+      const blob = await response.blob();
+
+      // Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a link element and trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      console.log('CSV file downloaded successfully');
+      router.push({ name: 'auditqueue' });
+    } else {
+      console.error('Failed to run evaluation');
+    }
+  } catch (error) {
+    console.error('Error in evaluation:', error);
+  }
+};
 
     return {
       configData, 

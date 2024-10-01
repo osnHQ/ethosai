@@ -9,6 +9,7 @@ import { getRecordsWithIds } from "../utils/db";
 import { generateReport } from "../utils/openai";
 import { configs } from "../db/schema";
 import { sql } from 'drizzle-orm';
+import PDFDocument from 'pdfkit';
 
 export type Env = {
   DATABASE_URL: string;
@@ -107,10 +108,11 @@ evaluationRouter.post('/evaluateBatch',
   }
 );
 
+// Backend code
 evaluationRouter.post('/evaluateCsv',
   zValidator('json', z.object({
-    configId: z.number(),   
-    model: z.string(),    
+    configId: z.number(),
+    model: z.string(),
   })),
   async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
@@ -119,38 +121,58 @@ evaluationRouter.post('/evaluateCsv',
     const { configId, model } = c.req.valid('json');
 
     try {
+      // Retrieve configuration from database
       const result = await db
-  .select()
-  .from(configs)
-  .where(sql`${configs.id} = ${configId}`)
-  .limit(1);
+        .select()
+        .from(configs)
+        .where(sql`${configs.id} = ${configId}`)
+        .limit(1);
 
-const config = result[0];
-    
-    
+      const config = result[0];
       if (!config) {
         return c.json({ error: 'Configuration not found' }, 404);
       }
 
-
+      // Parse CSV content
       const content = config.fileContents;
-      const rawRecords = parseCSV(content); 
+      const rawRecords = parseCSV(content);
 
-      const records = rawRecords.map((record: Record<string, string>) => ({
-        content: record['content'],
-        answer: record['answer'],
-      }));
+      // Evaluate records
+      const results = [];
+      for (let i = 0; i < rawRecords.length; i++) {
+        try {
+          const record = {
+            content: rawRecords[i]['content'],
+            answer: rawRecords[i]['answer'],
+          };
 
-      const recordsWithIds = await getRecordsWithIds(db, records);
+          if (!record.content || !record.answer) {
+            console.warn(`Missing fields at row ${i + 1}:`, record);
+            continue; // Skip this record
+          }
 
-      const results = await Promise.all(
-        recordsWithIds.map((record: { content: string; answer: string; }) => evaluateQuestion(db, openai, model, record))
-      );
+          console.log(`Processing record ${i + 1}:`, record);
+          const recordWithId = await getRecordsWithIds(db, [record]);
+          const result = await evaluateQuestion(db, openai, model, recordWithId[0]);
+          results.push(result);
 
-      const prompts = results.map((result) => `question: ${result.question}\nanswer: ${result.answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`);
-      const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
+        } catch (error) {
+          const err = error as Error;
+          console.error(`Error processing record at row ${i + 1}:`, err.message);
+          results.push({ error: `Failed to evaluate record at row ${i + 1}` });
+        }
+      }
 
-      return c.json(results.map((result, index) => ({ ...result, ...JSON.parse(reports[index]) })));
+      // Generate CSV content
+      const csvContent = generateCSV(results);
+
+      // Set headers for CSV download with dynamic filename
+      c.header('Content-Type', 'text/csv');
+      c.header('Content-Disposition', `attachment; filename=config_${configId}_results.csv`); // Dynamic filename
+      console.log(`Content-Disposition set to: attachment; filename=config_${configId}_results.csv`); // Log for debugging
+
+      // Return CSV content
+      return c.body(csvContent);
 
     } catch (error) {
       console.error("Error evaluating CSV:", error);
@@ -159,5 +181,25 @@ const config = result[0];
   }
 );
 
+
+
+function generateCSV(results: any[]): string {
+  const headers = ['question', 'answer', 'generated', 'similarity', 'evaluationId'];
+  let csvContent = headers.join(',') + '\n';
+
+  for (const result of results) {
+    const row = headers.map(header => {
+      let cell = result[header] || '';
+      // Escape quotes and wrap in quotes if the cell contains a comma
+      if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
+        cell = `"${cell.replace(/"/g, '""')}"`;
+      }
+      return cell;
+    });
+    csvContent += row.join(',') + '\n';
+  }
+
+  return csvContent;
+}
 
 export default evaluationRouter;

@@ -9,7 +9,6 @@ import { getRecordsWithIds } from "../utils/db";
 import { generateReport } from "../utils/openai";
 import { configs } from "../db/schema";
 import { sql } from 'drizzle-orm';
-import PDFDocument from 'pdfkit';
 
 export type Env = {
   DATABASE_URL: string;
@@ -20,11 +19,43 @@ export type Env = {
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();
 
+const getPrompt = (context: string, question: string, answer: string, response: string) => {
+  return `You are comparing a submitted answer to an expert answer on a given question. Here is the data:
+  [BEGIN DATA]
+  [Context]: ${context}
+  [Question]: ${question}
+  [Expert]: ${answer}
+  [Submission]: ${response}
+  [END DATA]
+
+  Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.
+  The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:
+  (A) The submitted answer is a subset of the expert answer and is fully consistent with it.
+  (B) The submitted answer is a superset of the expert answer and is fully consistent with it.
+  (C) The submitted answer contains all the same details as the expert answer.
+  (D) There is a disagreement between the submitted answer and the expert answer.
+  (E) The answers differ, but these differences don't matter from the perspective of factuality.
+choice_scores:
+  "A": 0.4
+  "B": 0.6
+  "C": 1
+  "D": 0
+  "E": 1
+
+  return the answer as a json object with the following structure:
+  {{
+    "choice": <string>,
+    "score": <float>
+  }}
+`;;
+}
+
 evaluationRouter.get(
   "/evaluate",
   zValidator(
     "query",
     z.object({
+      context: z.string(),
       question: z.string(),
       answer: z.string(),
       model: z.string(),
@@ -33,13 +64,16 @@ evaluationRouter.get(
   async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
     const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-    
-    const { question, answer, model } = c.req.valid("query");
+
+    const { context, question, answer, model } = c.req.valid("query");
 
     try {
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
 
-      const prompt = `question: ${question}\nanswer: ${answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`;
+      const response = result.generated;
+
+      const prompt = getPrompt(context, question, answer, response);
+
       const report = await generateReport(openai, model, prompt);
 
       return c.json({ ...result, ...JSON.parse(report) });
@@ -55,6 +89,7 @@ evaluationRouter.post(
   zValidator(
     "json",
     z.object({
+      context: z.string(),
       question: z.string(),
       answer: z.string(),
       model: z.string(),
@@ -63,12 +98,13 @@ evaluationRouter.post(
   async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
     const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-    
-    const { question, answer, model } = c.req.valid("json");
+
+    const { context, question, answer, model } = c.req.valid("json");
 
     try {
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-      const prompt = `question: ${question}\nanswer: ${answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`;
+      const response = result.generated;
+      const prompt = getPrompt(context, question, answer, response);
       const report = await generateReport(openai, model, prompt);
 
       return c.json({ ...result, ...JSON.parse(report) });
@@ -96,7 +132,7 @@ evaluationRouter.post('/evaluateBatch',
       const results = await Promise.all(
         questions.map((question) => evaluateQuestion(db, openai, model, { ...question }))
       );
-      
+
       const prompts = results.map((result) => `question: ${result.question}\nanswer: ${result.answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`);
       const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
 

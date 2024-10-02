@@ -45,6 +45,7 @@
     "chart.js": "^4.4.4",
     "flatpickr": "^4.6.13",
     "ky": "^1.7.2",
+    "lucide-vue-next": "^0.446.0",
     "ollama": "^0.5.9",
     "openai": "^4.66.1",
     "uplot": "^1.6.31",

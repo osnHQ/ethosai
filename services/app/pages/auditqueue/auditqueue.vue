@@ -55,7 +55,8 @@
               Upload Config File
               <input ref="fileInput" type="file" accept=".json,.csv,.txt" @change="handleFileUpload" class="hidden" />
             </label>
-            <div v-if="selectedFileName" class="mt-2 text-gray-600 text-sm">
+            <div v-if="selectedFileName" class="mt-2 text-gray-600 text-sm flex items-center">
+              <NuxtImg :src="getFileTypeIcon(selectedFileType)" alt="File Type Icon" class="w-6 h-6 mr-2" />
               Selected file: <span class="font-medium">{{ selectedFileName }}</span>
             </div>
             <p class="text-xs text-gray-500 mt-1">
@@ -302,6 +303,7 @@ const apiUrl = isLocalhost
 
 const configs = ref<Config[]>([])
 const selectedFileName = ref('')
+const selectedFileType = ref('')
 const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedReviewStatus = ref('')
@@ -352,7 +354,18 @@ const handleFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input?.files?.[0]) {
     selectedFileName.value = input.files[0].name
+    selectedFileType.value = input.files[0].type
   }
+}
+
+const getFileTypeIcon = (mimeType: string): string => {
+  const fileIcons: Record<string, string> = {
+    'application/json': '/json_icon.png',
+    'text/csv': '/csv_icon.png',
+    'text/plain': '/txt_icon.png',
+  };
+
+  return fileIcons[mimeType] || '';
 }
 
 const matchesCriteria = (config: Config) => {

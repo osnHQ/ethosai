@@ -1,346 +1,505 @@
 <template>
-  <div class="w-full relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
-    <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-280">
-      <section
-        class="flex flex-col px-8 pt-8 pb-3.5 mt-10 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
-        <header class="max-md:max-w-full">
-          <div class="flex gap-5 max-md:flex-col max-md:gap-0">
-            <div class="flex flex-col w-[81%] max-md:ml-0 max-md:w-full">
-              <div class="flex flex-col max-md:mt-10 max-md:max-w-full">
-                <div class="flex gap-5 justify-between px-0.5 w-full max-md:flex-wrap max-md:max-w-full">
-                  <h1
-                    class="flex gap-5 self-start text-3xl leading-10 text-zinc-900 max-md:flex-wrap max-md:max-w-full">
-                    <span class="flex-auto">Audit Queue</span>
-                    <NuxtImg loading="lazy" src="/loading.png" alt="" class="w-10" />
-                  </h1>
-                  <button class="justify-center px-6 py-2 text-lg leading-7 text-white bg-blue-500 rounded max-md:px-5"
-                    @click="goToCreateConfig">
-                    Add a new config manually
-                  </button>
-                </div>
-                <p class="mt-2 text-base leading-7 text-neutral-800 max-md:max-w-full">
-                  List of all community generated config files and audits
-                </p>
-              </div>
-            </div>
-            <div class="flex flex-col ml-5 w-[35%] max-md:ml-0 max-md:w-full">
-              <div class="flex flex-col grow max-md:mt-10">
-                <button @click="triggerFileInput"
-                  class="flex items-center justify-center px-2 py-2 text-lg leading-7 text-white bg-orange-500 rounded max-md:px-5">
-                  <svg class="mr-2 h-5 w-5 " fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                  </svg>
-                  Or Upload a config file here
-                </button>
+  <div class="min-h-screen flex flex-col md:flex-row bg-gray-50 transition-colors duration-300">
+    <aside :class="{
+      'hidden': !isSidebarOpen && isMobile,
+      'block': isSidebarOpen || !isMobile,
+      'fixed': isSidebarOpen && isMobile,
+      'inset-0': isSidebarOpen && isMobile,
+      'md:relative': true,
+      'md:block': true,
+    }" class="w-64 bg-white shadow-lg z-30 transition-transform transform md:translate-x-0">
+      <Sidebar @toggleSidebar="toggleSidebar" />
+    </aside>
 
-                <div class="flex flex-row gap-3 items-center mt-3">
-                  <div v-if="fileTypeIcon" class="mt-2">
-                    <NuxtImg :src="fileTypeIcon" alt="File Type Icon"
-                      class="w-16 h-16 object-cover border border-gray-300 rounded-md" />
-                  </div>
-                  <p v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">Selected file: {{
-                    selectedFileName }}
-                  </p>
-                </div>
-                <input ref="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
-                  @change="handleFileUpload" />
+    <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
 
-                <p class="mt-3 text-xs leading-5 text-zinc-700">JSON, CSV or TXT supported</p>
-                <a href="#" class="mt-3.5 text-sm leading-5 text-blue-500 underline">
-                  Download an example JSON format
-                </a>
-              </div>
-            </div>
+    <main class="flex-1 flex flex-col">
+      <header
+        class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-white shadow md:py-4 md:px-6">
+        <div class="flex items-center w-full md:w-auto">
+          <button @click="toggleSidebar"
+            class="md:hidden text-gray-700 focus:outline-none mr-4 transition-colors duration-200 hover:text-gray-900"
+            aria-label="Toggle Sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <div>
+            <h1 class="text-3xl font-extrabold text-gray-800 flex items-center gap-3">
+              Audit Queue
+              <img loading="lazy" src="/loading.png" alt="Loading" class="w-10 h-10" />
+            </h1>
+            <p class="mt-1 text-gray-500 text-md">
+              Comprehensive list of community-generated config files and audits
+            </p>
           </div>
-        </header>
-        <div class="flex flex-wrap gap-5 mt-10 text-sm leading-5 items-center">
-          <div class="flex gap-2 flex-grow items-center">
-            <div
-              class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
-              <NuxtImg loading="lazy" src="/search.png" alt="" class="w-5" />
-              <input v-model="searchQuery" type="text"
-                placeholder="Search for the configurations here (name, tags, category etc.)"
-                class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-2 text-3 w-50" />
-            </div>
-            <div class="flex">
-              <label for="dateRange" class="text-[#323842] ml-5">Select date range</label>
-              <div
-                class="flex items-center mr-2 w-3/4 justify-center pr-2 py-2 bg-white rounded border border-solid border-neutral-300 text-zinc-900">
-                <Flatpickr v-model="dateRange" :config="flatpickrConfig"
-                  class="grow w-full md:w-auto outline-none focus:outline-none focus:shadow-none" />
+        </div>
 
-                <NuxtImg loading="lazy" src="/downarrow.png" alt="" class="shrink-0 w-3.5 aspect-square" />
-              </div>
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 mt-4 md:mt-0 w-full md:w-auto">
+          <button @click="goToCreateConfig"
+            class="w-full md:w-auto px-6 py-3 text-sm font-medium text-white bg-blue-700 rounded-lg shadow hover:bg-blue-600 transition duration-200 flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add New Config
+          </button>
+
+          <div class="w-full md:w-auto flex flex-col items-start mt-0 md:mt-5">
+            <label
+              class="w-full md:w-auto flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-orange-600 rounded-lg shadow hover:bg-orange-500 transition duration-200 cursor-pointer">
+              <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              Upload Config File
+              <input ref="fileInput" type="file" accept=".json,.csv,.txt" @change="handleFileUpload" class="hidden" />
+            </label>
+            <div v-if="selectedFileName" class="mt-2 text-gray-600 text-sm flex items-center">
+              <NuxtImg :src="getFileTypeIcon(selectedFileType)" alt="File Type Icon" class="w-6 h-6 mr-2" />
+              Selected file: <span class="font-medium">{{ selectedFileName }}</span>
             </div>
+            <p class="text-xs text-gray-500 mt-1">
+              Supported formats: JSON, CSV, TXT
+            </p>
           </div>
-          <div class="flex gap-x-5 items-center text-zinc-900 flex-grow">
-            
+        </div>
+      </header>
+
+      <div class="flex flex-col md:flex-row justify-between items-center p-6 bg-white shadow">
+        <div class="flex items-center space-x-2">
+          <span class="text-gray-700 font-medium">View:</span>
+          <button @click="setView('table')" :class="viewMode === 'table' ? activeButtonClass : inactiveButtonClass"
+            aria-label="Table View"
+            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 3h18v3H3V3zm0 7h18v3H3v-3zm0 7h18v3H3v-3z" />
+            </svg>
+          </button>
+          <button @click="setView('grid')" :class="viewMode === 'grid' ? activeButtonClass : inactiveButtonClass"
+            aria-label="Grid View"
+            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4 4h6v6H4V4zm0 8h6v6H4v-6zm8-8h6v6h-6V4zm0 8h6v6h-6v-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col p-6 bg-white shadow mb-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <input v-model="searchQuery" type="text"
+            class="flex-grow md:flex-shrink-0 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-auto"
+            placeholder="Search configurations..." @input="debounceFilter" />
+
+          <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             <select v-model="selectedCategory"
-              class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
-              <option value="">Filter by category</option>
+              class="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              @change="filterConfigs">
+              <option value="">All Categories</option>
               <option v-for="category in categories" :key="category" :value="category">
                 {{ category }}
               </option>
             </select>
 
-            
             <select v-model="selectedReviewStatus"
-              class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
-              <option value="">Filter by status (audited, unaudited, under rev)</option>
+              class="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              @change="filterConfigs">
+              <option value="">All Statuses</option>
               <option v-for="status in reviewStatuses" :key="status" :value="status">
                 {{ status }}
               </option>
             </select>
+
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <label class="text-gray-700 text-sm font-medium">Date Range:</label>
+            <Flatpickr v-model="dateRange" :config="flatpickrConfig"
+              class="w-full md:w-auto p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
           </div>
         </div>
+      </div>
 
-
-        <div
-          class="flex gap-5 items-start mt-3.5 text-sm leading-6 text-right text-cyan-500 max-md:flex-wrap max-md:max-w-full">
-          <NuxtImg loading="lazy" src="/question.png" alt="" class="shrink-0 w-6 aspect-square" />
-          <p class="flex-auto mt-3">
-            Total <span class="font-bold text-cyan-500">551287</span> configs
-          </p>
+      <div class="flex-1 flex flex-col p-6">
+        <div v-if="isLoading" class="flex justify-center items-center h-full">
+          <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
         </div>
-        <div class="overflow-x-auto">
-          <table
-            class="mt-6 w-full text-sm leading-5 rounded border border-gray-100 border-solid bg-black bg-opacity-0">
-            <thead>
-              <tr class="font-semibold text-gray-600 bg-gray-50">
-                <th class="px-4 py-4 font-bold text-left">Config File Name</th>
-                <th class="px-4 py-4 font-bold text-left">Category</th>
-                <th class="px-4 py-4 font-bold text-left">Tags</th>
-                <th class="px-4 py-5 font-bold text-left">Review Status</th>
-                <th class="px-3.5 py-3.5 font-bold text-left">Date <span class="font-bold">Submitted</span></th>
-                <th class="px-4 py-3.5 font-bold text-left">Last Reviewed</th>
-                <th class="px-4 py-4 font-bold text-left">Submitted by</th>
-                <th class="pl-10 py-5 font-bold text-left"># of reviews</th>
-                <th class="px-8 py-5 font-bold text-center max-md:px-5 truncate">Action</th>
+
+        <div v-if="error" class="text-red-500 text-center mb-4">
+          {{ error }}
+        </div>
+
+        <section v-if="viewMode === 'table'" class="overflow-x-auto">
+          <table class="min-w-full bg-white shadow rounded-lg overflow-hidden">
+            <thead class="bg-gray-100">
+              <tr>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('name')">
+                  Name
+                  <SortIcon sortKey="name" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('category')">
+                  Category
+                  <SortIcon sortKey="category" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('tags')">
+                  Tags
+                  <SortIcon sortKey="tags" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('reviewStatus')">
+                  Status
+                  <SortIcon sortKey="reviewStatus" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('dateSubmitted')">
+                  Submitted
+                  <SortIcon sortKey="dateSubmitted" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('lastReviewed')">
+                  Last Reviewed
+                  <SortIcon sortKey="lastReviewed" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('submittedBy')">
+                  Submitted By
+                  <SortIcon sortKey="submittedBy" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                  @click="sortBy('numOfReviews')">
+                  Reviews
+                  <SortIcon sortKey="numOfReviews" :currentSortKey="sortKey" :sortOrder="sortOrder" />
+                </th>
+                <th class="px-6 py-4 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody>
-  <tr v-for="config in filteredConfigs" :key="config.id" class="bg-white">
-   
-    <td class="px-4 py-12 font-bold">{{ config.name }}</td>
-    
-    
-    <td class="px-4 py-12">{{ config.category || 'N/A' }}</td>
-    
-    
-    <td class="px-4 py-11">
-      <div class="flex gap-1 text-xs leading-5 text-blue-500">
-        <span v-for="tag in config.tags" :key="tag" class="px-2 py-2.5 bg-sky-50 rounded-2xl">{{ tag }}</span>
-      </div>
-    </td>
-    
-    
-    <td class="px-4 py-12">{{ config.reviewStatus }}</td>
-    
-    
-    <td class="px-4 py-12">{{ new Date(config.dateSubmitted).toLocaleDateString() }}</td>
-    
-    
-    <td class="px-4 py-12">{{ new Date(config.lastReviewed).toLocaleDateString() }}</td>
-    
-    
-    <td class="px-4 py-10">
-      <div class="flex gap-2">
-        
-        <span class="my-auto">{{ config.submittedBy }}</span>
-      </div>
-    </td>
-    
-    
-    <td class="pl-10 py-12">{{ config.numOfReviews || 0 }}</td>
-    
-    
-    <td class="px-8 py-12 text-center text-cyan-500 max-md:px-5">
-      <a href="#" class="hover:underline">View/Start Review</a>
-    </td>
-  </tr>
-</tbody>
-
+            <tbody class="divide-y divide-gray-200">
+              <tr v-for="config in paginatedConfigs" :key="config.id"
+                class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ config.name }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ config.category }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
+                  {{ config.tags.join(', ') }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="statusClass(config.reviewStatus)"
+                    class="px-3 py-1 text-xs font-semibold text-white rounded-full">
+                    {{ config.reviewStatus }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(config.dateSubmitted) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(config.lastReviewed) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ config.submittedBy.username }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ config.numOfReviews }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <button @click="viewDetails(config.id)" class="text-blue-600 hover:text-blue-900 font-medium text-sm">
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
           </table>
+        </section>
+
+        <div class="flex justify-between items-center mt-6">
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-700 text-sm">Items per page:</span>
+            <select v-model="itemsPerPage"
+              class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              @change="changePage(1)">
+              <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+            </select>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button @click="prevPage" :disabled="currentPage === 1"
+              class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              Previous
+            </button>
+
+            <span class="text-gray-700 text-sm">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+
+            <button @click="nextPage" :disabled="currentPage === totalPages"
+              class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+            </button>
+          </div>
         </div>
-        <nav
-          class="flex gap-1 self-center mt-14 max-w-full text-sm leading-5 whitespace-nowrap text-zinc-400 w-[344px] max-md:mt-10"
-          aria-label="Pagination">
-          <a href="#" class="flex gap-0.5 text-white">
-            <NuxtImg loading="lazy" src="/paginationleft.png" alt="Previous page" class="w-5 h-5 mt-3.5 mr-2" />
-            <span class="sr-only">Previous page</span>
-          </a>
-          <a href="#" aria-current="page" class="justify-center items-start px-4 py-3.5 bg-cyan-500 rounded text-white">
-            1
-          </a>
-          <a href="#"
-            class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-            2
-          </a>
-          <a href="#"
-            class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-            3
-          </a>
-          <a href="#"
-            class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-            4
-          </a>
-          <span class="flex gap-1">
-            <NuxtImg loading="lazy" src="/paginationdots.png" alt=""
-              class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
-            <a href="#"
-              class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-              10
-            </a>
-            <a href="#"
-              class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-              11
-            </a>
-          </span>
-          <a href="#" class="flex gap-0.5 text-zinc-400">
-            <NuxtImg loading="lazy" src="/paginationright.png" alt="Next page" class="w-5 h-5 mt-3.5 ml-5" />
-            <span class="sr-only">Next page</span>
-          </a>
-        </nav>
-      </section>
+      </div>
     </main>
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted, computed, watch } from 'vue'
+import ky from 'ky'
+import Flatpickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
+import { useRouter } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 
-<script lang="ts">
-import ky from 'ky';
-import { defineComponent } from 'vue';
-import Flatpickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css'; 
+const router = useRouter()
+const isSidebarOpen = ref(false)
+const { width } = useWindowSize()
+const isMobile = computed(() => width.value < 768)
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
 
 interface SubmittedBy {
-  avatarUrl: string;
-  username: string;
+  username: string
 }
 
 interface Config {
-  id: number;
-  name: string;
-  category: string;
-  tags: string[];
-  reviewStatus: string;
-  dateSubmitted: string;
-  lastReviewed: string;
-  submittedBy: SubmittedBy; 
-  numOfReviews: number;
+  id: number
+  name: string
+  category: string
+  tags: string[]
+  reviewStatus: string
+  dateSubmitted: string
+  lastReviewed: string
+  submittedBy: SubmittedBy
+  numOfReviews: number
 }
 
-export default defineComponent({
-  components: {
-    Flatpickr
-  },
-  data() {
-    return {
-      configs: [] as Config[],
-      categories: [] as string[],
-      reviewStatuses: [] as string[],
-      selectedFileName: '',
-      fileTypeIcon: '',
-      dateRange: ['2019-04-14T00:00:00Z', '2024-12-31T23:59:59Z'],
-      selectedCategory: '',
-      selectedReviewStatus: '',
-      searchQuery: '',
-      flatpickrConfig: {
-        mode: 'range',
-        dateFormat: 'Y/m/d',
-        defaultDate: ['2019-04-14T00:00:00Z', '2024-12-31T23:59:59Z'],
-      } as Record<string, any>
-    };
-  },
+const isLocalhost =
+  typeof window !== 'undefined' && window.location.hostname === 'localhost'
+const apiUrl = isLocalhost
+  ? 'http://localhost:8787/'
+  : 'https://ethos.lulz.workers.dev/'
 
-  computed: {
-  filteredConfigs() {
-    const [startDate, endDate] = this.dateRange;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+const configs = ref<Config[]>([])
+const selectedFileName = ref('')
+const selectedFileType = ref('')
+const searchQuery = ref('')
+const selectedCategory = ref('')
+const selectedReviewStatus = ref('')
+const categories = ref<string[]>([])
+const reviewStatuses = ref<string[]>([])
+const fileInput = ref<HTMLInputElement | null>(null)
+const filteredConfigs = ref<Config[]>([])
 
-    
-    if (!this.selectedCategory && !this.selectedReviewStatus && !this.searchQuery) {
-      return this.configs; 
-    }
+const dateRange = ref<Date[]>([])
 
-    const filtered = this.configs.filter(config => {
-      const matchesCategory = this.selectedCategory 
-        ? config.category.toLowerCase() === this.selectedCategory.toLowerCase() 
-        : true;
+const flatpickrConfig = {
+  mode: 'range' as const,
+  dateFormat: 'Y-m-d',
+}
 
-      const matchesReviewStatus = this.selectedReviewStatus 
-        ? config.reviewStatus === this.selectedReviewStatus 
-        : true;
+let debounceTimer: ReturnType<typeof setTimeout> | undefined = undefined
+const debounceFilter = () => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => filterConfigs(), 300)
+}
 
-      const matchesSearchQuery = this.searchQuery
-        ? config.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        : true;
+const isLoading = ref(false)
+const error = ref('')
 
-      const submittedDate = new Date(config.dateSubmitted);
-      const matchesDateRange = submittedDate >= start && submittedDate <= end;
+const fetchConfigs = async () => {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const response = await ky.get(`${apiUrl}configs`).json<Config[]>()
+    configs.value = response
 
-
-      return matchesCategory && matchesReviewStatus && matchesSearchQuery && matchesDateRange;
-    });
-
-    return filtered;
+    categories.value = Array.from(
+      new Set(response.map((config) => config.category))
+    )
+    reviewStatuses.value = Array.from(
+      new Set(response.map((config) => config.reviewStatus))
+    )
+    filterConfigs()
+  } catch (err) {
+    console.error('Error fetching configs:', err)
+    error.value = 'Failed to load configurations. Please try again later.'
+  } finally {
+    isLoading.value = false
   }
-},
+}
 
-  created() {
-    this.fetchConfigs();
-  },
+const handleFileUpload = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input?.files?.[0]) {
+    selectedFileName.value = input.files[0].name
+    selectedFileType.value = input.files[0].type
+  }
+}
 
-  methods: {
-    async fetchConfigs() {
-      try {
-        const response = await ky.get('http://localhost:8787/configs').json<Config[]>();
-        this.configs = response;
+const getFileTypeIcon = (mimeType: string): string => {
+  const fileIcons: Record<string, string> = {
+    'application/json': '/json_icon.png',
+    'text/csv': '/csv_icon.png',
+    'text/plain': '/txt_icon.png',
+  };
 
-        const categoriesSet = new Set<string>();
-        const reviewStatusesSet = new Set<string>();
-        this.configs.forEach(config => {
-          categoriesSet.add(config.category || 'N/A'); 
-          reviewStatusesSet.add(config.reviewStatus);
-        });
+  return fileIcons[mimeType] || '';
+}
 
-        this.categories = Array.from(categoriesSet);
-        this.reviewStatuses = Array.from(reviewStatusesSet);
-      } catch (error) {
-        console.error('Failed to fetch configs:', error);
-      }
-    },
+const matchesCriteria = (config: Config) => {
+  const matchesCategory =
+    !selectedCategory.value || config.category === selectedCategory.value
+  const matchesStatus =
+    !selectedReviewStatus.value ||
+    config.reviewStatus === selectedReviewStatus.value
+  const matchesSearch =
+    !searchQuery.value ||
+    config.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  const matchesDateRange =
+    !dateRange.value.length ||
+    (new Date(config.dateSubmitted) >= dateRange.value[0] &&
+      new Date(config.dateSubmitted) <= dateRange.value[1])
+  return matchesCategory && matchesStatus && matchesSearch && matchesDateRange
+}
 
-    goToCreateConfig(this: any) {
-      this.$router.push({ name: 'createconfig' });
-    },
+const filterConfigs = () => {
+  filteredConfigs.value = configs.value.filter(matchesCriteria)
+  applySorting()
+  currentPage.value = 1
+}
 
-    triggerFileInput() {
-      const fileInput = this.$refs.fileInput as HTMLInputElement | null;
-      fileInput?.click();
-    },
+const sortKey = ref<string>('')
+const sortOrder = ref<'asc' | 'desc'>('asc')
 
-    handleFileUpload(event: Event) {
-      const input = event.target as HTMLInputElement;
-      const file = input.files?.[0];
-      if (file) {
-        this.selectedFileName = file.name;
-        this.fileTypeIcon = this.getFileTypeIcon(file.type);
-      }
-    },
+const sortBy = (key: string) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortOrder.value = 'asc'
+  }
+  applySorting()
+}
 
-    getFileTypeIcon(mimeType: string): string {
-      const fileIcons: Record<string, string> = {
-        'application/json': '/json_icon.png',
-        'text/csv': '/csv_icon.png',
-        'text/plain': '/txt_icon.png',
-      };
+const applySorting = () => {
+  if (!sortKey.value) return
 
-      return fileIcons[mimeType] || '';
+  filteredConfigs.value.sort((a, b) => {
+    let aValue: any = a[sortKey.value as keyof Config]
+    let bValue: any = b[sortKey.value as keyof Config]
+
+    if (sortKey.value === 'submittedBy') {
+      aValue = a.submittedBy.username
+      bValue = b.submittedBy.username
+    } else if (sortKey.value === 'tags') {
+      aValue = a.tags.join(', ')
+      bValue = b.tags.join(', ')
+    } else if (sortKey.value === 'dateSubmitted' || sortKey.value === 'lastReviewed') {
+      aValue = new Date(aValue)
+      bValue = new Date(bValue)
     }
-  },
-});
+
+    if (aValue < bValue) return sortOrder.value === 'asc' ? -1 : 1
+    if (aValue > bValue) return sortOrder.value === 'asc' ? 1 : -1
+    return 0
+  })
+}
+
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const pageSizes = [10, 20, 50, 100]
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredConfigs.value.length / itemsPerPage.value) || 1
+})
+
+const paginatedConfigs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredConfigs.value.slice(start, end)
+})
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const statusClass = (status: string) => {
+  const classes: Record<string, string> = {
+    'Approved': 'bg-green-500',
+    'Pending': 'bg-yellow-500',
+    'Rejected': 'bg-red-500',
+  }
+  return classes[status] || 'bg-gray-500'
+}
+
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }
+  return new Date(dateString).toLocaleDateString(undefined, options)
+}
+
+const viewDetails = (id: number) => {
+  // router.push({ name: 'configDetails', params: { id } })
+}
+
+const goToCreateConfig = () => {
+  router.push({ name: 'createconfig' })
+}
+
+type ViewMode = 'grid' | 'table'
+const viewMode = ref<ViewMode>('table')
+
+const setView = (mode: ViewMode) => {
+  viewMode.value = mode
+}
+
+const activeButtonClass = 'text-blue-600 bg-gray-200 rounded'
+const inactiveButtonClass = 'text-gray-600 hover:bg-gray-100 rounded'
+
+onMounted(fetchConfigs)
+
+watch([configs, selectedCategory, selectedReviewStatus, searchQuery, dateRange], () => {
+  filterConfigs()
+})
 </script>
+
+<style scoped></style>

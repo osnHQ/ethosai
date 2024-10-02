@@ -1,6 +1,6 @@
 <template>
-  <main>
+  <main class="flex-1 overflow-auto">
     <slot />
-    <Footer />
   </main>
+  <Footer />
 </template>

@@ -247,7 +247,9 @@ const config = reactive({
   uploadedFile: null as File | null,
 });
 
-const isLocalhost = window.location.hostname === 'localhost';
+const isLocalhost =
+  typeof window !== 'undefined' && window.location.hostname === 'localhost'
+
 const apiUrl = isLocalhost ? 'http://localhost:8787/' : 'https://ethos.lulz.workers.dev/';
 
 const router = useRouter();

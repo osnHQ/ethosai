@@ -1,0 +1,90 @@
+<template>
+    <div class="w-64 bg-white shadow-lg h-screen">
+      <div class="p-4 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-blue-900">ethosAI</h1>
+      </div>
+      <nav class="mt-4">
+        <ul>
+          <li v-for="item in menuItems" :key="item.name" class="mb-2">
+            <button 
+              @click="toggleExpand(item)"
+              class="w-full flex items-center justify-between px-4 py-2 text-left text-gray-700 hover:bg-gray-100 focus:outline-none"
+            >
+              <span class="flex items-center">
+                <component :is="item.icon" class="w-5 h-5 mr-2" />
+                {{ item.name }}
+              </span>
+              <ChevronDown v-if="item.subitems && !item.expanded" class="w-4 h-4" />
+              <ChevronUp v-if="item.subitems && item.expanded" class="w-4 h-4" />
+            </button>
+            <ul v-if="item.subitems && item.expanded" class="ml-6 mt-1">
+              <li v-for="subitem in item.subitems" :key="subitem" class="mb-1">
+                <a href="#" class="block px-4 py-1 text-sm text-gray-600 hover:text-gray-900">{{ subitem }}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </template>
+  
+  <script setup lang="ts">
+  import { ref } from 'vue'
+  import { 
+    ChevronDown, 
+    ChevronUp, 
+    Home, 
+    ClipboardCheck, 
+    Users, 
+    Cpu, 
+    BarChart2, 
+    Settings 
+  } from 'lucide-vue-next'
+  
+  interface MenuItem {
+    name: string
+    icon: any
+    subitems?: string[]
+    expanded?: boolean
+  }
+  
+  const menuItems = ref<MenuItem[]>([
+    { name: 'Dashboard', icon: Home },
+    { 
+      name: 'Eval Management', 
+      icon: ClipboardCheck,
+      subitems: ['Create / edit evals', 'My evals'],
+      expanded: false
+    },
+    { 
+      name: 'Community Reviews', 
+      icon: Users,
+      subitems: ['Audit Queue', 'My Reviews'],
+      expanded: false
+    },
+    { 
+      name: 'LLM Selector', 
+      icon: Cpu,
+      subitems: ['Select LLM Model', 'Run Evaluation'],
+      expanded: false
+    },
+    { 
+      name: 'Result & Analysis', 
+      icon: BarChart2,
+      subitems: ['Recent Results', 'Compare Models'],
+      expanded: false
+    },
+    { 
+      name: 'Settings', 
+      icon: Settings,
+      subitems: ['Account Settings', 'Preferences'],
+      expanded: false
+    },
+  ])
+  
+  const toggleExpand = (item: MenuItem) => {
+    if (item.subitems) {
+      item.expanded = !item.expanded
+    }
+  }
+  </script>

@@ -231,6 +231,23 @@
           </table>
         </section>
 
+        <section v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+          <div v-for="config in paginatedConfigs" :key="config.id" class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="p-6">
+              <h2 class="text-xl font-bold text-gray-800 mb-2">{{ config.name }}</h2>
+              <p class="text-gray-600 mb-1">Category: <span class="font-semibold">{{ config.category }}</span></p>
+              <p class="text-gray-600 mb-1">Tags: <span class="font-semibold">{{ config.tags.join(', ') }}</span></p>
+              <p class="text-gray-600 mb-1">Status: <span :class="statusClass(config.reviewStatus)" class="font-semibold">{{ config.reviewStatus }}</span></p>
+              <p class="text-gray-600 mb-1">Submitted: <span class="font-semibold">{{ formatDate(config.dateSubmitted) }}</span></p>
+              <p class="text-gray-600 mb-1">Last Reviewed: <span class="font-semibold">{{ formatDate(config.lastReviewed) }}</span></p>
+              <p class="text-gray-600 mb-1">Submitted By: <span class="font-semibold">{{ config.submittedBy.username }}</span></p>
+              <p class="text-gray-600 mb-4">Reviews: <span class="font-semibold">{{ config.numOfReviews }}</span></p>
+              <button @click="viewDetails(config.id)" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200">View</button>
+            </div>
+          </div>
+        </section>
+        
+
         <div class="flex justify-between items-center mt-6">
           <div class="flex items-center space-x-2">
             <span class="text-gray-700 text-sm">Items per page:</span>

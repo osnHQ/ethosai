@@ -111,7 +111,7 @@ import 'flatpickr/dist/flatpickr.css'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const isSidebarOpen = ref(false);
+const isSidebarOpen = ref(true);
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };

@@ -332,7 +332,7 @@ def main() -> None:
         file_extension = uploaded_file.name.split(".")[-1].lower()
 
         if file_extension == "csv":
-            st.session_state.df = pd.read_csv(uploaded_file)
+            st.session_state.df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
             st.session_state.processed = True
 
         elif file_extension == "pdf":

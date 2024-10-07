@@ -316,7 +316,7 @@ def main() -> None:
     )
 
     model = st.sidebar.selectbox(
-        "Select Model", ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4"]
+        "Select Model", ["gpt-4o-mini", "gpt-4o"]
     )
     batch_size = st.sidebar.number_input(
         "Batch Size", min_value=1, max_value=10, value=5

@@ -455,13 +455,13 @@ def main() -> None:
         )
         context = st.text_area(
             "📝 Enter context for the questions",
-            height=100,
+            height=25,
         )
 
         system_prompt = st.text_area(
             "📝 Customize System Prompt",
             value="Reply with a one or few words short factoid answer.",
-            height=100,
+            height=25,
         )
 
         with st.expander("📁 Additional Settings", expanded=False):

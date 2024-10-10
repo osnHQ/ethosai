@@ -129,7 +129,7 @@ def process_pdf_in_parallel(
     return results
 
 async def generate_model_answer(
-    prompt: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
+    prompt: str, client: AsyncOpenAI, model: str = "gpt-4o-mini", system_prompt: str = "Reply with a one or few words short factoid answer."
 ) -> str:
     try:
         response = await client.chat.completions.create(
@@ -137,7 +137,7 @@ async def generate_model_answer(
             messages=[
                 {
                     "role": "system",
-                    "content": "Reply concisely.",
+                    "content": system_prompt,
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -239,6 +239,7 @@ async def process_questions(
     context: str = "",
     client=None,
     model: str = "gpt-4o-mini",
+    system_prompt: str = "Reply with a one or few words short factoid answer."
 ) -> None:
     columns = ["Question", "Model_Response", "Expected_Answer", "Choice", "Score"]
     results_df = pd.DataFrame(columns=columns)
@@ -257,7 +258,7 @@ async def process_questions(
                 current_question_placeholder.markdown(f"**Currently Processing:** {pair['question']}")
                 response = (
                     await generate_model_answer(
-                        f"{context}, {pair['question']}", client, model=model
+                        f"{context}, {pair['question']}", client, model=model, system_prompt=system_prompt
                     )
                 ).strip(".")
 
@@ -457,6 +458,12 @@ def main() -> None:
             height=100,
         )
 
+        system_prompt = st.text_area(
+            "📝 Customize System Prompt",
+            value="Reply with a one or few words short factoid answer.",
+            height=100,
+        )
+
         with st.expander("📁 Additional Settings", expanded=False):
             st.checkbox("Show Live Logs", value=False, key="show_logs")
 
@@ -534,6 +541,7 @@ def main() -> None:
                             context=context,
                             client=client,
                             model=model,
+                            system_prompt=system_prompt
                         )
                     )
 

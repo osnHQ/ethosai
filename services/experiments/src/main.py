@@ -15,6 +15,8 @@ from uuid import uuid4
 
 from openai import AsyncOpenAI
 
+import matplotlib.pyplot as plt
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -22,11 +24,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
         return [page.get_text() for page in doc]
-
 
 async def generate_qa_from_text(
     text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
@@ -68,12 +68,10 @@ async def generate_qa_from_text(
         logger.error(f"Error generating QA from text: {e}")
         return ""
 
-
 def process_pdf_batch(
     batch_text: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
 ) -> str:
     return asyncio.run(generate_qa_from_text(batch_text, client, model))
-
 
 def process_pdf_in_parallel(
     pdf_path: str,
@@ -101,7 +99,6 @@ def process_pdf_in_parallel(
 
     return results
 
-
 async def generate_model_answer(
     prompt: str, client: AsyncOpenAI, model: str = "gpt-4o-mini"
 ) -> str:
@@ -120,7 +117,6 @@ async def generate_model_answer(
     except Exception as e:
         logger.error(f"Error generating model answer: {e}")
         return ""
-
 
 async def compare_sentences_llm(
     model_answer: str,
@@ -205,10 +201,8 @@ def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
                 logger.error(f"Error saving QA to JSONL: {e}")
                 continue
 
-
 def load_jsonl(file) -> List[Dict[str, str]]:
     return [json.loads(line.decode("utf-8")) for line in file]
-
 
 def initialize_session_state() -> None:
     if "df" not in st.session_state:
@@ -216,14 +210,13 @@ def initialize_session_state() -> None:
     if "processed" not in st.session_state:
         st.session_state.processed = False
 
-
 async def process_questions(
     jsonl_data: List[Dict[str, str]],
     context: str = "",
     client=None,
     model: str = "gpt-4o-mini",
 ) -> None:
-    columns = ["Question", "Model_Response", "Expected_Answer"]
+    columns = ["Question", "Model_Response", "Expected_Answer", "Choice", "Score"]
     results_df = pd.DataFrame(columns=columns)
 
     progress_bar = st.progress(0)
@@ -254,7 +247,8 @@ async def process_questions(
                     "Question": pair["question"],
                     "Model_Response": response,
                     "Expected_Answer": pair["answer"],
-                    **similarity,
+                    "Choice": similarity["choice"],
+                    "Score": similarity["score"],
                 }
                 return result
             except Exception as e:
@@ -277,6 +271,9 @@ async def process_questions(
         progress_bar.progress(i / total)
         table_container.table(results_df)
 
+    summary = calculate_summary(results_df)
+    display_summary_charts(results_df, summary)
+
     csv = results_df.to_csv(index=False)
     file_path = f"./results/{uuid4().hex}.csv"
     results_df.to_csv(file_path, index=False)
@@ -289,6 +286,46 @@ async def process_questions(
         key="download_csv",
     )
 
+def calculate_summary(results_df: pd.DataFrame) -> Dict[str, any]:
+    accuracy = (results_df["Score"] == 1).mean() * 100
+    choice_distribution = results_df["Choice"].value_counts(normalize=True) * 100
+    avg_score = results_df["Score"].mean()
+    total_questions = len(results_df)
+    num_errors = int(results_df["Model_Response"].eq("Error").sum())
+
+    summary = {
+        "Total Questions": total_questions,
+        "Accuracy (%)": accuracy,
+        "Average Score": avg_score,
+        "Number of Errors": num_errors,
+        "Choice Distribution (%)": choice_distribution.round(2).to_dict(),
+    }
+    return summary
+
+def display_summary_charts(results_df: pd.DataFrame, summary: Dict[str, any]) -> None:
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("### Accuracy Percentage")
+        st.metric(label="Accuracy (%)", value=f"{summary['Accuracy (%)']:.2f}%")
+
+        st.write("### Average Score")
+        st.metric(label="Average Score", value=f"{summary['Average Score']:.2f}")
+
+        st.write("### Result Summary")
+        st.json(summary)
+
+    with col2:
+        choice_counts = results_df["Choice"].value_counts()
+        st.pyplot(generate_pie_chart(choice_counts, "Choice Distribution"))
+
+
+
+def generate_pie_chart(data, title: str) -> plt.Figure:
+    fig, ax = plt.subplots()
+    ax.pie(data, labels=data.index, autopct="%1.1f%%", startangle=90)
+    ax.set_title(title)
+    return fig
 
 def main() -> None:
     st.set_page_config(layout="wide")
@@ -379,7 +416,6 @@ def main() -> None:
                     model=model,
                 )
             )
-
 
 if __name__ == "__main__":
     main()

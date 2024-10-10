@@ -2,16 +2,15 @@
 name = "experiements"
 version = "0.1.0"
 description = "This is for testing out different experiemental apps"
-authors = [
-    { name = "Lulzx", email = "wiserishabh@gmail.com" }
-]
+authors = [{ name = "Lulzx", email = "wiserishabh@gmail.com" }]
 dependencies = [
-    "streamlit>=1.38.0",
+    "streamlit>=1.39.0",
     "pandas>=2.2.3",
-    "openai>=1.50.0",
+    "openai>=1.51.2",
     "pymupdf>=1.24.10",
     "python-dotenv>=1.0.1",
-    "rapidfuzz>=3.10.0"
+    "rapidfuzz>=3.10.0",
+    "matplotlib>=3.9.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

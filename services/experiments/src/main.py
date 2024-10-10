@@ -137,7 +137,7 @@ async def generate_model_answer(
             messages=[
                 {
                     "role": "system",
-                    "content": "Reply with a one or few words short factoid answer.",
+                    "content": "Reply concisely.",
                 },
                 {"role": "user", "content": prompt},
             ],

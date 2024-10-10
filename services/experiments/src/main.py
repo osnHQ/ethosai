@@ -16,6 +16,7 @@ from uuid import uuid4
 from openai import AsyncOpenAI
 
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,6 +24,31 @@ logging.basicConfig(
     handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
+
+st.set_page_config(
+    page_title="📊 EthosAI Dashboard",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'About': "# EthosAI Dashboard\nA powerful tool to generate and analyze Q&A sets from PDF and CSV files using OpenAI's API."
+    }
+)
+
+def initialize_session_state() -> None:
+    if "df" not in st.session_state:
+        st.session_state.df = pd.DataFrame(columns=["question", "answer"])
+    if "processed" not in st.session_state:
+        st.session_state.processed = False
+    if "results_df" not in st.session_state:
+        st.session_state.results_df = pd.DataFrame()
+    if "summary" not in st.session_state:
+        st.session_state.summary = {}
+    if "log" not in st.session_state:
+        st.session_state.log = []
+    if "current_question" not in st.session_state:
+        st.session_state.current_question = ""
+    if "show_logs" not in st.session_state:
+        st.session_state.show_logs = False
 
 def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
@@ -66,6 +92,7 @@ async def generate_qa_from_text(
         return response.choices[0].message.content
     except Exception as e:
         logger.error(f"Error generating QA from text: {e}")
+        st.session_state.log.append(f"Error generating QA from text: {e}")
         return ""
 
 def process_pdf_batch(
@@ -93,9 +120,11 @@ def process_pdf_in_parallel(
         process_func = partial(process_pdf_batch, client=client, model=model)
         futures = [executor.submit(process_func, batch) for batch in batches]
 
-        for i, future in enumerate(concurrent.futures.as_completed(futures)):
-            results.append(future.result())
-            progress_bar.progress((i + 1) / total_batches)
+        for i, future in enumerate(concurrent.futures.as_completed(futures), 1):
+            result = future.result()
+            results.append(result)
+            progress_bar.progress(i / total_batches)
+            st.session_state.log.append(f"Completed batch {i}/{total_batches}")
 
     return results
 
@@ -108,7 +137,7 @@ async def generate_model_answer(
             messages=[
                 {
                     "role": "system",
-                    "content": "reply with a one or few words short factoid answer.",
+                    "content": "Reply with a one or few words short factoid answer.",
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -116,6 +145,7 @@ async def generate_model_answer(
         return response.choices[0].message.content
     except Exception as e:
         logger.error(f"Error generating model answer: {e}")
+        st.session_state.log.append(f"Error generating model answer: {e}")
         return ""
 
 async def compare_sentences_llm(
@@ -125,7 +155,7 @@ async def compare_sentences_llm(
     context: str = "",
     client: AsyncOpenAI = None,
     model: str = "gpt-4o-mini",
-) -> str:
+) -> Dict[str, any]:
     prompt = f"""
 You are comparing a submitted answer to an expert answer on a given question. Here is the data:
   [BEGIN DATA]
@@ -149,7 +179,7 @@ choice_scores:
   "D": 0
   "E": 1
 
-  return the answer as a json object with the following structure:
+  Return the answer as a JSON object with the following structure:
   {{
     "choice": <string>,
     "score": <float>
@@ -179,16 +209,15 @@ choice_scores:
                 },
             },
         )
-        response = response.choices[0].message.content
-        return json.loads(response)
+        response_content = response.choices[0].message.content
+        return json.loads(response_content)
     except Exception as e:
         logger.error(f"Error comparing sentences with LLM: {e}")
-        return json.dumps(
-            {
-                "choice": f"error: {str(e)}",
-                "score": 0,
-            }
-        )
+        st.session_state.log.append(f"Error comparing sentences with LLM: {e}")
+        return {
+            "choice": f"error: {str(e)}",
+            "score": 0,
+        }
 
 def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
     with open(output_file, "w", encoding="utf-8") as jsonlfile:
@@ -199,16 +228,11 @@ def save_qa_to_jsonl(qa_tables: List[str], output_file: Path) -> None:
                     jsonlfile.write(json.dumps(qa) + "\n")
             except Exception as e:
                 logger.error(f"Error saving QA to JSONL: {e}")
+                st.session_state.log.append(f"Error saving QA to JSONL: {e}")
                 continue
 
 def load_jsonl(file) -> List[Dict[str, str]]:
     return [json.loads(line.decode("utf-8")) for line in file]
-
-def initialize_session_state() -> None:
-    if "df" not in st.session_state:
-        st.session_state.df = pd.DataFrame(columns=["question", "answer"])
-    if "processed" not in st.session_state:
-        st.session_state.processed = False
 
 async def process_questions(
     jsonl_data: List[Dict[str, str]],
@@ -221,6 +245,7 @@ async def process_questions(
 
     progress_bar = st.progress(0)
     table_container = st.empty()
+    current_question_placeholder = st.empty()
     total = len(jsonl_data)
 
     semaphore = asyncio.Semaphore(50)
@@ -228,6 +253,8 @@ async def process_questions(
     async def process_single_question(pair):
         async with semaphore:
             try:
+                st.session_state.current_question = pair["question"]
+                current_question_placeholder.markdown(f"**Currently Processing:** {pair['question']}")
                 response = (
                     await generate_model_answer(
                         f"{context}, {pair['question']}", client, model=model
@@ -250,8 +277,10 @@ async def process_questions(
                     "Choice": similarity["choice"],
                     "Score": similarity["score"],
                 }
+                st.session_state.log.append(f"Processed question: {pair['question']}")
                 return result
             except Exception as e:
+                st.session_state.log.append(f"Error processing question '{pair['question']}': {e}")
                 return {
                     "Question": pair["question"],
                     "Model_Response": "Error",
@@ -263,28 +292,36 @@ async def process_questions(
     tasks = [process_single_question(pair) for pair in jsonl_data]
     results = []
 
-    for i, task in enumerate(asyncio.as_completed(tasks), 1):
-        result = await task
-        results.append(result)
-        results_df = pd.DataFrame(results)
+    try:
+        for i, task in enumerate(asyncio.as_completed(tasks), 1):
+            result = await task
+            results.append(result)
+            results_df = pd.DataFrame(results)
 
-        progress_bar.progress(i / total)
-        table_container.table(results_df)
+            progress_bar.progress(i / total)
+            table_container.table(results_df)
+    finally:
+        st.session_state.current_question = ""
+        current_question_placeholder.empty()
 
     summary = calculate_summary(results_df)
     display_summary_charts(results_df, summary)
 
+    st.session_state.results_df = results_df
+    st.session_state.summary = summary
+
     csv = results_df.to_csv(index=False)
     file_path = f"./results/{uuid4().hex}.csv"
+    Path("./results").mkdir(parents=True, exist_ok=True)
     results_df.to_csv(file_path, index=False)
 
     st.download_button(
-        label="Download results as CSV",
+        label="📥 Download Results as CSV",
         data=csv,
         file_name="qa_results.csv",
         mime="text/csv",
-        key="download_csv",
     )
+
 
 def calculate_summary(results_df: pd.DataFrame) -> Dict[str, any]:
     accuracy = (results_df["Score"] == 1).mean() * 100
@@ -303,119 +340,256 @@ def calculate_summary(results_df: pd.DataFrame) -> Dict[str, any]:
     return summary
 
 def display_summary_charts(results_df: pd.DataFrame, summary: Dict[str, any]) -> None:
-    col1, col2 = st.columns(2)
+    with st.container():
+        st.subheader("📈 Summary Metrics")
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Total Questions", summary["Total Questions"])
+        col2.metric("Accuracy (%)", f"{summary['Accuracy (%)']:.2f}%")
+        col3.metric("Average Score", f"{summary['Average Score']:.2f}")
+        col4.metric("Number of Errors", summary["Number of Errors"])
 
-    with col1:
-        st.write("### Accuracy Percentage")
-        st.metric(label="Accuracy (%)", value=f"{summary['Accuracy (%)']:.2f}%")
-
-        st.write("### Average Score")
-        st.metric(label="Average Score", value=f"{summary['Average Score']:.2f}")
-
-        st.write("### Result Summary")
-        st.json(summary)
-
-    with col2:
+    with st.container():
+        st.subheader("📊 Choice Distribution")
         choice_counts = results_df["Choice"].value_counts()
-        st.pyplot(generate_pie_chart(choice_counts, "Choice Distribution"))
+
+        correct_choices = ['B', 'C', 'E']
+        incorrect_choices = ['A', 'D']
+
+        correct_count = results_df['Choice'].isin(correct_choices).sum()
+        incorrect_count = results_df['Choice'].isin(incorrect_choices).sum()
+
+        total_questions = len(results_df)
+
+        correct_percentage = (correct_count / total_questions) * 100
+        incorrect_percentage = (incorrect_count / total_questions) * 100
+
+        labels = ['Correct', 'Incorrect']
+        percentages = [correct_percentage, incorrect_percentage]
+
+        fig_correct_incorrect = px.bar(
+            x=labels,
+            y=percentages,
+            labels={'x': 'Answer Type', 'y': 'Percentage'},
+            title='Answer type distribution',
+            text=[f'{correct_percentage:.2f}%', f'{incorrect_percentage:.2f}%'],
+            color=labels,
+            color_discrete_map={'Correct': 'green', 'Incorrect': 'red'}
+        )
+        fig_correct_incorrect.update_traces(textposition='outside')
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.plotly_chart(generate_pie_chart(choice_counts, "Choice Distribution"), use_container_width=True)
+        with col2:
+            st.plotly_chart(fig_correct_incorrect, use_container_width=True)
 
 
 
 def generate_pie_chart(data, title: str) -> plt.Figure:
-    fig, ax = plt.subplots()
-    ax.pie(data, labels=data.index, autopct="%1.1f%%", startangle=90)
-    ax.set_title(title)
+    fig = px.pie(names=data.index, values=data.values, title=title, hole=0.3)
+    fig.update_traces(textposition='inside', textinfo='percent+label')
     return fig
 
+def generate_bar_chart(data, title: str) -> plt.Figure:
+    fig = px.bar(
+        x=data.index,
+        y=data.values,
+        labels={'x': 'Choice', 'y': 'Percentage'},
+        title=title,
+        color=data.index
+    )
+    fig.update_traces(texttemplate='%{y:.2f}%', textposition='auto')
+    return fig
+
+@st.cache_resource
+def load_api_key() -> str:
+    load_dotenv()
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    if OPENAI_API_KEY:
+        return OPENAI_API_KEY
+    else:
+        return ""
+
+def clear_session_state():
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.success("Session state cleared. Reloading the app...")
+    st.rerun()
+
 def main() -> None:
-    st.set_page_config(layout="wide")
-    st.title("EthosAI")
+    st.title("📊 **EthosAI Dashboard**")
 
     initialize_session_state()
 
-    st.sidebar.title("Configuration")
+    with st.sidebar:
+        st.header("🔧 Configuration")
 
-    load_dotenv()
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        OPENAI_API_KEY = load_api_key()
 
-    if OPENAI_API_KEY:
-        os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-    else:
-        api_key_input = st.sidebar.text_input("OpenAI API Key", type="password")
-        if api_key_input:
-            os.environ["OPENAI_API_KEY"] = api_key_input
+        if OPENAI_API_KEY:
+            os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
         else:
-            st.error("Please enter your OpenAI API key in the sidebar.")
-            st.stop()
+            api_key_input = st.text_input(
+                "🔑 Enter your OpenAI API Key", type="password"
+            )
+            if api_key_input:
+                os.environ["OPENAI_API_KEY"] = api_key_input
+                st.success("OpenAI API Key has been set.")
+            else:
+                st.warning("Please enter your OpenAI API key to proceed.")
+                st.stop()
 
-    client = AsyncOpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY"),
-    )
+        client = AsyncOpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+        )
 
-    model = st.sidebar.selectbox(
-        "Select Model", ["gpt-4o-mini", "gpt-4o"]
-    )
-    batch_size = st.sidebar.number_input(
-        "Batch Size", min_value=1, max_value=10, value=5
-    )
-    max_workers = st.sidebar.number_input(
-        "Max Workers", min_value=1, max_value=50, value=50
-    )
-    context = st.sidebar.text_input("Enter context for the questions", "")
+        model = st.selectbox(
+            "🛠️ Select Model", ["gpt-4o-mini", "gpt-4o"], index=0
+        )
+        batch_size = st.slider(
+            "📦 Batch Size", min_value=1, max_value=10, value=5, step=1
+        )
+        max_workers = st.slider(
+            "🔧 Max Workers", min_value=1, max_value=50, value=50, step=1
+        )
+        context = st.text_area(
+            "📝 Enter context for the questions",
+            height=100,
+        )
 
-    uploaded_file = st.file_uploader("Upload a PDF or CSV file", type=["pdf", "csv"])
+        with st.expander("📁 Additional Settings", expanded=False):
+            st.checkbox("Show Live Logs", value=False, key="show_logs")
+
+        st.button("🧹 Clear Session", on_click=clear_session_state)
+
+    st.header("📂 Upload Your File")
+    uploaded_file = st.file_uploader(
+        "Upload a PDF or CSV file",
+        type=["pdf", "csv"],
+    )
 
     if uploaded_file is not None and not st.session_state.processed:
         file_extension = uploaded_file.name.split(".")[-1].lower()
 
         if file_extension == "csv":
-            st.session_state.df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
-            st.session_state.processed = True
+            try:
+                st.session_state.df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
+                st.session_state.processed = True
+                st.success("✅ CSV file uploaded and processed successfully.")
+            except Exception as e:
+                st.error(f"❌ Error processing CSV file: {e}")
+                logger.error(f"CSV processing error: {e}")
+                st.stop()
 
         elif file_extension == "pdf":
             pdf_path = f"/tmp/{uploaded_file.name}"
 
-            with open(pdf_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
+            try:
+                with open(pdf_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.info("🔄 Processing PDF file. This may take a few moments...")
 
-            qa_tables = process_pdf_in_parallel(
-                pdf_path,
-                batch_size=batch_size,
-                max_workers=max_workers,
-                model=model,
-                client=client,
-            )
+                qa_tables = process_pdf_in_parallel(
+                    pdf_path,
+                    batch_size=batch_size,
+                    max_workers=max_workers,
+                    model=model,
+                    client=client,
+                )
 
-            jsonl_output_file = "/tmp/output.jsonl"
-            save_qa_to_jsonl(qa_tables, jsonl_output_file)
+                jsonl_output_file = "/tmp/output.jsonl"
+                save_qa_to_jsonl(qa_tables, jsonl_output_file)
 
-            with open(jsonl_output_file, "rb") as file:
-                jsonl_data = load_jsonl(file)
-                st.session_state.df = pd.json_normalize(jsonl_data)
-                st.session_state.processed = True
+                with open(jsonl_output_file, "rb") as file:
+                    jsonl_data = load_jsonl(file)
+                    st.session_state.df = pd.json_normalize(jsonl_data)
+                    st.session_state.processed = True
+                st.success("✅ PDF file processed successfully.")
+            except Exception as e:
+                st.error(f"❌ Error processing PDF file: {e}")
+                logger.error(f"PDF processing error: {e}")
+                st.stop()
 
     if st.session_state.processed and not st.session_state.df.empty:
-        edited_df = st.data_editor(
-            st.session_state.df, num_rows="dynamic", key="data_editor"
-        )
+        st.header("✏️ Edit and Review Q&A Data")
 
-        csv = edited_df.to_csv(index=False)
+        with st.expander("📄 View Data", expanded=True):
+            edited_df = st.data_editor(
+                st.session_state.df,
+                num_rows="dynamic",
+            )
         st.download_button(
-            label="Download data as CSV",
-            data=csv,
+            label="📥 Download Q&A Data as CSV",
+            data=edited_df.to_csv(index=False),
             file_name="qa_data.csv",
             mime="text/csv",
         )
 
-        if st.button("Process Questions"):
-            asyncio.run(
-                process_questions(
-                    edited_df.to_dict("records"),
-                    context=context,
-                    client=client,
-                    model=model,
-                )
+        with st.expander("⚙️ Processing Options", expanded=True):
+            if st.button("🔄 Process Questions"):
+                with st.spinner("🔄 Processing questions..."):
+                    asyncio.run(
+                        process_questions(
+                            edited_df.to_dict("records"),
+                            context=context,
+                            client=client,
+                            model=model,
+                        )
+                    )
+
+    if not st.session_state.results_df.empty:
+        st.header("📝 **Processing Results**")
+
+        tabs = st.tabs(["📋 Detailed Results", "🔍 Search Results"])
+
+        with tabs[0]:
+            st.subheader("📋 Detailed Results Table")
+            st.dataframe(st.session_state.results_df)
+
+        with tabs[1]:
+            st.subheader("🔍 Search Through Results")
+            search_query = st.text_input(
+                "🔎 Enter a keyword to search questions",
             )
+            if search_query:
+                filtered_df = st.session_state.results_df[
+                    st.session_state.results_df["Question"].str.contains(
+                        search_query,
+                        case=False,
+                        na=False
+                    )
+                ]
+                st.write(f"Found {len(filtered_df)} results for '{search_query}':")
+                st.dataframe(filtered_df)
+            else:
+                st.write("Enter a keyword to search through the questions.")
+
+        st.download_button(
+            label="📥 Download Detailed Results as CSV",
+            data=st.session_state.results_df.to_csv(index=False),
+            file_name="detailed_results.csv",
+            mime="text/csv",
+        )
+
+    if st.session_state.show_logs and st.session_state.log:
+        st.header("📜 **Live Processing Log**")
+        log_text = "\n".join(st.session_state.log[-100:])
+        st.text_area(
+            "Processing Log",
+            log_text,
+            height=300,
+        )
+
+    if st.session_state.current_question:
+        st.sidebar.subheader("🔄 Current Task")
+        st.sidebar.info(f"**{st.session_state.current_question}**")
+
+    st.markdown(
+        """
+        ---
+        🛠️ Built with [Streamlit](https://streamlit.io/) | © 2024 EthosAI
+        """
+    )
 
 if __name__ == "__main__":
     main()

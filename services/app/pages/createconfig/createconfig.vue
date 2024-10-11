@@ -25,7 +25,7 @@
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
               <div>
-                <button @click="triggerFileInput"
+                <button @click.prevent="triggerFileInput"
                   class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-lg text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out">
                   <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -35,20 +35,21 @@
                   Upload a Config File
                 </button>
 
+
                 <div class="flex flex-row gap-3 items-center mt-3">
                   <div v-if="fileTypeIcon" class="mt-2">
                     <NuxtImg :src="fileTypeIcon" alt="File Type Icon"
                       class="w-16 h-16 object-cover border border-gray-300 rounded-md" />
                   </div>
                   <p v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">Selected file: {{
-                    selectedFileName }}
-                  </p>
+                    selectedFileName }}</p>
                 </div>
-
               </div>
 
-              <input ref="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
+              <input ref="fileInput" id="fileInput" type="file" accept=".json,.csv,.txt" style="display: none;"
                 @change="handleFileUpload" />
+
+
 
 
               <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -230,6 +231,7 @@ const FILE_ICONS: Record<string, string> = {
   'text/plain': '/txt_icon.png',
 };
 
+const fileInput = ref<HTMLInputElement | null>(null);
 const questionAnswerPairs = ref<QA[]>([]);
 const newQuestion = ref('');
 const newAnswer = ref('');
@@ -301,19 +303,22 @@ const removeTag = (index: number) => {
 };
 
 const triggerFileInput = () => {
-  const fileInput = document.getElementById('fileInput') as HTMLInputElement | null;
-  fileInput?.click();
+  if (fileInput.value) {
+    fileInput.value.click(); // Use ref to access the input element and trigger the click event
+  }
 };
+
 
 const handleFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   if (file) {
     selectedFileName.value = file.name;
-    fileTypeIcon.value = getFileTypeIcon(file.type);
+    fileTypeIcon.value = FILE_ICONS[file.type] || '';
     config.uploadedFile = file;
   }
 };
+
 
 const getFileTypeIcon = (mimeType: string): string => FILE_ICONS[mimeType] || '';
 

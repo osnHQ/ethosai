@@ -1,9 +1,29 @@
 <template>
+    
     <div
-        class="w-full relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
-        <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-280">
+        class="w-full relative shadow bg-white flex items-start justify-between text-left text-base text-dimgray font-inter">
+
+        <div>
+       <aside :class="{
+        'hidden': !isSidebarOpen && isMobile,
+        'block': isSidebarOpen || !isMobile,
+        'fixed md:relative': true,
+        'inset-0': isSidebarOpen && isMobile,
+        'z-30': true,
+        'min-h-screen': true,
+        'transition-transform transform md:translate-x-0': true
+    }" class="w-64 min-h-screen bg-white shadow-lg md:block">
+      <Sidebar @toggleSidebar="toggleSidebar" />
+    </aside>
+</div>
+    
+    <!-- Overlay for Mobile -->
+    <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
+
+        <div>
+        <main class="flex-1 flex flex-col items-start justify-start px-0 pb-0 max-w-280">
             <section
-                class="flex flex-col px-8 pt-8 pb-3.5 mt-10 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
+                class="flex flex-col px-8 pb-3.5 mt-5 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
                 <header class="max-md:max-w-full">
                     <div class="flex gap-5 max-md:flex-col max-md:gap-0">
                         <div class="flex flex-col w-[81%] max-md:ml-0 max-md:w-full">
@@ -12,7 +32,7 @@
                                     class="flex gap-5 justify-between px-0.5 w-full max-md:flex-wrap max-md:max-w-full">
                                     <h1
                                         class="flex gap-5 self-start text-3xl leading-10 text-zinc-900 max-md:flex-wrap max-md:max-w-full">
-                                        <span class="flex-auto">Recent Results</span>
+                                        <span class="flex-auto font-bold">Recent Results</span>
                                     </h1>
                                 </div>
                                 <p class="mt-2 text-base leading-7 text-neutral-800 max-md:max-w-full">
@@ -180,6 +200,7 @@
                 </nav>
             </section>
         </main>
+    </div>
     </div>
 </template>
 

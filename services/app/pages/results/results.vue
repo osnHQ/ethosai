@@ -204,16 +204,16 @@
     </div>
 </template>
 
-
 <script lang="ts">
 import BarChartC from '@/components/BarChart.vue';
 import ky from 'ky';
 import { defineComponent, computed, ref, onMounted } from 'vue';
-import type { Ref } from 'vue';
-import uPlot from 'uplot';
-import 'uplot/dist/uPlot.min.css';
+import { useWindowSize } from '@vueuse/core';
+import { useRouter } from 'vue-router'; // Add this import
 import Flatpickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
+import uPlot from 'uplot';
+import 'uplot/dist/uPlot.min.css';
 
 interface Config {
     evalID: string;
@@ -233,12 +233,21 @@ export default defineComponent({
         BarChartC,
     },
     setup() {
+        const router = useRouter(); // Initialize router here
+        const isSidebarOpen = ref(false); // Initialize sidebar state
+        const { width } = useWindowSize(); // Use window size to detect mobile
+        const isMobile = computed(() => width.value < 768);
+
+        const toggleSidebar = () => {
+            isSidebarOpen.value = !isSidebarOpen.value;
+        };
+
         const configs = ref<Config[]>([]);
         const searchQuery = ref('');
         const dateRange = ref(['2019/04/14', '2024/06/14']);
         const selectedLLM = ref('');
         const llmLogos = ref<string[]>([]);
-        const llms = ref<string[]>([]); 
+        const llms = ref<string[]>([]);
         const flatpickrConfig = ref({
             mode: 'range' as 'range',
             dateFormat: 'Y/m/d',
@@ -251,7 +260,7 @@ export default defineComponent({
             const start = startDate ? new Date(startDate) : new Date('0000-01-01');
             const end = endDate ? new Date(endDate) : new Date('9999-12-31');
 
-            return configs.value.filter(config => {
+            return configs.value.filter((config) => {
                 const matchesLLM = !selectedLLM.value || config.LLMName === selectedLLM.value;
                 const matchesSearchQuery = config.configFileName
                     .toLowerCase()
@@ -269,13 +278,13 @@ export default defineComponent({
                 configs.value = response.configs;
 
                 const logoSet = new Set<string>();
-                const llmSet = new Set<string>(); 
-                configs.value.forEach(config => {
+                const llmSet = new Set<string>();
+                configs.value.forEach((config) => {
                     logoSet.add(config.LLMLogo);
-                    llmSet.add(config.LLMName); 
+                    llmSet.add(config.LLMName);
                 });
                 llmLogos.value = Array.from(logoSet);
-                llms.value = Array.from(llmSet); 
+                llms.value = Array.from(llmSet);
             } catch (error) {
                 console.error('Failed to fetch configs:', error);
             }
@@ -309,15 +318,13 @@ export default defineComponent({
                     ],
                     scales: {
                         x: { time: false },
-                        y: {
-                            range: (): [number, number] => [30, 80],
-                        },
+                        y: { range: () => [30, 80] },
                     },
                     axes: [
                         {
                             stroke: 'black',
                             label: 'Categories',
-                            values: (_self: uPlot, ticks: number[]) => ticks.map(i => categories[i]),
+                            values: (_self: uPlot, ticks: number[]) => ticks.map((i) => categories[i]),
                         },
                         {
                             stroke: 'black',
@@ -338,6 +345,10 @@ export default defineComponent({
         });
 
         return {
+            router, // Ensure router is exposed if used in template
+            isSidebarOpen,
+            isMobile,
+            toggleSidebar,
             configs,
             searchQuery,
             dateRange,

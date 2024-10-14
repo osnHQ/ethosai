@@ -1,20 +1,20 @@
 <template>
-  <div class="w-64 bg-white dark:bg-gray-800 shadow-lg h-screen">
-    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+  <div class="w-64 bg-gray-900 dark:bg-gray-800 shadow-lg shadow-blueGray h-screen">
+    <div class="p-4 border-b border-gray-700 dark:border-gray-700">
       <h1 class="text-2xl font-bold text-blue-900 dark:text-blue-300">ethosAI</h1>
     </div>
     <nav class="mt-4">
       <ul>
         <li v-for="item in menuItems" :key="item.name" class="mb-2">
           <template v-if="!item.subitems">
-            <router-link :to="item.route || '/'" class="block w-full flex items-center px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <router-link :to="item.route || '/'" class="block w-full flex items-center px-4 py-2 text-left text-gray-400 dark:text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-700">
               {{ item.name }}
             </router-link>
           </template>
 
           <template v-else>
             <button @click="toggleExpand(item)"
-              class="w-full flex items-center justify-between px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              class="w-full flex items-center justify-between px-4 py-2 text-left text-gray-400 dark:text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none"
               :aria-expanded="item.subitems ? item.expanded : undefined">
               <span class="flex items-center">
                 <component :is="item.icon" class="w-5 h-5 mr-2" />
@@ -26,7 +26,7 @@
             <ul v-if="item.expanded" class="ml-6 mt-1">
               <li v-for="subitem in item.subitems" :key="subitem" class="mb-1">
                 <router-link :to="item.route || '/'"
-                  class="block px-4 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                  class="block px-4 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-400 dark:hover:text-white">
                   {{ subitem }}
                 </router-link>
               </li>

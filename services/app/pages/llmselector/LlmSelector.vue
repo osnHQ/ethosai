@@ -37,13 +37,20 @@
       >
         Run Evaluation
       </button>
+       <!-- Spinner -->
+       <div
+        v-if="loading"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <div class="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
 import LlmCard from './LlmCard.vue';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -54,6 +61,7 @@ export default {
   setup() {
     const router = useRouter();
     const selectedLlm = ref(null);
+    const loading = ref(false);  // New loading state
 
     const llms = [
       {
@@ -93,8 +101,13 @@ export default {
     const runEvaluation = () => {
       if (selectedLlm.value) {
         localStorage.setItem('selectedLlm', JSON.stringify(selectedLlm.value));
+        loading.value = true;  // Show spinner
 
-        router.push({ name: 'reviewandrun' });
+        // Delay the navigation by 2 seconds
+        setTimeout(() => {
+          loading.value = false;  // Hide spinner
+          router.push({ name: 'reviewandrun' });
+        }, 2000);
       }
     };
 
@@ -103,7 +116,9 @@ export default {
       selectedLlm,
       selectLlm,
       runEvaluation,
+      loading,  // Expose loading state
     };
   },
 };
+
 </script>

@@ -1,29 +1,49 @@
 <template>
-  <div class="w-full relative shadow bg-white flex items-start justify-end py-0 pr-7 pl-0 gap-2 text-left text-base text-dimgray font-inter">
-    <main class="w-290 flex flex-col items-center px-7 py-9 bg-white rounded border-4 border-white border-solid shadow-sm max-md:px-5">
-      <h1 class="self-stretch text-3xl leading-10 text-zinc-900 max-md:max-w-full">
-        Review and Run Evaluation
-      </h1>
-      <p class="self-stretch mt-9 text-base leading-7 text-neutral-800 max-md:max-w-full">
+  <div class="flex h-screen bg-white">
+    <!-- Sidebar -->
+    <aside
+      :class="{
+        'hidden': !isSidebarOpen && isMobile,
+        'block': isSidebarOpen || !isMobile,
+        'fixed': true,
+        'inset-y-0 left-0': true,
+        'z-30': true,
+        'min-h-screen': true,
+        'transition-transform transform md:translate-x-0': true
+      }"
+      class="w-64 bg-white shadow-lg md:block"
+    >
+      <Sidebar @toggleSidebar="toggleSidebar" />
+    </aside>
+
+    <!-- Overlay for Mobile -->
+    <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-64 overflow-auto p-7"> <!-- Added margin-left to avoid overlap -->
+      <h1 class="text-3xl leading-10 text-zinc-900">Review and Run Evaluation</h1>
+      <p class="mt-5 text-base leading-7 text-neutral-800">
         Confirm your choices before running the evaluation.
       </p>
-      <section class="flex gap-5 self-stretch px-6 py-5 mt-8 w-full bg-cyan-500 rounded-lg max-md:flex-wrap max-md:pl-5 max-md:max-w-full">
-        <div class="flex flex-auto gap-5 my-auto text-lg leading-7 text-white max-md:flex-wrap">
+
+      <!-- Warning Section -->
+      <section v-if="showWarning" class="flex gap-5 self-stretch px-6 py-5 mt-2 w-full bg-cyan-500 rounded-lg">
+        <div class="flex flex-auto gap-5 my-auto text-lg leading-7 text-white">
           <NuxtImg loading="lazy" src="/Alarm.png" alt="" class="w-7 h-5 mt-4" />
-          <p class="flex-auto max-md:max-w-full">
+          <p class="flex-auto">
             Please go through the details carefully before running the config against the selected LLM as it takes time and cost for this!
           </p>
         </div>
-        <button class="px-7 py-3.5 text-sm leading-5 text-orange-500 whitespace-nowrap bg-red-50 rounded max-md:px-5">
+        <button @click="dismissWarning" class="px-7 py-3.5 text-sm leading-5 text-orange-500 whitespace-nowrap bg-red-50 rounded">
           Dismiss
         </button>
       </section>
 
-      
-      <section v-if="configData" class="mt-20 w-full max-w-300 max-md:mt-10 max-md:max-w-full border border-neutral-300 border-dashed border-2 px-10 py-3">
-        <div class="flex gap-5 max-md:flex-col">
-          <aside class="flex flex-col w-[35%] max-md:ml-0 max-md:w-full">
-            <div class="flex flex-col grow items-start py-7 pr-20 pl-8 mx-auto w-full text-sm font-bold leading-5 bg-white rounded-md shadow max-md:px-5 max-md:mt-6">
+      <!-- Configuration Data Section -->
+      <section v-if="configData" class="mt-5 w-full border border-neutral-300 rounded-2xl shadow-lg px-10 py-5">
+        <div class="flex gap-5">
+          <aside class="flex flex-col w-[35%]">
+            <div class="flex flex-col grow items-start py-7 pr-20 pl-8 mx-auto w-full text-sm font-bold leading-5 bg-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-102 hover:bg-gray-200">
               <h2 class="text-xl leading-8 text-zinc-900">{{ configData.name || 'Config Name' }}</h2>
               <div class="flex gap-2 mt-6 text-sky-600">
                 <NuxtImg loading="lazy" src="/attachment.png" alt="" class="w-4.5" />
@@ -56,20 +76,18 @@
             </div>
           </aside>
 
-          
-          <div class="flex flex-col ml-5 w-[65%] max-md:ml-0 max-md:w-full">
-            <article v-if="selectedLlm" class="mt-24 w-full bg-white rounded shadow-sm max-md:mt-10 max-md:max-w-full">
-              <div class="flex gap-5 max-md:flex-col">
-                <div class="flex flex-col w-[37%] max-md:ml-0 max-md:w-full">
-                  <NuxtImg loading="lazy" :src="selectedLlm.image || '/default-llm.png'" alt="LLM Image" class="grow w-full aspect-[1.72] max-md:mt-5" />
+          <!-- Selected LLM Section -->
+          <div class="flex flex-col ml-5 w-[65%]">
+            <article v-if="selectedLlm" class="mt-24 w-full bg-white rounded-2xl shadow-md transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-[1.02]">
+              <div class="flex gap-5">
+                <div class="flex flex-col w-[37%]">
+                  <NuxtImg loading="lazy" :src="selectedLlm.image || '/default-llm.png'" alt="LLM Image" class="grow w-full aspect-[1.72]" />
                 </div>
-                <div class="flex flex-col ml-5 w-[63%] max-md:ml-0 max-md:w-full">
-                  <div class="flex flex-col self-stretch my-auto text-zinc-900 max-md:mt-10 max-md:max-w-full">
-                    <h3 class="text-lg leading-7 max-md:max-w-full">{{ selectedLlm.name || 'Selected LLM' }}</h3>
-                    <p class="mt-5 text-xs leading-5 max-md:max-w-full">
-                      {{ selectedLlm.description || 'LLM description goes here.' }}
-                    </p>
-                    <button class="mt-4 text-base font-bold leading-7 text-cyan-500 max-md:max-w-full">
+                <div class="flex flex-col ml-5 w-[63%]">
+                  <div class="flex flex-col self-stretch my-auto text-zinc-900">
+                    <h3 class="text-lg leading-7">{{ selectedLlm.name || 'Selected LLM' }}</h3>
+                    <p class="mt-5 text-xs leading-5">{{ selectedLlm.description || 'LLM description goes here.' }}</p>
+                    <button class="mt-4 text-base font-bold leading-7 text-cyan-500">
                       View Details
                     </button>
                   </div>
@@ -80,23 +98,27 @@
         </div>
       </section>
 
-      
-      <div class="flex gap-4 mt-14 ml-24 text-lg leading-7 max-md:flex-wrap max-md:mt-10">
-        <button @click="editSelection" class="px-5 py-2 text-white bg-amber-700 rounded">Edit the selection</button>
-        <button @click="saveDraft" class="px-5 py-2 text-blue-700 bg-white rounded border border-blue-700 border-solid">
-          Save Draft
-        </button>
-        <button @click="cancelAndExit" class="p-2 text-red-500 bg-red-200 rounded">
-          Cancel and exit to Dashboard
-        </button>
+   <!-- Action Buttons -->
+<div class="flex flex-col items-center gap-4 mt-14 text-lg leading-7"> 
+  <div class="flex gap-4"> <!-- Flex container for the first row -->
+    <button @click="editSelection" class="px-5 py-2 text-white bg-amber-700 rounded">Edit the selection</button>
+    <button @click="saveDraft" class="px-5 py-2 text-blue-700 bg-white rounded border border-blue-700">Save Draft</button>
+    <button @click="cancelAndExit" class="p-2 text-red-500 bg-red-200 rounded">Cancel and exit to Dashboard</button>
+  </div>
+  <button @click="runEvaluation" class="px-11 py-2 mt-3 text-lg leading-7 text-white bg-blue-600 rounded">
+    Run Evaluation
+  </button>
+</div>
+
+
+      <!-- Spinner Overlay -->
+      <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center gap-4 text-white">
+        <div class="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+        <p class="text-xl">Your config file is being evaluated, please wait...</p>
       </div>
-      <button @click="runEvaluation" class="px-11 py-2 mt-9 text-lg leading-7 text-white bg-blue-600 rounded max-md:px-5">
-        Run Evaluation
-      </button>
     </main>
   </div>
 </template>
-
 
 <script>
 import { ref, onMounted } from 'vue';
@@ -109,6 +131,8 @@ export default {
     const selectedLlm = ref(null);
     const configId = ref(null); 
     const router = useRouter();
+    const loading = ref(false);
+    const showWarning = ref(true); 
 
     
     const isClient = () => typeof window !== 'undefined';
@@ -153,7 +177,9 @@ export default {
       }
     });
 
-    
+    const dismissWarning = () => {
+      showWarning.value = false;
+    };
     const editSelection = () => {
       //will write logic in next commit
     };
@@ -178,6 +204,7 @@ const runEvaluation = async () => {
     configId: Number(configId.value),
     model: 'gpt-4o-mini', 
   };
+  loading.value = true; 
 
   try {
     const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
@@ -220,7 +247,9 @@ const runEvaluation = async () => {
     }
   } catch (error) {
     console.error('Error in evaluation:', error);
-  }
+  }finally {
+        loading.value = false;  // Hide spinner
+      }
 };
 
     return {
@@ -231,6 +260,9 @@ const runEvaluation = async () => {
       saveDraft,
       cancelAndExit,
       runEvaluation, 
+      loading,
+      showWarning,  // State for the warning section
+      dismissWarning,  
     };
   },
 };

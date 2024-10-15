@@ -50,6 +50,13 @@
       "when": 1727061065517,
       "tag": "0006_glorious_red_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1728976662974,
+      "tag": "0007_funny_silver_fox",
+      "breakpoints": true
     }
   ]
 }

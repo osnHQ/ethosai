@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp, numeric, json } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, numeric, json, foreignKey, boolean, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', { 
   id: serial('id').primaryKey(),
@@ -67,3 +67,25 @@ export const reports = pgTable('reports', {
   content: text('content'),
   createdAt: timestamp('created_at').defaultNow()
 });
+
+// Api Key Table
+export const apiKey = pgTable(
+  "api_key",
+  {
+    id: serial("id").primaryKey(),
+    clientId: integer("client_id").notNull(),
+    apiKey: varchar("api_key", { length: 255 }).notNull().unique(),
+    queryCount: integer("query_count").default(0).notNull(),
+    isActive: boolean("is_active").notNull().default(true),
+    isDeleted: boolean("is_deleted").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    clientFk: foreignKey({
+      columns: [table.clientId],
+      foreignColumns: [users.id],
+      name: "api_key_client_fk",
+    }),
+  })
+);

@@ -10,7 +10,6 @@
         {{ notification.message }}
       </div>
 
-      <!-- Loading Spinner -->
       <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
       </div>
@@ -88,12 +87,9 @@
 
               <b class="text-gray-700">Enter a Category</b>
               <div class="w-full flex flex-row items-start justify-between pt-1 pb-1.5 pr-3 gap-5">
-                <input
-      v-model="config.category"
-      class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
-      placeholder="Enter Category"
-      type="text"
-    />
+                <input v-model="config.category"
+                  class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+                  placeholder="Enter Category" type="text" />
               </div>
             </div>
 
@@ -113,7 +109,8 @@
                       placeholder="Input text" type="text" />
                     <div
                       class="flex-1 flex flex-row items-start text-[#34270D] justify-start gap-1 min-w-[333px] max-w-full mq450:flex-wrap">
-                      <div v-for="(tag, index) in config.tags" :key="index"                        class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag
+                      <div v-for="(tag, index) in config.tags" :key="index"
+                        class="rounded-lg bg-[#EDDBB8] flex items-start justify-start py-1.5 px-3"><span>{{ tag
                           }}</span>
                         <button @click="removeTag(index)" class="ml-2 text-red-500 hover:text-red-700">x</button>
                       </div>
@@ -265,7 +262,7 @@ export default defineComponent({
         fileName: '',
         description: '',
         inputText: '',
-        category: '', 
+        category: '',
         tags: [] as string[],
         uploadedFile: null as File | null,
       },
@@ -348,40 +345,39 @@ export default defineComponent({
         uploadedFile: null,
       };
     },
-  saveDraft() {
-  const draftData = {
-    questionAnswerPairs: this.questionAnswerPairs,
-    newQuestion: this.newQuestion,
-    newAnswer: this.newAnswer,
-    selectedFileName: this.selectedFileName,
-    fileTypeIcon: this.fileTypeIcon,
-    config: {
-      fileName: this.config.fileName,
-      description: this.config.description,
-      inputText: this.config.inputText,
-      tags: this.config.tags,
-      // Exclude uploadedFile from the draft
-    },
-  };
-  localStorage.setItem('draftData', JSON.stringify(draftData));
-  this.showNotification('Draft saved successfully!', 'success');
-},
-loadDraft() {
-  const draftData = JSON.parse(localStorage.getItem('draftData') || '{}');
-  
-  this.config = {
-    fileName: draftData.config?.fileName || '',
-    description: draftData.config?.description || '',
-    inputText: draftData.config?.inputText || '',
-    category: draftData.config?.category || '',  // Ensure category is included
-    tags: draftData.config?.tags || [],
-    uploadedFile: null,  // Always set to null to force re-upload
-  };
+    saveDraft() {
+      const draftData = {
+        questionAnswerPairs: this.questionAnswerPairs,
+        newQuestion: this.newQuestion,
+        newAnswer: this.newAnswer,
+        selectedFileName: this.selectedFileName,
+        fileTypeIcon: this.fileTypeIcon,
+        config: {
+          fileName: this.config.fileName,
+          description: this.config.description,
+          inputText: this.config.inputText,
+          tags: this.config.tags,
 
-  // Clear the file name and icon since no file is stored in draft
-  this.selectedFileName = '';
-  this.fileTypeIcon = '';
-},
+        },
+      };
+      localStorage.setItem('draftData', JSON.stringify(draftData));
+      this.showNotification('Draft saved successfully!', 'success');
+    },
+    loadDraft() {
+      const draftData = JSON.parse(localStorage.getItem('draftData') || '{}');
+
+      this.config = {
+        fileName: draftData.config?.fileName || '',
+        description: draftData.config?.description || '',
+        inputText: draftData.config?.inputText || '',
+        category: draftData.config?.category || '',
+        tags: draftData.config?.tags || [],
+        uploadedFile: null,
+      };
+
+      this.selectedFileName = '';
+      this.fileTypeIcon = '';
+    },
     async submitForAudit() {
       try {
         if (!this.config.uploadedFile) {
@@ -394,7 +390,7 @@ loadDraft() {
 
         const payload = {
           name: this.config.fileName,
-          category: this.config.category,     
+          category: this.config.category,
           tags: this.config.tags,
           questionAnswerPairs: this.questionAnswerPairs,
           reviewStatus: 'Pending',
@@ -433,7 +429,7 @@ loadDraft() {
         this.showNotification('Submission Failed!', 'error');
       }
       finally {
-        this.isLoading = false; // Stop loading spinner
+        this.isLoading = false;
       }
     },
   },

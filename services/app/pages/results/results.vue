@@ -1,7 +1,6 @@
 <template>
     
     <div class="flex h-screen bg-white">
-    <!-- Sidebar -->
     <aside
       :class="{
         'hidden': !isSidebarOpen && isMobile,
@@ -17,12 +16,11 @@
       <Sidebar @toggleSidebar="toggleSidebar" />
     </aside>
 
-    <!-- Overlay for Mobile -->
     <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
 
 
         
-            <main class="flex-1 ml-64 overflow-auto p-7"> <!-- Added margin-left to avoid overlap -->
+            <main class="flex-1 ml-64 overflow-auto p-7"> 
                 <section
                 class="flex flex-col px-8 pb-3.5 mt-5 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
                 <header class="max-md:max-w-full">
@@ -43,7 +41,6 @@
                     </div>
 
                     <div class="flex w-full h-full border border-gray-100 rounded-lg shadow-md bg-gray-50">
-                        <!-- Left Column (30%) -->
                         <div class="w-1/3 p-4 space-y-4">
                             <!-- Card 1 -->
                             <div class="bg-purple-100 p-3 rounded-lg shadow-md flex items-center justify-between">
@@ -209,7 +206,7 @@ import BarChartC from '@/components/BarChart.vue';
 import ky from 'ky';
 import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
-import { useRouter } from 'vue-router'; // Add this import
+import { useRouter } from 'vue-router'; 
 import Flatpickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import uPlot from 'uplot';
@@ -233,9 +230,9 @@ export default defineComponent({
         BarChartC,
     },
     setup() {
-        const router = useRouter(); // Initialize router here
-        const isSidebarOpen = ref(false); // Initialize sidebar state
-        const { width } = useWindowSize(); // Use window size to detect mobile
+        const router = useRouter(); 
+        const isSidebarOpen = ref(false); 
+        const { width } = useWindowSize(); 
         const isMobile = computed(() => width.value < 768);
 
         const toggleSidebar = () => {
@@ -345,7 +342,7 @@ export default defineComponent({
         });
 
         return {
-            router, // Ensure router is exposed if used in template
+            router, 
             isSidebarOpen,
             isMobile,
             toggleSidebar,

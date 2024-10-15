@@ -1,9 +1,7 @@
 <template>
     <div :class="cardClasses" class="w-75 p-4 rounded-lg shadow-md">
-      <!-- Chart Title -->
       <h2 class="text-lg font-semibold text-gray-900 font-bold text-center mb-[-20px]">{{ title }}</h2>
       
-      <!-- Chart.js Semi-circle -->
       <div class="relative">
         <DoughnutChart 
           :percent="percent" 
@@ -15,8 +13,7 @@
         </div>
       </div>
   
-      <!-- Button -->
-      <div class="flex justify-center mt-[-20px]"> <!-- Changed from mb to mt for proper spacing -->
+      <div class="flex justify-center mt-[-20px]"> 
         <button 
           :class="buttonClasses" 
           class="py-2 px-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300">
@@ -51,9 +48,9 @@
         type: Number,
         required: true,
       },
-      theme: { // Ensure this is added to accept the theme
+      theme: { 
         type: String,
-        default: 'blue', // Default theme
+        default: 'blue', 
       },
       buttonText: {
         type: String,
@@ -87,7 +84,4 @@
   };
   </script>
   
-  <style scoped>
-  /* Additional styling can be added here if needed */
-  </style>
   

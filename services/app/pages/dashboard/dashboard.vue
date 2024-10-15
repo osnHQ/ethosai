@@ -15,7 +15,6 @@
             </aside>
         </div>
 
-        <!-- Overlay for Mobile -->
         <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar">
         </div>
         <div>
@@ -69,7 +68,6 @@
                                     </span>
                                     <div
                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-purple-500 text-white ml-2">
-                                        <!-- Icon inside the circle (you can replace with any icon SVG) -->
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round">
@@ -108,7 +106,6 @@
                                     </span>
                                     <div
                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white ml-2">
-                                        <!-- Icon inside the circle (you can replace with any icon SVG) -->
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                             stroke-linejoin="round" class="h-6 w-6">
@@ -144,7 +141,6 @@
                                     </span>
                                     <div
                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white ml-2">
-                                        <!-- Icon inside the circle (you can replace with any icon SVG)  width="250" height="250" viewBox="-40 -20 350 350"-->
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="250"
                                             height="250" viewBox="-20 -20 300 300" xml:space="preserve">
@@ -227,7 +223,6 @@
 
                         </div>
                         <div class="flex justify-center space-x-22 mt-3">
-                            <!-- chart-->
                             <ChartCard title="Community Eval Audits" :percent="72" :completed="397000" :total="551000"
                                 chartBackgroundColor="#00bcd4" chartBorderColor="#00bcd4" buttonText="View report" />
 
@@ -422,9 +417,9 @@ export default defineComponent({
     Flatpickr,
   },
   setup() {
-    const isSidebarOpen = ref(false); // Sidebar toggle state
+    const isSidebarOpen = ref(false); 
     const { width } = useWindowSize(); // Track window size
-    const isMobile = computed(() => width.value < 768); // Detect mobile device
+    const isMobile = computed(() => width.value < 768); 
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;
@@ -454,7 +449,7 @@ export default defineComponent({
 
     const fetchConfigs = async () => {
       try {
-        const response = await fetch('/api/configs'); // Replace with actual API
+        const response = await fetch('/api/configs'); 
         configs.value = await response.json();
       } catch (error) {
         console.error('Failed to fetch configs:', error);

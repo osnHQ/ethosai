@@ -8,7 +8,6 @@
   import { Doughnut } from 'vue-chartjs';
   import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
   
-  // Register necessary chart components
   ChartJS.register(ArcElement, Tooltip, Legend);
   
   export default {
@@ -20,7 +19,7 @@
       },
       theme: {
         type: String,
-        default: 'blue', // Default theme is 'blue'
+        default: 'blue', 
       },
     },
     mounted() {
@@ -44,9 +43,9 @@
           type: 'doughnut',
           data: chartData,
           options: {
-            rotation: -90, // Rotate to make it a half circle
-            circumference: 180, // Only show 180 degrees
-            cutout: '70%', // Adjust the inner radius for a donut effect
+            rotation: -90,
+            circumference: 180, 
+            cutout: '70%',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -63,23 +62,23 @@
       getBackgroundColor() {
         switch (this.theme) {
           case 'red':
-            return ['#950909', '#ff5555']; // Example red colors
+            return ['#950909', '#ff5555'];
           case 'green':
-            return ['#36a2eb', '#6eeeff']; // Example green colors
+            return ['#36a2eb', '#6eeeff']; 
           case 'blue':
           default:
-            return ['#198FC7', '#6eeeff']; // Default blue colors
+            return ['#198FC7', '#6eeeff']; 
         }
       },
       getBorderColor() {
         switch (this.theme) {
           case 'red':
-            return ['#950909', '#ff5555']; // Example red border colors
+            return ['#950909', '#ff5555']; 
           case 'green':
-            return ['#36a2eb', '#6eeeff']; // Example green border colors
+            return ['#36a2eb', '#6eeeff'];
           case 'blue':
           default:
-            return ['#198FC7', '#6eeeff']; // Default blue border colors
+            return ['#198FC7', '#6eeeff']; 
         }
       },
     },
@@ -89,7 +88,7 @@
   <style scoped>
   canvas {
     height: 250px !important;
-    width: 260px !important; /* Increase width for semi-circle */
+    width: 260px !important;
   }
   </style>
   

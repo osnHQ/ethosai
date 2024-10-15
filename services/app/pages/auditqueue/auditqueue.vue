@@ -1,6 +1,5 @@
 <template>
    <div class="flex h-screen bg-white">
-    <!-- Sidebar -->
     <aside
       :class="{
         'hidden': !isSidebarOpen && isMobile,
@@ -16,11 +15,10 @@
       <Sidebar @toggleSidebar="toggleSidebar" />
     </aside>
 
-    <!-- Overlay for Mobile -->
     <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
 
     
-    <main class="flex-1 ml-64 overflow-auto p-7"> <!-- Added margin-left to avoid overlap -->
+    <main class="flex-1 ml-64 overflow-auto p-7"> 
       <header
         class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-white shadow md:py-4 md:px-6">
         <div class="flex items-center w-full md:w-auto">

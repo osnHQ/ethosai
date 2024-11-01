@@ -91,8 +91,8 @@
 
 
 
-            <div class="w-[1036px] flex flex-col items-start justify-start pt-0 px-0 pb-4 gap-8">
-              <div class="w-[1010px] flex flex-col items-start justify-start gap-1">
+            <div class="flex flex-col items-start justify-start pt-0 px-0 pb-4 gap-8">
+              <div class="flex flex-col items-start justify-start gap-1">
 
 
 
@@ -115,9 +115,9 @@
                   </div>
 
                   <div
-                    class="w-[680px] flex flex-row flex-wrap items-start justify-start gap-12 text-lg text-gray-400 mq450:gap-7">
+                    class="flex flex-row flex-wrap md:gap-12 text-lg text-gray-400 mq450:gap-7">
 
-                    <b class="flex-1 text-gray-900 mq450:min-w-full">Questions & Eval instructions / Answers for the
+                    <b class="text-gray-900 mq450:min-w-full">Questions & Eval instructions / Answers for the
 
                       Prompt Eval File</b>
                     <div class="flex flex-col items-start mt-1 justify-start pt-px px-0 pb-0">
@@ -128,17 +128,17 @@
               </div>
 
 
-              <div class="w-full flex flex-row flex-wrap items-start justify-start gap-7 ">
-                <div class="w-md flex flex-col items-start justify-start gap-1">
+              <div class="w-full flex flex-col md:flex-row items-start justify-start gap-7">
+                <div class="w-full md:w-1/2 flex flex-col items-start justify-start gap-1">
                   <b class="text-gray-700">Enter your Question</b>
                   <input v-model="newQuestion"
-                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+                    class="w-80 border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                     placeholder="What's your Question" type="text" />
                 </div>
-                <div class="w-md flex flex-col items-start justify-start py-0 pr-3 pl-0 gap-1 min-w-[218px]">
+                <div class="w-1/2 flex flex-col items-start justify-start py-0 pr-3 pl-0 gap-1 min-w-[218px]">
                   <b class="text-gray-700">Enter your Answer</b>
                   <input v-model="newAnswer"
-                    class="w-full border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
+                    class="w-80 border-none outline-none h-9 rounded flex items-start justify-start pt-1 px-3 pb-1.5 font-inter text-sm text-black bg-light"
                     placeholder="What's your Answer" type="text" />
 
                 </div>
@@ -149,7 +149,7 @@
 
 
 
-              <div class="flex flex-row items-center justify-center w-full mt-[-20px] mq700:flex-wrap">
+              <div class="flex flex-col md:flex-col md:items-center md:justify-center mt-[-20px] mq700:flex-wrap md:ml-[370px]">
                 <button @click="addQA"
                   class="cursor-pointer [border:none] py-[7px] px-3  bg-cyan-500 rounded overflow-hidden flex flex-row items-start justify-start whitespace-nowrap">
 
@@ -192,13 +192,11 @@
             </div>
 
 
-            <div class="w-full flex flex-row items-center justify-center pt-3 gap-5 text-lg text-darkslategray-100">
-              <button @click="resetForm" class="rounded bg-red-50 text-red-500 py-2 px-4">Discard changes</button>
+            <div class="flex flex-row items-center justify-center pt-3 gap-5 text-lg text-darkslategray-100">
+              <button @click="resetForm" class="text-sm md:text-base rounded bg-red-50 text-red-500 py-2 px-4">Discard changes</button>
               <button @click="saveDraft"
-                class="rounded bg-white text-orange-500 py-2 px-4 border border-orange-500">Save Draft</button>
-              <button @click="submitForAudit" class="rounded bg-cyan-500 text-white py-2 px-4">Submit for
-
-                Audit</button>
+                class="text-sm md:text-base rounded bg-white text-orange-500 py-2 px-4 border border-orange-500">Save Draft</button>
+              <button @click="submitForAudit" class="text-sm md:text-base rounded bg-cyan-500 text-white py-2 px-2 md:px-4">Submit for Audit</button>
             </div>
 
           </div>

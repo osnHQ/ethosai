@@ -1,9 +1,28 @@
 <template>
-    <div
-        class="w-full relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
-        <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-280">
-            <section
-                class="flex flex-col px-8 pt-8 pb-3.5 mt-10 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
+    
+    <div class="flex h-screen bg-white">
+    <aside
+      :class="{
+        'hidden': !isSidebarOpen && isMobile,
+        'block': isSidebarOpen || !isMobile,
+        'fixed': true,
+        'inset-y-0 left-0': true,
+        'z-30': true,
+        'min-h-screen': true,
+        'transition-transform transform md:translate-x-0': true
+      }"
+      class="w-64 bg-white shadow-lg md:block"
+    >
+      <Sidebar @toggleSidebar="toggleSidebar" />
+    </aside>
+
+    <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
+
+
+        
+            <main class="flex-1 ml-64 overflow-auto p-7"> 
+                <section
+                class="flex flex-col px-8 pb-3.5 mt-5 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
                 <header class="max-md:max-w-full">
                     <div class="flex gap-5 max-md:flex-col max-md:gap-0">
                         <div class="flex flex-col w-[81%] max-md:ml-0 max-md:w-full">
@@ -12,7 +31,7 @@
                                     class="flex gap-5 justify-between px-0.5 w-full max-md:flex-wrap max-md:max-w-full">
                                     <h1
                                         class="flex gap-5 self-start text-3xl leading-10 text-zinc-900 max-md:flex-wrap max-md:max-w-full">
-                                        <span class="flex-auto">Recent Results</span>
+                                        <span class="flex-auto font-bold">Recent Results</span>
                                     </h1>
                                 </div>
                                 <p class="mt-2 text-base leading-7 text-neutral-800 max-md:max-w-full">
@@ -22,7 +41,6 @@
                     </div>
 
                     <div class="flex w-full h-full border border-gray-100 rounded-lg shadow-md bg-gray-50">
-                        <!-- Left Column (30%) -->
                         <div class="w-1/3 p-4 space-y-4">
                             <!-- Card 1 -->
                             <div class="bg-purple-100 p-3 rounded-lg shadow-md flex items-center justify-between">
@@ -183,16 +201,16 @@
     </div>
 </template>
 
-
 <script lang="ts">
 import BarChartC from '@/components/BarChart.vue';
 import ky from 'ky';
 import { defineComponent, computed, ref, onMounted } from 'vue';
-import type { Ref } from 'vue';
-import uPlot from 'uplot';
-import 'uplot/dist/uPlot.min.css';
+import { useWindowSize } from '@vueuse/core';
+import { useRouter } from 'vue-router'; 
 import Flatpickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
+import uPlot from 'uplot';
+import 'uplot/dist/uPlot.min.css';
 
 interface Config {
     evalID: string;
@@ -212,12 +230,21 @@ export default defineComponent({
         BarChartC,
     },
     setup() {
+        const router = useRouter(); 
+        const isSidebarOpen = ref(false); 
+        const { width } = useWindowSize(); 
+        const isMobile = computed(() => width.value < 768);
+
+        const toggleSidebar = () => {
+            isSidebarOpen.value = !isSidebarOpen.value;
+        };
+
         const configs = ref<Config[]>([]);
         const searchQuery = ref('');
         const dateRange = ref(['2019/04/14', '2024/06/14']);
         const selectedLLM = ref('');
         const llmLogos = ref<string[]>([]);
-        const llms = ref<string[]>([]); 
+        const llms = ref<string[]>([]);
         const flatpickrConfig = ref({
             mode: 'range' as 'range',
             dateFormat: 'Y/m/d',
@@ -230,7 +257,7 @@ export default defineComponent({
             const start = startDate ? new Date(startDate) : new Date('0000-01-01');
             const end = endDate ? new Date(endDate) : new Date('9999-12-31');
 
-            return configs.value.filter(config => {
+            return configs.value.filter((config) => {
                 const matchesLLM = !selectedLLM.value || config.LLMName === selectedLLM.value;
                 const matchesSearchQuery = config.configFileName
                     .toLowerCase()
@@ -248,13 +275,13 @@ export default defineComponent({
                 configs.value = response.configs;
 
                 const logoSet = new Set<string>();
-                const llmSet = new Set<string>(); 
-                configs.value.forEach(config => {
+                const llmSet = new Set<string>();
+                configs.value.forEach((config) => {
                     logoSet.add(config.LLMLogo);
-                    llmSet.add(config.LLMName); 
+                    llmSet.add(config.LLMName);
                 });
                 llmLogos.value = Array.from(logoSet);
-                llms.value = Array.from(llmSet); 
+                llms.value = Array.from(llmSet);
             } catch (error) {
                 console.error('Failed to fetch configs:', error);
             }
@@ -288,15 +315,13 @@ export default defineComponent({
                     ],
                     scales: {
                         x: { time: false },
-                        y: {
-                            range: (): [number, number] => [30, 80],
-                        },
+                        y: { range: () => [30, 80] },
                     },
                     axes: [
                         {
                             stroke: 'black',
                             label: 'Categories',
-                            values: (_self: uPlot, ticks: number[]) => ticks.map(i => categories[i]),
+                            values: (_self: uPlot, ticks: number[]) => ticks.map((i) => categories[i]),
                         },
                         {
                             stroke: 'black',
@@ -317,6 +342,10 @@ export default defineComponent({
         });
 
         return {
+            router, 
+            isSidebarOpen,
+            isMobile,
+            toggleSidebar,
             configs,
             searchQuery,
             dateRange,

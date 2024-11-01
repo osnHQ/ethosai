@@ -1,45 +1,70 @@
 import OpenAI from "openai";
 
-export function createOpenAIClient(apiKey: string) {
-  return new OpenAI({
-    apiKey,
-  });
+type ReportResponse = { choice: string; score: number };
+
+export function createOpenAIClient(apiKey: string): OpenAI {
+  return new OpenAI({ apiKey });
 }
 
-export async function generateResponse(openai: OpenAI, modelName: string, prompt: string) {
-  const response = await openai.chat.completions.create({
-    model: modelName,
-    messages: [{ role: "system", content: "Answer the factoids with short one or few words only." }, { role: "user", content: prompt }],
-    temperature: 0,
-  });
-  return response.choices[0].message.content || "";
-}
+export async function generateResponse(
+  openai: OpenAI,
+  modelName: string,
+  prompt: string
+): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: modelName,
+      messages: [
+        { role: "system", content: "Answer the factoids with short one or few words only." },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0,
+    });
 
-export async function generateReport(openai: OpenAI, modelName: string, prompt: string) {
-  const response = await openai.chat.completions.create({
-    model: modelName,
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0,
-    response_format: {
-      "type": "json_schema",
-        "json_schema": {
-            "name": "choice-scoring",
-            "strict": true,
-            "schema": {
-                "type": "object",
-                "properties": {
-                    "choice": {"type": "string"},
-                    "score": {"type": "number"},
-                },
-                "required": [
-                    "choice",
-                    "score",
-                ],
-                "additionalProperties": false,
-            },
-        },
+    return response.choices[0]?.message?.content || ""; 
+  } catch (error) {
+    console.error("Error generating response:", error);
+    return "";
   }
-  
-  });
-  return response.choices[0].message.content || "";
+}
+
+export async function generateReport(
+  openai: OpenAI,
+  modelName: string,
+  prompt: string
+): Promise<ReportResponse> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: modelName,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0,
+    });
+
+    const messageContent = response.choices[0]?.message?.content ?? "{}";
+
+    if (!messageContent.trim().startsWith("{") || !messageContent.trim().endsWith("}")) {
+      return { choice: "", score: 0 };
+    }
+
+    try {
+      const parsedResponse: Partial<ReportResponse> = JSON.parse(messageContent);
+
+      if (typeof parsedResponse.choice === 'string' && typeof parsedResponse.score === 'number') {
+        return {
+          choice: parsedResponse.choice.trim().charAt(0), 
+          score: parsedResponse.score,
+        };
+      } else {
+        console.error("Invalid structure for report response:", parsedResponse);
+        return { choice: "", score: 0 };
+      }
+    } catch (parseError) {
+      console.error("Failed to parse report JSON response:", parseError);
+      console.error("Original message content:", messageContent);
+      return { choice: "", score: 0 };
+    }
+  } catch (error) {
+    console.error("Error generating report:", error);
+    return { choice: "", score: 0 };
+  }
 }

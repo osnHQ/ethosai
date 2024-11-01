@@ -1,94 +1,9 @@
 {
-  "id": "3e1861fe-6dd4-4485-a9bb-ce34539a3661",
+  "id": "ccdf5496-2cbe-4ef7-b89e-69c583d45576",
   "prevId": "b803382c-9600-4b5c-9510-f023e3580504",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "api_key": {
-      "name": "api_key",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "client_id": {
-          "name": "client_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "api_key": {
-          "name": "api_key",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "query_count": {
-          "name": "query_count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "is_active": {
-          "name": "is_active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "is_deleted": {
-          "name": "is_deleted",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "api_key_client_fk": {
-          "name": "api_key_client_fk",
-          "tableFrom": "api_key",
-          "tableTo": "users",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "api_key_api_key_unique": {
-          "name": "api_key_api_key_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "api_key"
-          ]
-        }
-      }
-    },
     "configs": {
       "name": "configs",
       "schema": "",
@@ -213,6 +128,12 @@
         "score": {
           "name": "score",
           "type": "numeric(5, 4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "choice": {
+          "name": "choice",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },

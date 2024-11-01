@@ -1,11 +1,11 @@
 <template>
     <div>
-        <Dashboard />
+        <LlmComparison />
     </div>
 </template>
 
 <script setup>
-import Dashboard from "./dashboard.vue"
+import LlmComparison from "./llmcomparison.vue";
 
 const color = useColorMode()
 color.value === 'light'

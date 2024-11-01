@@ -1,19 +1,24 @@
 <template>
-  <div class="min-h-screen flex flex-col md:flex-row bg-gray-50 transition-colors duration-300">
-    <aside :class="{
-      'hidden': !isSidebarOpen && isMobile,
-      'block': isSidebarOpen || !isMobile,
-      'fixed': isSidebarOpen && isMobile,
-      'inset-0': isSidebarOpen && isMobile,
-      'md:relative': true,
-      'md:block': true,
-    }" class="w-64 bg-white shadow-lg z-30 transition-transform transform md:translate-x-0">
+   <div class="flex h-screen bg-white">
+    <aside
+      :class="{
+        'hidden': !isSidebarOpen && isMobile,
+        'block': isSidebarOpen || !isMobile,
+        'fixed': true,
+        'inset-y-0 left-0': true,
+        'z-30': true,
+        'min-h-screen': true,
+        'transition-transform transform md:translate-x-0': true
+      }"
+      class="w-64 bg-white shadow-lg md:block"
+    >
       <Sidebar @toggleSidebar="toggleSidebar" />
     </aside>
 
     <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
 
-    <main class="flex-1 flex flex-col">
+    
+    <main class="flex-1 ml-64 overflow-auto p-7"> 
       <header
         class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-white shadow md:py-4 md:px-6">
         <div class="flex items-center w-full md:w-auto">

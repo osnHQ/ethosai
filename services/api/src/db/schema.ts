@@ -50,8 +50,10 @@ export const evaluations = pgTable('evaluations', {
   answer: text('answer').notNull(),
   output: text('output'),
   score: numeric('score', { precision: 5, scale: 4 }),
+  choice: text('choice'),  
   createdAt: timestamp('created_at').defaultNow(),
 });
+
 
 export const review = pgTable('reviews', {
   id: serial('id').primaryKey(),

@@ -21,34 +21,29 @@ const evaluationRouter = new Hono<{ Bindings: Env }>();
 
 const getPrompt = (context: string, question: string, answer: string, response: string) => {
   return `You are comparing a submitted answer to an expert answer on a given question. Here is the data:
-  [BEGIN DATA]
-  [Context]: ${context}
-  [Question]: ${question}
-  [Expert]: ${answer}
-  [Submission]: ${response}
-  [END DATA]
+[BEGIN DATA]
+[Context]: ${context}
+[Question]: ${question}
+[Expert]: ${answer}
+[Submission]: ${response}
+[END DATA]
 
-  Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.
-  The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:
-  (A) The submitted answer is a subset of the expert answer and is fully consistent with it.
-  (B) The submitted answer is a superset of the expert answer and is fully consistent with it.
-  (C) The submitted answer contains all the same details as the expert answer.
-  (D) There is a disagreement between the submitted answer and the expert answer.
-  (E) The answers differ, but these differences don't matter from the perspective of factuality.
-choice_scores:
-  "A": 0.4
-  "B": 0.6
-  "C": 1
-  "D": 0
-  "E": 1
+Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.
+The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:
+(A) The submitted answer is a subset of the expert answer and is fully consistent with it.
+(B) The submitted answer is a superset of the expert answer and is fully consistent with it.
+(C) The submitted answer contains all the same details as the expert answer.
+(D) There is a disagreement between the submitted answer and the expert answer.
+(E) The answers differ, but these differences don't matter from the perspective of factuality.
 
-  return the answer as a json object with the following structure:
-  {{
-    "choice": <string>,
-    "score": <float>
-  }}
-`;;
+Please return the answer strictly as a JSON object with the following structure, and ensure the choice is a single letter:
+{
+  "choice": "<string>",
+  "score": <float>
 }
+Only include this JSON object in your response.`;
+};
+
 
 evaluationRouter.get(
   "/evaluate",
@@ -69,14 +64,13 @@ evaluationRouter.get(
 
     try {
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-
       const response = result.generated;
-
       const prompt = getPrompt(context, question, answer, response);
 
       const report = await generateReport(openai, model, prompt);
+      const { choice, score } = report;
 
-      return c.json({ ...result, ...JSON.parse(report) });
+      return c.json({ ...result, choice, score });
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
@@ -105,9 +99,11 @@ evaluationRouter.post(
       const result = await evaluateQuestion(db, openai, model, { content: question, answer });
       const response = result.generated;
       const prompt = getPrompt(context, question, answer, response);
-      const report = await generateReport(openai, model, prompt);
 
-      return c.json({ ...result, ...JSON.parse(report) });
+      const report = await generateReport(openai, model, prompt);
+      const { choice, score } = report;
+
+      return c.json({ ...result, choice, score });
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
@@ -133,10 +129,17 @@ evaluationRouter.post('/evaluateBatch',
         questions.map((question) => evaluateQuestion(db, openai, model, { ...question }))
       );
 
-      const prompts = results.map((result) => `question: ${result.question}\nanswer: ${result.answer}\n\ngenerated response: ${result.generated}\nsimilarity: ${result.similarity}`);
+      const prompts = results.map((result) => {
+        return getPrompt("", result.question, result.answer, result.generated); 
+      });
+
       const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
 
-      return c.json(results.map((result, index) => ({ ...result, ...JSON.parse(reports[index]) })));
+      return c.json(results.map((result, index) => ({
+        ...result, 
+        choice: reports[index].choice, 
+        score: reports[index].score
+      })));
     } catch (error) {
       console.error(error);
       return new HTTPException(500, { message: "Batch evaluation failed" }).getResponse();
@@ -144,7 +147,6 @@ evaluationRouter.post('/evaluateBatch',
   }
 );
 
-// Backend code
 evaluationRouter.post('/evaluateCsv',
   zValidator('json', z.object({
     configId: z.number(),
@@ -157,7 +159,6 @@ evaluationRouter.post('/evaluateCsv',
     const { configId, model } = c.req.valid('json');
 
     try {
-      // Retrieve configuration from database
       const result = await db
         .select()
         .from(configs)
@@ -169,11 +170,9 @@ evaluationRouter.post('/evaluateCsv',
         return c.json({ error: 'Configuration not found' }, 404);
       }
 
-      // Parse CSV content
       const content = config.fileContents;
       const rawRecords = parseCSV(content);
 
-      // Evaluate records
       const results = [];
       for (let i = 0; i < rawRecords.length; i++) {
         try {
@@ -184,30 +183,28 @@ evaluationRouter.post('/evaluateCsv',
 
           if (!record.content || !record.answer) {
             console.warn(`Missing fields at row ${i + 1}:`, record);
-            continue; // Skip this record
+            continue;
           }
 
-          console.log(`Processing record ${i + 1}:`, record);
           const recordWithId = await getRecordsWithIds(db, [record]);
           const result = await evaluateQuestion(db, openai, model, recordWithId[0]);
-          results.push(result);
+
+          const prompt = getPrompt("", result.question, result.answer, result.generated);
+          const report = await generateReport(openai, model, prompt);
+          
+          results.push({ ...result, choice: report.choice, score: report.score });
 
         } catch (error) {
-          const err = error as Error;
-          console.error(`Error processing record at row ${i + 1}:`, err.message);
+          console.error(`Error processing record at row ${i + 1}:`, error);
           results.push({ error: `Failed to evaluate record at row ${i + 1}` });
         }
       }
 
-      // Generate CSV content
       const csvContent = generateCSV(results);
 
-      // Set headers for CSV download with dynamic filename
       c.header('Content-Type', 'text/csv');
-      c.header('Content-Disposition', `attachment; filename=config_${configId}_results.csv`); // Dynamic filename
-      console.log(`Content-Disposition set to: attachment; filename=config_${configId}_results.csv`); // Log for debugging
+      c.header('Content-Disposition', `attachment; filename=config_${configId}_results.csv`);
 
-      // Return CSV content
       return c.body(csvContent);
 
     } catch (error) {
@@ -217,16 +214,13 @@ evaluationRouter.post('/evaluateCsv',
   }
 );
 
-
-
 function generateCSV(results: any[]): string {
-  const headers = ['question', 'answer', 'generated', 'similarity', 'evaluationId'];
+  const headers = ['question', 'answer', 'generated', 'choice', 'score', 'evaluationId'];
   let csvContent = headers.join(',') + '\n';
 
   for (const result of results) {
     const row = headers.map(header => {
       let cell = result[header] || '';
-      // Escape quotes and wrap in quotes if the cell contains a comma
       if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
         cell = `"${cell.replace(/"/g, '""')}"`;
       }

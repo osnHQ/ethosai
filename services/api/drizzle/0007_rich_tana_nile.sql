@@ -1,0 +1,1 @@
+ALTER TABLE "evaluations" ADD COLUMN "choice" text;

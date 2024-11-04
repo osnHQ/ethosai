@@ -49,6 +49,8 @@ def initialize_session_state() -> None:
         st.session_state.current_question = ""
     if "show_logs" not in st.session_state:
         st.session_state.show_logs = False
+    if "has_model_answer" not in st.session_state:
+        st.session_state.has_model_answer = False
 
 def extract_text_from_pdf(pdf_path: str) -> List[str]:
     with pymupdf.open(pdf_path) as doc:
@@ -239,7 +241,8 @@ async def process_questions(
     context: str = "",
     client=None,
     model: str = "gpt-4o-mini",
-    system_prompt: str = "Reply with a one or few words short factoid answer."
+    system_prompt: str = "Reply with a one or few words short factoid answer.",
+    has_model_answer: bool = False
 ) -> None:
     columns = ["Question", "Model_Response", "Expected_Answer", "Choice", "Score"]
     results_df = pd.DataFrame(columns=columns)
@@ -256,12 +259,16 @@ async def process_questions(
             try:
                 st.session_state.current_question = pair["question"]
                 current_question_placeholder.markdown(f"**Currently Processing:** {pair['question']}")
-                response = (
-                    await generate_model_answer(
-                        f"{context}, {pair['question']}", client, model=model, system_prompt=system_prompt
-                    )
-                ).strip(".")
-
+                
+                if has_model_answer:
+                    response = pair.get("model_answer", "").strip(".")
+                else:
+                    response = (
+                        await generate_model_answer(
+                            f"{context}, {pair['question']}", client, model=model, system_prompt=system_prompt
+                        )
+                    ).strip(".")
+                
                 similarity = await compare_sentences_llm(
                     model_answer=response,
                     expert_answer=pair["answer"],
@@ -323,7 +330,6 @@ async def process_questions(
         mime="text/csv",
     )
 
-
 def calculate_summary(results_df: pd.DataFrame) -> Dict[str, any]:
     accuracy = (results_df["Score"] == 1).mean() * 100
     choice_distribution = results_df["Choice"].value_counts(normalize=True) * 100
@@ -371,7 +377,7 @@ def display_summary_charts(results_df: pd.DataFrame, summary: Dict[str, any]) ->
             x=labels,
             y=percentages,
             labels={'x': 'Answer Type', 'y': 'Percentage'},
-            title='Answer type distribution',
+            title='Answer Type Distribution',
             text=[f'{correct_percentage:.2f}%', f'{incorrect_percentage:.2f}%'],
             color=labels,
             color_discrete_map={'Correct': 'green', 'Incorrect': 'red'}
@@ -383,8 +389,6 @@ def display_summary_charts(results_df: pd.DataFrame, summary: Dict[str, any]) ->
             st.plotly_chart(generate_pie_chart(choice_counts, "Choice Distribution"), use_container_width=True)
         with col2:
             st.plotly_chart(fig_correct_incorrect, use_container_width=True)
-
-
 
 def generate_pie_chart(data, title: str) -> plt.Figure:
     fig = px.pie(names=data.index, values=data.values, title=title, hole=0.3)
@@ -469,6 +473,12 @@ def main() -> None:
 
         st.button("🧹 Clear Session", on_click=clear_session_state)
 
+        if st.session_state.processed and not st.session_state.df.empty:
+            if st.session_state.has_model_answer:
+                st.info("📂 Detected CSV with existing model answers. Proceeding to scoring.")
+            else:
+                st.info("📂 Detected CSV without model answers. Will generate model answers and then score.")
+
     st.header("📂 Upload Your File")
     uploaded_file = st.file_uploader(
         "Upload a PDF or CSV file",
@@ -480,9 +490,26 @@ def main() -> None:
 
         if file_extension == "csv":
             try:
-                st.session_state.df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
+                df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
+                required_columns = {"question", "expert answer"}
+                if {"model answer"}.issubset(df.columns.str.lower()):
+                    st.session_state.has_model_answer = True
+                    df.columns = [col.lower() for col in df.columns]
+                    st.session_state.df = df.rename(columns={
+                        "question": "question",
+                        "expert answer": "answer",
+                        "model answer": "model_answer"
+                    })
+                    mode = "Scoring"
+                else:
+                    st.session_state.has_model_answer = False
+                    st.session_state.df = df.rename(columns={
+                        "question": "question",
+                        "expert answer": "answer"
+                    })
+                    mode = "Generation and Scoring"
                 st.session_state.processed = True
-                st.success("✅ CSV file uploaded and processed successfully.")
+                st.success(f"✅ CSV file uploaded and processed successfully in **{mode}** mode.")
             except Exception as e:
                 st.error(f"❌ Error processing CSV file: {e}")
                 logger.error(f"CSV processing error: {e}")
@@ -521,10 +548,25 @@ def main() -> None:
         st.header("✏️ Edit and Review Q&A Data")
 
         with st.expander("📄 View Data", expanded=True):
-            edited_df = st.data_editor(
-                st.session_state.df,
-                num_rows="dynamic",
-            )
+            if st.session_state.has_model_answer:
+                edited_df = st.data_editor(
+                    st.session_state.df,
+                    num_rows="dynamic",
+                    column_config={
+                        "question": st.column_config.TextColumn(),
+                        "answer": st.column_config.TextColumn(),
+                        "model_answer": st.column_config.TextColumn(),
+                    }
+                )
+            else:
+                edited_df = st.data_editor(
+                    st.session_state.df,
+                    num_rows="dynamic",
+                    column_config={
+                        "question": st.column_config.TextColumn(),
+                        "answer": st.column_config.TextColumn(),
+                    }
+                )
         st.download_button(
             label="📥 Download Q&A Data as CSV",
             data=edited_df.to_csv(index=False),
@@ -541,7 +583,8 @@ def main() -> None:
                             context=context,
                             client=client,
                             model=model,
-                            system_prompt=system_prompt
+                            system_prompt=system_prompt,
+                            has_model_answer=st.session_state.has_model_answer
                         )
                     )
 

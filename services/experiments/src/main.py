@@ -490,7 +490,7 @@ def main() -> None:
 
         if file_extension == "csv":
             try:
-                df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")
+                df = pd.read_csv(uploaded_file, encoding="utf-8-sig")
                 required_columns = {"question", "expert answer"}
                 if {"model answer"}.issubset(df.columns.str.lower()):
                     st.session_state.has_model_answer = True

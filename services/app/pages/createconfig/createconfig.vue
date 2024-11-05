@@ -402,7 +402,11 @@ export default defineComponent({
         formData.append('metadata', JSON.stringify(payload));
         formData.append('questionAnswerPairs', JSON.stringify(this.questionAnswerPairs));
 
-        const apiUrl = 'http://localhost:8787/configs';
+        const isDev = typeof process !== "undefined" && process.env.NODE_ENV === "development";
+
+        const BACKEND = isDev ? "http://localhost:8787" : "https://ethos.lulz.workers.dev";
+
+        const apiUrl = BACKEND + '/configs';
 
         const response = await ky.post(apiUrl, { body: formData });
 

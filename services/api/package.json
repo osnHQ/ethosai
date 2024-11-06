@@ -13,8 +13,8 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.1.19",
-    "@types/pdfkit": "^0.13.5",
     "@cloudflare/workers-types": "^4.20240925.0",
+    "@types/pdfkit": "^0.13.5",
     "@types/pg": "^8.11.10",
     "@types/pg-pool": "^2.0.6",
     "drizzle-kit": "^0.20.18",
@@ -36,6 +36,7 @@
     "jose": "^5.9.3",
     "ky": "^1.7.2",
     "openai": "^4.67.0",
+    "p-limit": "^6.1.0",
     "pg": "^8.13.0",
     "pg-pool": "^3.7.0"
   }

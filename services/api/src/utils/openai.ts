@@ -68,3 +68,21 @@ export async function generateReport(
     return { choice: "", score: 0 };
   }
 }
+
+export async function generateReportsBatch(
+  openai: OpenAI,
+  model: string,
+  prompts: string[]
+): Promise<ReportResponse[]> {
+  const results = await Promise.all(
+    prompts.map(async (prompt) => {
+      const response = await openai.chat.completions.create({
+        model: model,
+        messages: [{ role: "system", content: prompt }],
+      });
+      const content = JSON.parse(response.choices[0]?.message?.content?.trim() || "{}");
+      return { choice: content.choice || "", score: content.score || 0 };
+    })
+  );
+  return results;
+}

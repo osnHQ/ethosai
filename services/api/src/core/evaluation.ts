@@ -3,10 +3,10 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { createDbConnection, createOpenAIClient } from "../utils/functions";
-import { evaluateQuestion } from "./process";
+import { evaluateQuestionBatch } from "./process"; // New batch evaluation function
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
-import { generateReport } from "../utils/openai";
+import { generateReportsBatch } from "../utils/openai"; // New batch report generation function
 import { configs } from "../db/schema";
 import { sql } from 'drizzle-orm';
 
@@ -19,6 +19,7 @@ export type Env = {
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();
 
+// Update to get prompt as a single function for batch processing
 const getPrompt = (context: string, question: string, answer: string, response: string) => {
   return `You are comparing a submitted answer to an expert answer on a given question. Here is the data:
 [BEGIN DATA]
@@ -44,109 +45,6 @@ Please return the answer strictly as a JSON object with the following structure,
 Only include this JSON object in your response.`;
 };
 
-
-evaluationRouter.get(
-  "/evaluate",
-  zValidator(
-    "query",
-    z.object({
-      context: z.string(),
-      question: z.string(),
-      answer: z.string(),
-      model: z.string(),
-    }),
-  ),
-  async (c) => {
-    const db = createDbConnection(c.env.DATABASE_URL);
-    const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-
-    const { context, question, answer, model } = c.req.valid("query");
-
-    try {
-      const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-      const response = result.generated;
-      const prompt = getPrompt(context, question, answer, response);
-
-      const report = await generateReport(openai, model, prompt);
-      const { choice, score } = report;
-
-      return c.json({ ...result, choice, score });
-    } catch (error) {
-      console.error(error);
-      return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
-    }
-  }
-);
-
-evaluationRouter.post(
-  "/evaluate",
-  zValidator(
-    "json",
-    z.object({
-      context: z.string(),
-      question: z.string(),
-      answer: z.string(),
-      model: z.string(),
-    }),
-  ),
-  async (c) => {
-    const db = createDbConnection(c.env.DATABASE_URL);
-    const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-
-    const { context, question, answer, model } = c.req.valid("json");
-
-    try {
-      const result = await evaluateQuestion(db, openai, model, { content: question, answer });
-      const response = result.generated;
-      const prompt = getPrompt(context, question, answer, response);
-
-      const report = await generateReport(openai, model, prompt);
-      const { choice, score } = report;
-
-      return c.json({ ...result, choice, score });
-    } catch (error) {
-      console.error(error);
-      return new HTTPException(500, { message: "Evaluation failed" }).getResponse();
-    }
-  }
-);
-
-evaluationRouter.post('/evaluateBatch',
-  zValidator('json', z.object({
-    model: z.string(),
-    questions: z.array(z.object({
-      content: z.string(),
-      answer: z.string(),
-    })),
-  })),
-  async (c) => {
-    const db = createDbConnection(c.env.DATABASE_URL);
-    const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-    const { model, questions } = c.req.valid('json');
-
-    try {
-      const results = await Promise.all(
-        questions.map((question) => evaluateQuestion(db, openai, model, { ...question }))
-      );
-
-      const prompts = results.map((result) => {
-        return getPrompt("", result.question, result.answer, result.generated); 
-      });
-
-      const reports = await Promise.all(prompts.map((prompt) => generateReport(openai, model, prompt)));
-
-      return c.json(results.map((result, index) => ({
-        ...result, 
-        choice: reports[index].choice, 
-        score: reports[index].score
-      })));
-    } catch (error) {
-      console.error(error);
-      return new HTTPException(500, { message: "Batch evaluation failed" }).getResponse();
-    }
-  }
-);
-
 evaluationRouter.post('/evaluateCsv',
   zValidator('json', z.object({
     configId: z.number(),
@@ -155,17 +53,16 @@ evaluationRouter.post('/evaluateCsv',
   async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
     const openai = createOpenAIClient(c.env.OPENAI_API_KEY);
-
     const { configId, model } = c.req.valid('json');
 
     try {
-      const result = await db
+      // Fetch configuration and CSV data from DB
+      const [config] = await db
         .select()
         .from(configs)
         .where(sql`${configs.id} = ${configId}`)
         .limit(1);
 
-      const config = result[0];
       if (!config) {
         return c.json({ error: 'Configuration not found' }, 404);
       }
@@ -173,33 +70,37 @@ evaluationRouter.post('/evaluateCsv',
       const content = config.fileContents;
       const rawRecords = parseCSV(content);
 
-      const results = [];
-      for (let i = 0; i < rawRecords.length; i++) {
-        try {
-          const record = {
-            content: rawRecords[i]['content'],
-            answer: rawRecords[i]['answer'],
-          };
-
-          if (!record.content || !record.answer) {
-            console.warn(`Missing fields at row ${i + 1}:`, record);
-            continue;
+      // Filter valid records
+      const validRecords = rawRecords
+        .map((record, index) => {
+          if (typeof record.content === "string" && typeof record.answer === "string") {
+            return { content: record.content, answer: record.answer };
+          } else {
+            console.warn(`Skipping row ${index + 1} due to missing fields`);
+            return null;
           }
+        })
+        .filter(Boolean) as { content: string; answer: string }[];
 
-          const recordWithId = await getRecordsWithIds(db, [record]);
-          const result = await evaluateQuestion(db, openai, model, recordWithId[0]);
+      // Evaluate questions in batch
+      const evaluationResults = await evaluateQuestionBatch(db, openai, model, validRecords);
 
-          const prompt = getPrompt("", result.question, result.answer, result.generated);
-          const report = await generateReport(openai, model, prompt);
-          
-          results.push({ ...result, choice: report.choice, score: report.score });
+      // Generate prompts and process them in batches
+      const prompts = evaluationResults.map((result) =>
+        getPrompt("", result.question, result.answer, result.generated)
+      );
 
-        } catch (error) {
-          console.error(`Error processing record at row ${i + 1}:`, error);
-          results.push({ error: `Failed to evaluate record at row ${i + 1}` });
-        }
-      }
+      // Generate reports in batch for all prompts
+      const reports = await generateReportsBatch(openai, model, prompts);
 
+      // Combine results and reports
+      const results = evaluationResults.map((result, index) => ({
+        ...result,
+        choice: reports[index].choice,
+        score: reports[index].score
+      }));
+
+      // Generate CSV content from the results
       const csvContent = generateCSV(results);
 
       c.header('Content-Type', 'text/csv');

@@ -15,7 +15,7 @@ export async function generateResponse(
     const response = await openai.chat.completions.create({
       model: modelName,
       messages: [
-        { role: "system", content: "Answer the factoids with short one or few words only." },
+        { role: "system", content: "Evaluate the factual content and return a JSON object." },
         { role: "user", content: prompt },
       ],
       temperature: 0,
@@ -43,24 +43,19 @@ export async function generateReport(
     const messageContent = response.choices[0]?.message?.content ?? "{}";
 
     if (!messageContent.trim().startsWith("{") || !messageContent.trim().endsWith("}")) {
+      console.error("Invalid JSON format:", messageContent);
       return { choice: "", score: 0 };
     }
 
-    try {
-      const parsedResponse: Partial<ReportResponse> = JSON.parse(messageContent);
+    const parsedResponse: Partial<ReportResponse> = JSON.parse(messageContent);
 
-      if (typeof parsedResponse.choice === 'string' && typeof parsedResponse.score === 'number') {
-        return {
-          choice: parsedResponse.choice.trim().charAt(0), 
-          score: parsedResponse.score,
-        };
-      } else {
-        console.error("Invalid structure for report response:", parsedResponse);
-        return { choice: "", score: 0 };
-      }
-    } catch (parseError) {
-      console.error("Failed to parse report JSON response:", parseError);
-      console.error("Original message content:", messageContent);
+    if (typeof parsedResponse.choice === 'string' && typeof parsedResponse.score === 'number') {
+      return {
+        choice: parsedResponse.choice.trim().charAt(0),
+        score: parsedResponse.score,
+      };
+    } else {
+      console.error("Invalid structure for report response:", parsedResponse);
       return { choice: "", score: 0 };
     }
   } catch (error) {
@@ -76,12 +71,43 @@ export async function generateReportsBatch(
 ): Promise<ReportResponse[]> {
   const results = await Promise.all(
     prompts.map(async (prompt) => {
-      const response = await openai.chat.completions.create({
-        model: model,
-        messages: [{ role: "system", content: prompt }],
-      });
-      const content = JSON.parse(response.choices[0]?.message?.content?.trim() || "{}");
-      return { choice: content.choice || "", score: content.score || 0 };
+      try {
+        const response = await openai.chat.completions.create({
+          model: model,
+          messages: [{ role: "user", content: prompt }],
+          response_format : {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "choice-scoring",
+                "strict": true,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "choice": {"type": "string", 
+                        "enum": ["A", "B", "C", "D", "E"]
+                        },
+                        "score": {"type": "number"},
+
+                    },
+                    "required": [
+                        "choice",
+                        "score",
+                    ],
+                    "additionalProperties": false,
+                },
+            },
+        },
+              });
+        const content = response.choices[0]?.message?.content?.trim() || "{}";
+        
+        console.log("Raw model output:", content);  // Log the raw output for debugging
+
+        const parsedContent = JSON.parse(content);
+        return { choice: parsedContent.choice || "", score: parsedContent.score || 0 };
+      } catch (error) {
+        console.error("Error processing batch report:", error);
+        return { choice: "", score: 0 };
+      }
     })
   );
   return results;

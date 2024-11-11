@@ -20,6 +20,15 @@ export type Env = {
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();
 
+// Mapping the choice letter to the corresponding score
+const choiceToScore: Record<string, number> = {
+  A: 0.4,
+  B: 0.6,
+  C: 1,
+  D: 0,
+  E: 1,
+};
+
 const getPromptForModel = (model: string, context: string, question: string, answer: string, response: string): string => {
   if (model === 'gpt-4o') {
     return `You are tasked with evaluating the factual content of a submitted answer against an expert answer. For each evaluation, return a JSON object. Here is the data:
@@ -111,11 +120,16 @@ evaluationRouter.post('/evaluateCsv',
 
       const reports = await generateReportsBatch(openai, model, prompts);
 
-      const results = evaluationResults.map((result, index) => ({
-        ...result,
-        choice: reports[index].choice,
-        score: reports[index].score
-      }));
+      // Map the reports to the results, calculating the score based on the choice letter
+      const results = evaluationResults.map((result, index) => {
+        const choice = reports[index].choice;
+        const score = choiceToScore[choice] || 0; // Default to 0 if choice is not found
+        return {
+          ...result,
+          choice,
+          score,
+        };
+      });
 
       const csvContent = generateCSV(results);
 

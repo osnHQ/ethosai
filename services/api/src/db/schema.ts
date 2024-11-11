@@ -1,5 +1,12 @@
 import { pgTable, serial, text, integer, timestamp, numeric, json, foreignKey, boolean, varchar } from 'drizzle-orm/pg-core';
 
+export const csvEvaluations = pgTable('csv_evaluations', {
+  id: serial('id').primaryKey(),
+  fileName: text('file_name').notNull(),
+  averageScore: numeric('average_score', { precision: 5, scale: 4 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const users = pgTable('users', { 
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
@@ -69,6 +76,8 @@ export const reports = pgTable('reports', {
   content: text('content'),
   createdAt: timestamp('created_at').defaultNow()
 });
+
+
 
 // Api Key Table
 export const apiKey = pgTable(

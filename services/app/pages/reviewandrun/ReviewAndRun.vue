@@ -192,57 +192,60 @@ export default {
 
     // Frontend code
     const runEvaluation = async () => {
-      if (!selectedLlm.value || !configId.value) {
-        console.error('Missing selected LLM or config ID.');
-        return;
-      }
+  if (!selectedLlm.value || !configId.value) {
+    console.error('Missing selected LLM or config ID.');
+    return;
+  }
 
-      const payload = {
-        configId: Number(configId.value),
-        model: 'gpt-4o-mini',
-      };
-      loading.value = true;
+  const model = selectedLlm.value === 'gpt-4o' ? 'gpt-4o' : 'gpt-4o-mini';  // Choose the model dynamically
 
-      try {
-        const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+  const payload = {
+    configId: Number(configId.value),
+    model: model,  // Pass the selected model dynamically
+  };
+  loading.value = true;
 
-        if (response.ok) {
-          const contentDisposition = response.headers.get('Content-Disposition');
-          console.log("Content-Disposition Header:", contentDisposition); 
+  try {
+    const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
 
-          const filenameMatch = contentDisposition && contentDisposition.match(/filename="?(.+)"?/i);
-          const filename = filenameMatch ? filenameMatch[1] : 'evaluation_results.csv';
+    if (response.ok) {
+      const contentDisposition = response.headers.get('Content-Disposition');
+      console.log("Content-Disposition Header:", contentDisposition);
 
-          const blob = await response.blob();
+      const filenameMatch = contentDisposition && contentDisposition.match(/filename="?(.+)"?/i);
+      const filename = filenameMatch ? filenameMatch[1] : 'evaluation_results.csv';
 
-          const url = window.URL.createObjectURL(blob);
+      const blob = await response.blob();
 
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
+      const url = window.URL.createObjectURL(blob);
 
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(link);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
 
-          console.log('CSV file downloaded successfully');
-          router.push({ name: 'auditqueue' });
-        } else {
-          console.error('Failed to run evaluation');
-        }
-      } catch (error) {
-        console.error('Error in evaluation:', error);
-      } finally {
-        loading.value = false;  
-      }
-    };
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      console.log('CSV file downloaded successfully');
+      router.push({ name: 'auditqueue' });
+    } else {
+      console.error('Failed to run evaluation');
+    }
+  } catch (error) {
+    console.error('Error in evaluation:', error);
+  } finally {
+    loading.value = false;  
+  }
+};
+
 
     return {
       configData,

@@ -21,10 +21,10 @@ export async function generateResponse(
       temperature: 0,
     });
 
-    return response.choices[0]?.message?.content || ""; 
+    return response.choices[0]?.message?.content?.trim() || ""; 
   } catch (error) {
     console.error("Error generating response:", error);
-    return "";
+    return "";  // Return an empty string in case of an error
   }
 }
 
@@ -40,27 +40,29 @@ export async function generateReport(
       temperature: 0,
     });
 
-    const messageContent = response.choices[0]?.message?.content ?? "{}";
+    const messageContent = response.choices[0]?.message?.content?.trim() ?? "{}";
 
-    if (!messageContent.trim().startsWith("{") || !messageContent.trim().endsWith("}")) {
+    // Ensure the response is a valid JSON format
+    if (!messageContent.startsWith("{") || !messageContent.endsWith("}")) {
       console.error("Invalid JSON format:", messageContent);
-      return { choice: "", score: 0 };
+      return { choice: "E", score: 0 };  // Return default values if the response is not valid
     }
 
     const parsedResponse: Partial<ReportResponse> = JSON.parse(messageContent);
 
+    // Ensure valid structure for report response
     if (typeof parsedResponse.choice === 'string' && typeof parsedResponse.score === 'number') {
       return {
-        choice: parsedResponse.choice.trim().charAt(0),
+        choice: parsedResponse.choice.trim().charAt(0),  // Ensure that the choice is a single character
         score: parsedResponse.score,
       };
     } else {
       console.error("Invalid structure for report response:", parsedResponse);
-      return { choice: "", score: 0 };
+      return { choice: "E", score: 0 };  // Default to 'E' and score 0 if structure is invalid
     }
   } catch (error) {
     console.error("Error generating report:", error);
-    return { choice: "", score: 0 };
+    return { choice: "E", score: 0 };  // Return default values in case of an error
   }
 }
 
@@ -75,38 +77,19 @@ export async function generateReportsBatch(
         const response = await openai.chat.completions.create({
           model: model,
           messages: [{ role: "user", content: prompt }],
-          response_format : {
-            "type": "json_schema",
-            "json_schema": {
-                "name": "choice-scoring",
-                "strict": true,
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "choice": {"type": "string", 
-                        "enum": ["A", "B", "C", "D", "E"]
-                        },
-                        "score": {"type": "number"},
+          temperature: 0,  // Ensure consistency with the temperature setting in other functions
+        });
 
-                    },
-                    "required": [
-                        "choice",
-                        "score",
-                    ],
-                    "additionalProperties": false,
-                },
-            },
-        },
-              });
-        const content = response.choices[0]?.message?.content?.trim() || "{}";
-        
+        const content = response.choices[0]?.message?.content?.trim() || "{}";  // Fallback to empty JSON if missing
         console.log("Raw model output:", content);  // Log the raw output for debugging
 
         const parsedContent = JSON.parse(content);
-        return { choice: parsedContent.choice || "", score: parsedContent.score || 0 };
+
+        // Ensure that we return a valid report response
+        return { choice: parsedContent.choice || "E", score: parsedContent.score || 0 };
       } catch (error) {
         console.error("Error processing batch report:", error);
-        return { choice: "", score: 0 };
+        return { choice: "E", score: 0 };  // Return default values in case of an error
       }
     })
   );

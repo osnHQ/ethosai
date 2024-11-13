@@ -1,11 +1,6 @@
 import { pgTable, serial, text, integer, timestamp, numeric, json, foreignKey, boolean, varchar } from 'drizzle-orm/pg-core';
 
-export const csvEvaluations = pgTable('csv_evaluations', {
-  id: serial('id').primaryKey(),
-  fileName: text('file_name').notNull(),
-  averageScore: numeric('average_score', { precision: 5, scale: 4 }).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-});
+
 
 export const users = pgTable('users', { 
   id: serial('id').primaryKey(),
@@ -37,7 +32,8 @@ export const configs = pgTable('configs', {
   lastReviewed: timestamp('last_reviewed').notNull(),
   submittedBy: json('submitted_by').notNull(),
   questionAnswerPairs: json('questionAnswerPairs').notNull().default([]), 
-  fileContents: text('file_contents').notNull().default('No file uploaded'), 
+  fileContents: text('file_contents').notNull().default('No file uploaded'),
+  averageScore: text('average_score').default('0'), 
 });
 
 export const models = pgTable('models', {

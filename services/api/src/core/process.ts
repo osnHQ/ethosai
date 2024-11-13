@@ -1,6 +1,6 @@
 import { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import OpenAI from "openai";
-import { generateResponse, generateReport } from "../utils/openai"; 
+import { generateResponse, generateReport } from "../utils/openai"; // Ensure these functions are exported correctly
 import { evaluations } from "../db/schema";
 
 export async function evaluateQuestion(

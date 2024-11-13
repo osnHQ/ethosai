@@ -10,6 +10,7 @@ import { generateReportsBatch } from "../utils/openai"; // New batch report gene
 import { configs } from "../db/schema";
 import { sql } from 'drizzle-orm';
 
+
 export type Env = {
   DATABASE_URL: string;
   NODE_ENV: string;
@@ -19,8 +20,39 @@ export type Env = {
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();
 
-// Update to get prompt as a single function for batch processing
-const getPrompt = (context: string, question: string, answer: string, response: string) => {
+// Mapping the choice letter to the corresponding score
+const choiceToScore: Record<string, number> = {
+  A: 0.4,
+  B: 0.6,
+  C: 1,
+  D: 0,
+  E: 1,
+};
+
+const getPromptForModel = (model: string, context: string, question: string, answer: string, response: string): string => {
+  if (model === 'gpt-4o') {
+    return `You are tasked with evaluating the factual content of a submitted answer against an expert answer. For each evaluation, return a JSON object. Here is the data:
+[Context]: ${context}
+[Question]: ${question}
+[Expert Answer]: ${answer}
+[Submitted Answer]: ${response}
+
+Based on the comparison, select one of the following options:
+(A) The submitted answer is a subset of the expert answer and is fully consistent with it.
+(B) The submitted answer is a superset of the expert answer and is fully consistent with it.
+(C) The submitted answer contains all the same details as the expert answer.
+(D) There is a disagreement between the submitted answer and the expert answer.
+(E) The answers differ, but these differences don't matter from the perspective of factuality.
+
+Return the result as a JSON object with the following format:
+{
+  "choice": "<string>",
+  "score": <float>
+}
+Ensure the response is only this JSON object for each question-answer pair.`;
+  }
+
+  // Default or gpt-4o-mini prompt
   return `You are comparing a submitted answer to an expert answer on a given question. Here is the data:
 [BEGIN DATA]
 [Context]: ${context}
@@ -56,7 +88,6 @@ evaluationRouter.post('/evaluateCsv',
     const { configId, model } = c.req.valid('json');
 
     try {
-      // Fetch configuration and CSV data from DB
       const [config] = await db
         .select()
         .from(configs)
@@ -70,7 +101,6 @@ evaluationRouter.post('/evaluateCsv',
       const content = config.fileContents;
       const rawRecords = parseCSV(content);
 
-      // Filter valid records
       const validRecords = rawRecords
         .map((record, index) => {
           if (typeof record.content === "string" && typeof record.answer === "string") {
@@ -82,25 +112,25 @@ evaluationRouter.post('/evaluateCsv',
         })
         .filter(Boolean) as { content: string; answer: string }[];
 
-      // Evaluate questions in batch
       const evaluationResults = await evaluateQuestionBatch(db, openai, model, validRecords);
 
-      // Generate prompts and process them in batches
       const prompts = evaluationResults.map((result) =>
-        getPrompt("", result.question, result.answer, result.generated)
+        getPromptForModel(model, "", result.question, result.answer, result.generated)
       );
 
-      // Generate reports in batch for all prompts
       const reports = await generateReportsBatch(openai, model, prompts);
 
-      // Combine results and reports
-      const results = evaluationResults.map((result, index) => ({
-        ...result,
-        choice: reports[index].choice,
-        score: reports[index].score
-      }));
+      // Map the reports to the results, calculating the score based on the choice letter
+      const results = evaluationResults.map((result, index) => {
+        const choice = reports[index].choice;
+        const score = choiceToScore[choice] || 0; // Default to 0 if choice is not found
+        return {
+          ...result,
+          choice,
+          score,
+        };
+      });
 
-      // Generate CSV content from the results
       const csvContent = generateCSV(results);
 
       c.header('Content-Type', 'text/csv');

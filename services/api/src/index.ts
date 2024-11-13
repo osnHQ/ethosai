@@ -5,6 +5,7 @@ import { apiReference } from '@scalar/hono-api-reference';
 import evaluationRouter from "./core/evaluation";
 import apiKeyRouter from "./core/apiKey";
 import generalRouter from "./core/general";
+import authRouter from "./utils/auth";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -12,6 +13,7 @@ app.use('/*', cors())
 
 app.route('/api-key', apiKeyRouter);
 app.route('/eval', evaluationRouter);
+app.route('/auth', authRouter);
 app.route('/', generalRouter);
 
 app.get('/reference', apiReference({

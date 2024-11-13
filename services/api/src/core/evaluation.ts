@@ -3,10 +3,9 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { createDbConnection, createOpenAIClient } from "../utils/functions";
-import { evaluateQuestionBatch } from "./process"; // New batch evaluation function
+import { evaluateQuestionBatch } from "./process";
 import { parseCSV } from "../utils/functions";
-import { getRecordsWithIds } from "../utils/db";
-import { generateReportsBatch } from "../utils/openai"; // New batch report generation function
+import { generateReportsBatch } from "../utils/openai";
 import { configs } from "../db/schema";
 import { sql } from 'drizzle-orm';
 
@@ -20,7 +19,6 @@ export type Env = {
 
 const evaluationRouter = new Hono<{ Bindings: Env }>();
 
-// Mapping the choice letter to the corresponding score
 const choiceToScore: Record<string, number> = {
   A: 0.4,
   B: 0.6,
@@ -76,6 +74,24 @@ Please return the answer strictly as a JSON object with the following structure,
 }
 Only include this JSON object in your response.`;
 };
+
+function generateCSV(results: any[]): string {
+  const headers = ['question', 'answer', 'generated', 'choice', 'score', 'evaluationId'];
+  let csvContent = headers.join(',') + '\n';
+
+  for (const result of results) {
+    const row = headers.map(header => {
+      let cell = result[header] || '';
+      if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
+        cell = `"${cell.replace(/"/g, '""')}"`;
+      }
+      return cell;
+    });
+    csvContent += row.join(',') + '\n';
+  }
+
+  return csvContent;
+}
 
 evaluationRouter.post('/evaluateCsv',
   zValidator('json', z.object({
@@ -144,23 +160,5 @@ evaluationRouter.post('/evaluateCsv',
     }
   }
 );
-
-function generateCSV(results: any[]): string {
-  const headers = ['question', 'answer', 'generated', 'choice', 'score', 'evaluationId'];
-  let csvContent = headers.join(',') + '\n';
-
-  for (const result of results) {
-    const row = headers.map(header => {
-      let cell = result[header] || '';
-      if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
-        cell = `"${cell.replace(/"/g, '""')}"`;
-      }
-      return cell;
-    });
-    csvContent += row.join(',') + '\n';
-  }
-
-  return csvContent;
-}
 
 export default evaluationRouter;

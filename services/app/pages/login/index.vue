@@ -179,7 +179,7 @@ export default {
                     loading.stop();
                     return;
                 }
-
+                
                 const registration = await client.register(email.value.toLowerCase(), challenge);
                 console.log(registration);
 

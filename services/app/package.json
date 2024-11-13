@@ -10,7 +10,7 @@
     "prepare": "nuxi prepare",
     "start": "node .output/server/index.mjs",
     "start:generate": "npx serve .output/public",
-    "lint": "eslint .",
+    "lint": "eslint **/*.ts",
     "typecheck": "vue-tsc --noEmit"
   },
   "devDependencies": {

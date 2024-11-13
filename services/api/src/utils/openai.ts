@@ -15,13 +15,13 @@ export async function generateResponse(
     const response = await openai.chat.completions.create({
       model: modelName,
       messages: [
-        { role: "system", content: "Evaluate the factual content and return a JSON object." },
+        { role: "system", content: "Answer the factoids with short one or few words only." },
         { role: "user", content: prompt },
       ],
       temperature: 0,
     });
 
-    return response.choices[0]?.message?.content?.trim() || ""; 
+    return response.choices[0]?.message?.content?.trim() || "";
   } catch (error) {
     console.error("Error generating response:", error);
     return "";  // Return an empty string in case of an error
@@ -33,17 +33,17 @@ export async function generateReport(
   modelName: string,
   prompt: string
 ): Promise<ReportResponse> {
-    const response = await openai.chat.completions.create({
-      model: modelName,
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0,
-    });
+  const response = await openai.chat.completions.create({
+    model: modelName,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0,
+  });
 
-    const messageContent = response.choices[0]?.message?.content?.trim() ?? "{}";
-    console.log(messageContent);
-    const { choice, score } = JSON.parse(messageContent);
-    console.log(choice, score);
-    return { choice, score };
+  const messageContent = response.choices[0]?.message?.content?.trim() ?? "{}";
+  console.log(messageContent);
+  const { choice, score } = JSON.parse(messageContent);
+  console.log(choice, score);
+  return { choice, score };
 }
 
 export async function generateReportsBatch(

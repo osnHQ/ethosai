@@ -1,19 +1,21 @@
 <template>
-      <div class="w-350 relative shadow bg-white flex items-start justify-end text-left text-base text-dimgray font-inter">
-        <main class="flex-1 flex flex-col items-start justify-start pt-6 px-0 pb-0 max-w-280">
+      <div class="overflow-hidden">
 
-    <div class="flex flex-col px-7 py-7 bg-white rounded shadow-sm max-md:px-5">
-      <h1 class="text-3xl leading-10 text-zinc-900 max-md:max-w-full">
+      
+        <main class="flex-1 flex flex-col pt-6 px-0 pb-0 w-full">
+
+    <div class="flex flex-col px-7 py-7 bg-white rounded shadow-sm">
+      <h1 class="text-3xl font-semibold leading-10 text-zinc-900 max-md:max-w-full">
         Select Configuration File
       </h1>
-      <p class="mt-7 text-base leading-7 text-neutral-800 max-md:max-w-full">
+      <p class="mt-2 text-base leading-7 text-neutral-800 max-md:max-w-full">
         Pick a configuration file to run with the selected LLM.
       </p>
       <div class="self-center mt-8 w-full max-w-[1102px] max-md:max-w-full">
         <div class="flex gap-5 max-md:flex-col max-md:gap-0">
           <div class="flex flex-col w-[23%] max-md:ml-0 max-md:w-full">
             <div
-              class="flex gap-4 px-2.5 py-2 w-70 text-lg leading-7 text-white bg-orange-500 rounded-lg shadow max-md:mt-5"
+              class="flex gap-4 px-2.5 py-2 w-70 text-lg leading-7 text-white bg-orange-500 rounded-lg shadow md:mt-4"
             >
               <NuxtImg
                 loading="lazy"
@@ -21,7 +23,7 @@
                 alt=""
                 class="w-6 h-6 mt-1"
               />
-              <div class="flex-auto pl-3 w-full my-auto">You have selected</div>
+              <div class="flex-auto text-base pl-3 w-full my-auto">You have selected</div>
               <NuxtImg
                 loading="lazy"
                 src="/rightarrowwhite.png"
@@ -35,30 +37,30 @@
               class="grow pr-4 w-full bg-white rounded shadow-sm max-md:mt-5 max-md:max-w-full"
             >
               <div class="flex gap-5 max-md:flex-col max-md:gap-0">
-                <div class="flex flex-col w-[33%] max-md:ml-0 max-md:w-full">
+                <div class="flex flex-col w-[33%] max-md:ml-0 md:w-full">
                   <NuxtImg
                     loading="lazy"
                     src="/anthropiccard.png"
                     alt="Claude2 AI model illustration"
-                    class="grow w-full aspect-[1.72] max-md:mt-5"
+                    class="grow h-auto object-contain w-full aspect-[1.72] max-md:mt-5"
                   />
                 </div>
                 <div class="flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full">
                   <div
                     class="flex flex-col self-stretch my-auto max-md:mt-10 max-md:max-w-full"
                   >
-                    <h2 class="text-lg leading-7 text-zinc-900 max-md:max-w-full">
+                    <h2 class="text-xl md:text-lg font-semibold leading-7 text-zinc-900 max-md:max-w-full">
                       Claude2
                     </h2>
                     <p
-                      class="mt-5 text-xs leading-5 text-zinc-900 max-md:max-w-full"
+                      class="mt-2 text-sm md:text-xs leading-5 text-zinc-900 max-w-sm md:max-w-full"
                     >
                       Anthropic's latest addition Claude2 is friendly, personalized
                       and is able to perform much better than its pre-decessor
                       Claud1 in text generation, analysis and knowledge sharing.
                     </p>
-                    <div class="flex justify-between items-center mt-4 w-full max-md:flex-wrap">
-                        <button class="text-base font-bold leading-7 text-cyan-500">
+                    <div class="flex md:justify-between items-center mt-4 md:flex-wrap">
+                        <button class="text-base pr-4 font-bold leading-7 text-cyan-500">
                           View Details
                          </button>
                      <div class="text-xs leading-5 text-zinc-400">
@@ -73,7 +75,7 @@
         </div>
       </div>
       <div
-        class="flex gap-5 justify-between px-5 py-5 mt-7 w-full bg-blue-600 rounded-lg max-md:flex-wrap max-md:pl-5 max-md:max-w-full"
+        class="flex gap-5 justify-between px-5 py-5 mt-7 md:w-full bg-blue-600 rounded-lg max-md:flex-wrap max-md:pl-5 max-w-sm md:max-w-full"
       >
         <div
           class="flex gap-5 my-auto text-lg leading-7 text-white max-md:flex-wrap"
@@ -84,7 +86,7 @@
             alt=""
             class="w-7 h-7 "
           />
-          <p class="flex-auto max-md:max-w-full">
+          <p class="flex-auto md:max-w-full">
             Kindly pick from the list of configurations available from Ethos AI
             platform as below.
           </p>
@@ -95,19 +97,19 @@
           Learn more
         </button>
       </div>
-      <div class="flex gap-5 justify-between mt-16 w-full text-sm leading-5 max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
-            <div class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow w-52">
-              <NuxtImg loading="lazy" src="/search.png" alt="" class="w-5" />
-              <input type="text" placeholder="Search for the configurations here (name, tags, category etc.)" aria-label="Search for LLMs" class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-3.7 text-4 w-50" />
+      <div class="flex flex-col md:flex-row gap-5 justify-between mt-16 w-full text-sm leading-5 max-md:flex-wrap max-md:pr-5 max-md:mt-10 md:max-w-full">
+            <div class="flex py-2 rounded mr-3 border border-solid bg-black bg-opacity-0 border-zinc-900 text-neutral-300 flex-grow max-w-sm md:max-w-full">
+              <NuxtImg loading="lazy" src="/search.png" alt="" class="w-5 mx-2" />
+              <input type="text" placeholder="Search for the configurations here (name, tags, category etc.)" aria-label="Search for LLMs" class="flex-grow outline-none focus:outline-none focus:shadow-none text-black placeholder-text-3.7 text-4 w-full max-md:w-full" />
             </div>
-            <select class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
+            <select class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 max-w-sm w-full md:w-auto">
               <option>Filter by category</option>
             </select>
-            <select class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto">
+            <select class="bg-white border border-solid border-zinc-900 rounded px-2 py-2 w-full md:w-auto max-w-sm">
               <option>Filter by status (audited, unaudited, under rev)</option>
             </select>
           </div>
-      <div class="flex gap-5 self-start mt-5 text-sm leading-5 max-md:flex-wrap">
+      <div class="flex flex-col md:flex-row gap-5 self-start mt-5 text-sm leading-5 max-md:flex-wrap">
         <div class="flex flex-1 flex-auto gap-5">
           <label for="dateRange" class="grow my-auto text-zinc-700">Select date range</label>
           <div
@@ -130,7 +132,23 @@
           </button>
         </div>
       </div>
-      <div class="overflow-x-auto">
+
+      <div v-for="(card, index) in cardsData" :key="index" class="md:hidden mt-4 flex flex-col rounded-lg bg-white shadow-md p-4">
+        <div class="mb-2 flex justify-center">
+          <NuxtImg loading="lazy" :src="card.imgPath" alt="" class="w-14 aspect-square" />
+        </div>
+
+        <p class="font-semibold text-gray-600 text-center mb-2">Config File Name: <span class="bg-white font-bold text-black">{{ card.configFileName }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Category: <span class="bg-white font-bold text-black">{{ card.category }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Submitted by: <span class="bg-white font-bold text-black">{{ card.submittedBy }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Review Status: <span class="bg-white font-bold text-black">{{ card.reviewStatus }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Date Submitted: <span class="bg-white font-bold text-black">{{ card.dateSubmitted }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Last Modified: <span class="bg-white font-bold text-black">{{ card.lastModified }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Cost of Eval: <span class="bg-white font-bold text-black">{{ card.costOfEval }}</span></p>
+        <p class="font-semibold text-gray-600 text-center mb-2">Action: <span  class="text-blue hover:underline">{{ card.action }}</span></p>
+      </div>
+
+      <div class="overflow-x-auto hidden md:block">
       <table class="mt-6 w-full text-sm leading-5 rounded border border-gray-100 border-solid bg-black bg-opacity-0">
         <thead>
           <tr class="font-semibold text-gray-600 bg-gray-50">
@@ -256,14 +274,58 @@
       </nav>
     </div>
 </main>
-
 </div>
 
   </template>
   
-  <script>
-  export default {
-    name: 'ConfigurationSelector',
-    // Component logic can be added here
-  }
-  </script>
+  <script setup>
+import { ref } from 'vue';
+
+const cardsData = ref([
+  {
+    configFileName: "Capital Cities of the world",
+    category: "History",
+    submittedBy: "Brandon",
+    reviewStatus: "Audited",
+    dateSubmitted: "11/09/2020",
+    lastModified: "25/12/2022",
+    costOfEval: "$ 1.2",
+    action: "View/Start Review",
+    imgPath: "/avatar.png"
+  },
+  // Add more card objects here
+  {
+    configFileName: "Best cars of 20th Century",
+    category: "Business",
+    submittedBy: "Paula",
+    reviewStatus: "Audited",
+    dateSubmitted: "23/02/2022",
+    lastModified: "23/04/2022",
+    costOfEval: "$ 0.8",
+    action: "View/Start Review",
+    imgPath: "/avatar2.png"
+  },
+  {
+    configFileName: "Oscar movies of 1990s",
+    category: "Entertainment",
+    submittedBy: "Username",
+    reviewStatus: "Under Review",
+    dateSubmitted: "10/07/2020",
+    lastModified: "21/04/2024",
+    costOfEval: "$ 0.05",
+    action: "View/Start Review",
+    imgPath: "/avatar3.png"
+  },
+  {
+    configFileName: "Automobile Parts",
+    category: "Manufacturing",
+    submittedBy: "Username",
+    reviewStatus: "Audited",
+    dateSubmitted: "17/08/2021",
+    lastModified: "12/03/2023",
+    costOfEval: "$ 1.12",
+    action: "View/Start Review",
+    imgPath: "/avatar4.png"
+  },
+]);
+</script>

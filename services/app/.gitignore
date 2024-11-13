@@ -11,3 +11,4 @@ package.json
 .env
 .env.local
 .vitepress
+.dev.vars

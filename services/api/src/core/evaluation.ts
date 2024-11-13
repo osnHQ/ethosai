@@ -7,9 +7,8 @@ import { evaluateQuestionBatch } from "./process"; // New batch evaluation funct
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
 import { generateReportsBatch } from "../utils/openai"; // New batch report generation function
-import { configs } from "../db/schema";
+import { configs, evaluations } from "../db/schema";
 import { sql } from 'drizzle-orm';
-
 
 export type Env = {
   DATABASE_URL: string;
@@ -120,18 +119,44 @@ evaluationRouter.post('/evaluateCsv',
 
       const reports = await generateReportsBatch(openai, model, prompts);
 
-      // Map the reports to the results, calculating the score based on the choice letter
-      const results = evaluationResults.map((result, index) => {
-        const choice = reports[index].choice;
-        const score = choiceToScore[choice] || 0; // Default to 0 if choice is not found
-        return {
-          ...result,
-          choice,
-          score,
-        };
-      });
+      let totalScore = 0;
 
-      const csvContent = generateCSV(results);
+      for (let i = 0; i < evaluationResults.length; i++) {
+        const result = evaluationResults[i];
+        const report = reports[i];
+        const choice = report.choice;
+        const score = choiceToScore[choice] || 0;
+
+        totalScore += score;
+
+        // Insert individual evaluation results into the database
+        await db.insert(evaluations).values({
+          model,
+          question: result.question,
+          answer: result.answer,
+          output: result.generated,
+          choice,
+          score: String(score),
+          createdAt: new Date(),
+        });
+      }
+
+// Calculate and store the average score in the configs table
+const averageScore = totalScore / evaluationResults.length;
+console.log(`Average Score for config ${configId}:`, averageScore);
+
+await db.update(configs)
+  .set({ averageScore: averageScore.toFixed(4) }) // Convert number to string with 4 decimal places
+  .where(sql`${configs.id} = ${sql.raw(configId.toString())}`);
+
+
+
+
+      const csvContent = generateCSV(evaluationResults.map((result, index) => ({
+        ...result,
+        choice: reports[index].choice,
+        score: choiceToScore[reports[index].choice] || 0,
+      })));
 
       c.header('Content-Type', 'text/csv');
       c.header('Content-Disposition', `attachment; filename=config_${configId}_results.csv`);

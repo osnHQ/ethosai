@@ -57,19 +57,38 @@ export async function generateReportsBatch(
         const response = await openai.chat.completions.create({
           model: model,
           messages: [{ role: "user", content: prompt }],
-          temperature: 0,  // Ensure consistency with the temperature setting in other functions
-        });
+          response_format : {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "choice-scoring",
+                "strict": true,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "choice": {"type": "string", 
+                        "enum": ["A", "B", "C", "D", "E"]
+                        },
+                        "score": {"type": "number"},
 
-        const content = response.choices[0]?.message?.content?.trim() || "{}";  // Fallback to empty JSON if missing
+                    },
+                    "required": [
+                        "choice",
+                        "score",
+                    ],
+                    "additionalProperties": false,
+                },
+            },
+        },
+              });
+        const content = response.choices[0]?.message?.content?.trim() || "{}";
+        
         console.log("Raw model output:", content);  // Log the raw output for debugging
 
         const parsedContent = JSON.parse(content);
-
-        // Ensure that we return a valid report response
-        return { choice: parsedContent.choice || "E", score: parsedContent.score || 0 };
+        return { choice: parsedContent.choice || "", score: parsedContent.score || 0 };
       } catch (error) {
         console.error("Error processing batch report:", error);
-        return { choice: "E", score: 0 };  // Return default values in case of an error
+        return { choice: "", score: 0 };
       }
     })
   );

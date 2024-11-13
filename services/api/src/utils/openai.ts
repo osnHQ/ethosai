@@ -33,7 +33,6 @@ export async function generateReport(
   modelName: string,
   prompt: string
 ): Promise<ReportResponse> {
-  try {
     const response = await openai.chat.completions.create({
       model: modelName,
       messages: [{ role: "user", content: prompt }],
@@ -41,29 +40,10 @@ export async function generateReport(
     });
 
     const messageContent = response.choices[0]?.message?.content?.trim() ?? "{}";
-
-    // Ensure the response is a valid JSON format
-    if (!messageContent.startsWith("{") || !messageContent.endsWith("}")) {
-      console.error("Invalid JSON format:", messageContent);
-      return { choice: "E", score: 0 };  // Return default values if the response is not valid
-    }
-
-    const parsedResponse: Partial<ReportResponse> = JSON.parse(messageContent);
-
-    // Ensure valid structure for report response
-    if (typeof parsedResponse.choice === 'string' && typeof parsedResponse.score === 'number') {
-      return {
-        choice: parsedResponse.choice.trim().charAt(0),  // Ensure that the choice is a single character
-        score: parsedResponse.score,
-      };
-    } else {
-      console.error("Invalid structure for report response:", parsedResponse);
-      return { choice: "E", score: 0 };  // Default to 'E' and score 0 if structure is invalid
-    }
-  } catch (error) {
-    console.error("Error generating report:", error);
-    return { choice: "E", score: 0 };  // Return default values in case of an error
-  }
+    console.log(messageContent);
+    const { choice, score } = JSON.parse(messageContent);
+    console.log(choice, score);
+    return { choice, score };
 }
 
 export async function generateReportsBatch(

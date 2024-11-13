@@ -178,6 +178,7 @@ generalRouter.post('/configs', async (c: Context) => {
 generalRouter.get("/evaluations", async (c) => {
     const db = createDbConnection(c.env.DATABASE_URL);
     const allEvaluations = await db.select().from(evaluations);
+    allEvaluations.sort((a, b) => a.id - b.id);
     return c.json(allEvaluations);
 });
 

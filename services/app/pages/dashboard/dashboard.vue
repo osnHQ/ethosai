@@ -34,8 +34,8 @@
                                         </h1>
 
                                     </div>
-                                    <p class="ml-1 text-base leading-7 text-md text-gray-800 max-md:max-w-full">
-                                        Your personalized overview of Ethos AI activities and metrics. </p>
+                                    <div class="ml-1 text-base leading-7 text-md text-gray-800 max-md:max-w-full">
+                                        Your personalized overview of Ethos AI activities and metrics. </div>
                                 </div>
                             </div>
                             <div class="flex flex-col ml-5 w-[35%] max-md:ml-0 max-md:w-full">
@@ -45,11 +45,11 @@
                                             <NuxtImg :src="fileTypeIcon" alt="File Type Icon"
                                                 class="w-16 h-16 object-cover border border-gray-300 rounded-md" />
                                         </div>
-                                        <p v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">
+                                        <div v-if="selectedFileName" class="mt-2 text-gray-700 dark:text-gray-300">
                                             Selected
                                             file: {{
                                                 selectedFileName }}
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                                     <h5 class="mb-3 ml-2 text-slate-800 text-3xl font-semibold">
                                         24
                                     </h5>
-                                    <p class="text-slate-600 leading-normal font-light">
+                                    <div class="text-slate-600 leading-normal font-light">
                                     <div
                                         class="bg-red-100 text-red-700 rounded-full px-4 py-2 inline-flex items-center space-x-2">
                                         <span>25%</span>
@@ -93,7 +93,7 @@
                                                 d="M12 3v18m7-7l-7 7-7-7" />
                                         </svg>
                                     </div>
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -118,7 +118,7 @@
                                     <h5 class="mb-3 ml-2 text-slate-800 text-3xl font-semibold">
                                         11
                                     </h5>
-                                    <p class="text-slate-600 leading-normal font-light">
+                                    <div class="text-slate-600 leading-normal font-light">
                                     <div
                                         class="bg-green-100 text-green-700 rounded-full px-4 py-2 inline-flex items-center space-x-2">
                                         <span>25%</span>
@@ -128,7 +128,7 @@
                                                 d="M12 21V3m-7 7l7-7 7 7" />
                                         </svg>
                                     </div>
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -204,7 +204,7 @@
                                     <h5 class="mb-3 ml-2 text-slate-800 text-3xl font-semibold">
                                         23
                                     </h5>
-                                    <p class="text-slate-600 leading-normal font-light">
+                                    <div class="text-slate-600 leading-normal font-light">
                                     <div
                                         class="bg-green-100 text-green-700 rounded-full px-4 py-2 inline-flex items-center space-x-2">
                                         <span>25%</span>
@@ -214,7 +214,7 @@
                                                 d="M12 21V3m-7 7l7-7 7 7" />
                                         </svg>
                                     </div>
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 

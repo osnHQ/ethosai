@@ -206,6 +206,7 @@ export default {
   loading.value = true;
 
   try {
+    // Step 1: Evaluate the configuration
     const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
       method: 'POST',
       headers: {
@@ -215,6 +216,7 @@ export default {
     });
 
     if (response.ok) {
+      // Step 2: Download the CSV file after evaluation
       const contentDisposition = response.headers.get('Content-Disposition');
       console.log("Content-Disposition Header:", contentDisposition);
 
@@ -235,6 +237,11 @@ export default {
       document.body.removeChild(link);
 
       console.log('CSV file downloaded successfully');
+
+      // Step 3: Call the API to update the model's average score
+      await updateModelAverageScore();
+
+      // Step 4: Redirect after the evaluation is complete and model score is updated
       router.push({ name: 'auditqueue' });
     } else {
       console.error('Failed to run evaluation');
@@ -242,7 +249,27 @@ export default {
   } catch (error) {
     console.error('Error in evaluation:', error);
   } finally {
-    loading.value = false;  
+    loading.value = false;  // Hide loading spinner
+  }
+};
+
+// Function to call the API to update the model's average score
+const updateModelAverageScore = async () => {
+  try {
+    const response = await fetch('http://localhost:8787/eval/ModelAverageScores', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      console.log("Model average score updated successfully.");
+    } else {
+      console.error("Failed to update model average score.");
+    }
+  } catch (error) {
+    console.error("Error updating model average score:", error);
   }
 };
 

@@ -7,8 +7,10 @@ import { evaluateQuestionBatch } from "./process"; // New batch evaluation funct
 import { parseCSV } from "../utils/functions";
 import { getRecordsWithIds } from "../utils/db";
 import { generateReportsBatch } from "../utils/openai"; // New batch report generation function
-import { configs, evaluations } from "../db/schema";
+import { configs, evaluations,models } from "../db/schema";
 import { sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';  
+
 
 export type Env = {
   DATABASE_URL: string;
@@ -189,5 +191,61 @@ function generateCSV(results: any[]): string {
 
   return csvContent;
 }
+
+
+evaluationRouter.post('/ModelAverageScores', async (c) => {
+  const db = createDbConnection(c.env.DATABASE_URL);
+
+  try {
+    const allModels = await db.select({ name: models.name }).from(models);
+
+    for (const { name: modelName } of allModels) {
+      const configsForModel = await db
+        .select()
+        .from(configs)
+        .where(eq(configs.model, modelName));
+
+      if (configsForModel.length === 0) {
+        console.warn(`No configs found for model ${modelName}`);
+        continue;
+      }
+
+      const totalScore = configsForModel.reduce((sum, config) => {
+        return sum + parseFloat(config.averageScore || '0'); // Convert score to float
+      }, 0);
+
+      const avgScore = totalScore / configsForModel.length;
+
+      console.log(`Average score for model ${modelName}:`, avgScore);
+
+      const existingModel = await db
+        .select()
+        .from(models)
+        .where(eq(models.name, modelName))
+        .limit(1);
+
+      if (existingModel.length > 0) {
+        await db
+          .update(models)
+          .set({ averageScore: avgScore.toFixed(4) }) 
+          .where(eq(models.name, modelName));
+        console.log(`Updated average score for model ${modelName}`);
+      } else {
+        await db
+          .insert(models)
+          .values({
+            name: modelName,
+            averageScore: avgScore.toFixed(4), 
+          });
+        console.log(`Inserted new model ${modelName} with average score ${avgScore.toFixed(4)}`);
+      }
+    }
+
+    return c.json({ message: 'Updated average scores for all models' });
+  } catch (error) {
+    console.error("Error updating all model average scores:", error);
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+});
 
 export default evaluationRouter;

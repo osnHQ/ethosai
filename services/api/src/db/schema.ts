@@ -45,7 +45,9 @@ export const models = pgTable('models', {
   description: text('description'),
   image: text('image'),
   tags: json('tags'),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
+  averageScore: text('average_score').default('0'), 
+
 });
 
 export const evaluations = pgTable('evaluations', {

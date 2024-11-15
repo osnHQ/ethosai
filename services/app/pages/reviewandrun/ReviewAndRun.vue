@@ -197,11 +197,11 @@ export default {
     return;
   }
 
-  const model = selectedLlm.value === 'gpt-4o' ? 'gpt-4o' : 'gpt-4o-mini';  // Choose the model dynamically
+  const model = selectedLlm.value?.name === 'GPT-4o' ? 'gpt-4o' : 'gpt-4o-mini';
 
   const payload = {
     configId: Number(configId.value),
-    model: model,  // Pass the selected model dynamically
+    model: model,  
   };
   loading.value = true;
 

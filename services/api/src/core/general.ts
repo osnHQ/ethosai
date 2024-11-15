@@ -157,6 +157,7 @@ generalRouter.post('/configs', async (c: Context) => {
             reviews: metadata.reviews || "",
             questionAnswerPairs: questionAnswerPairs,  
             fileContents: fileContent, 
+            model: metadata.model,
         };
 
         const result = await db.insert(configs).values(config).returning({

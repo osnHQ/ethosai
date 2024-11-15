@@ -33,8 +33,10 @@ export const configs = pgTable('configs', {
   submittedBy: json('submitted_by').notNull(),
   questionAnswerPairs: json('questionAnswerPairs').notNull().default([]), 
   fileContents: text('file_contents').notNull().default('No file uploaded'),
-  averageScore: text('average_score').default('0'), 
+  averageScore: text('average_score').default('0'),
+  model: text('model').notNull().default('unknown'), 
 });
+
 
 export const models = pgTable('models', {
   id: serial('id').primaryKey(),

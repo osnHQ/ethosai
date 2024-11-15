@@ -19,6 +19,7 @@ type Config = {
     reviews?: string;  
     questionAnswerPairs: QAPair[]; 
     fileContents: string;
+    model: string;
 }
 
 export async function createConfig(db: NeonHttpDatabase, config: Config) {
@@ -33,6 +34,7 @@ export async function createConfig(db: NeonHttpDatabase, config: Config) {
         rating: config.rating || 0,  
         questionAnswerPairs: config.questionAnswerPairs.length ? config.questionAnswerPairs : [],
         fileContents: config.fileContents ?? "No file uploaded",
+        model: config.model,
         });
         
 }

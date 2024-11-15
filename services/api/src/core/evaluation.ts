@@ -129,7 +129,6 @@ evaluationRouter.post('/evaluateCsv',
 
         totalScore += score;
 
-        // Insert individual evaluation results into the database
         await db.insert(evaluations).values({
           model,
           question: result.question,
@@ -141,13 +140,16 @@ evaluationRouter.post('/evaluateCsv',
         });
       }
 
-// Calculate and store the average score in the configs table
 const averageScore = totalScore / evaluationResults.length;
 console.log(`Average Score for config ${configId}:`, averageScore);
 
 await db.update(configs)
-  .set({ averageScore: averageScore.toFixed(4) }) // Convert number to string with 4 decimal places
+  .set({
+    averageScore: averageScore.toFixed(4), 
+    model, 
+  })
   .where(sql`${configs.id} = ${sql.raw(configId.toString())}`);
+
 
 
 

@@ -254,12 +254,14 @@ evaluationRouter.post('/evaluatePdf',
       };
 
       addHeader("LLM Audit Report", 1);
-      addSectionHeader("Average Score");
+      addSectionHeader(`Testing against ${model}`);  
+      yPos += 20;
       doc.setFont("Helvetica", "Bold");
       doc.setFontSize(24);
       doc.setTextColor(0, 0, 139);
       doc.text(`Average Score: ${averageScore.toFixed(2)}`, margin, yPos);
       yPos += 40; 
+
       addSectionHeader("Introduction");
       addBodyText("In today's rapidly evolving technological landscape, Large Language Models (LLMs) have emerged as powerful tools capable of generating human-quality text, translating languages, and answering complex questions with remarkable accuracy. As these models become increasingly integrated into various sectors, ensuring their responsible development and deployment is paramount. At ethosAI, we are committed to providing transparent and accountable AI evaluation through our advanced LLM auditing engine.");
       addBodyText("Our engine is built on an in-house LLM that rigorously assesses AI models across three core principles: Holistic Assessment, Dynamic Benchmarking, and Ethical Foundations. This approach allows us to evaluate not only an LLM's factual knowledge and recall but also its logical reasoning, creative abilities, and ethical decision-making capabilities.");
@@ -299,16 +301,31 @@ evaluationRouter.post('/evaluatePdf',
       addBulletPoint("Average Score: Calculated as the mean of all scores obtained across the questions.");
 
       const resultTableData = [
-          ["Category", "Accuracy (%)", "Average Score"],
-          ["Presidency", "75%", "0.875"],
-          ["Amendments", "71%", "0.858"],
-          ["Congress", "67%", "0.867"],
-          ["Federalism", "60%", "0.8"],
-          ["General", "53%", "0.791"],
-          ["Supreme Court", "50%", "0.8"],
-          ["Rights & Liberty", "0%", "0.6"]
+        ["Category", "Accuracy (%)", "Average Score"],
+        ["Presidency", "75%", "0.875"],
+        ["Amendments", "71%", "0.858"],
+        ["Congress", "67%", "0.867"],
+        ["Federalism", "60%", "0.8"],
+        ["General", "53%", "0.791"],
+        ["Supreme Court", "50%", "0.8"],
+        ["Rights & Liberty", "0%", "0.6"]
       ];
       addTable(resultTableData, [200, 100, 100]);
+      
+      yPos += 20; 
+      
+      addSectionHeader("Detailed Evaluation Results");
+      const detailedTableData = [
+        ["Question", "Expected Answer", "Choice", "Score", "Evaluation ID"],
+        ...csvData.map(result => [
+          result.question,
+          result.answer,
+          result.choice,
+          result.score.toString(),
+          result.evaluationId.toString(),
+        ])
+      ];
+      addTable(detailedTableData, [150, 150, 50, 50, 60]);
 
       doc.addPage();
       addHeader("LLM Audit Report", 4);

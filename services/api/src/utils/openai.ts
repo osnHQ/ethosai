@@ -40,7 +40,6 @@ export async function generateReport(
     });
 
     const messageContent = response.choices[0]?.message?.content?.trim() ?? "{}";
-    console.log(messageContent);
     const { choice, score } = JSON.parse(messageContent);
     console.log(choice, score);
     return { choice, score };

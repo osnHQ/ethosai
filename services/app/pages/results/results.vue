@@ -1,27 +1,24 @@
 <template>
-    
     <div class="flex h-screen bg-white">
-    <aside
-      :class="{
-        'hidden': !isSidebarOpen && isMobile,
-        'block': isSidebarOpen || !isMobile,
-        'fixed': true,
-        'inset-y-0 left-0': true,
-        'z-30': true,
-        'min-h-screen': true,
-        'transition-transform transform md:translate-x-0': true
-      }"
-      class="w-64 bg-white shadow-lg md:block"
-    >
-      <Sidebar @toggleSidebar="toggleSidebar" />
-    </aside>
+        <aside
+            :class="{
+                'hidden': !isSidebarOpen && isMobile,
+                'block': isSidebarOpen || !isMobile,
+                'fixed': true,
+                'inset-y-0 left-0': true,
+                'z-30': true,
+                'min-h-screen': true,
+                'transition-transform transform md:translate-x-0': true
+            }"
+            class="w-64 bg-white shadow-lg md:block"
+        >
+            <Sidebar @toggleSidebar="toggleSidebar" />
+        </aside>
 
-    <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
+        <div v-if="isSidebarOpen && isMobile" class="fixed inset-0 bg-black opacity-30 z-20" @click="toggleSidebar"></div>
 
-
-        
-            <main class="flex-1 ml-64 overflow-auto p-7"> 
-                <section
+        <main class="flex-1 ml-64 overflow-auto p-7">
+            <section
                 class="flex flex-col px-8 pb-3.5 mt-5 w-full bg-white rounded shadow-sm max-w-[1676px] max-md:px-5 max-md:max-w-full">
                 <header class="max-md:max-w-full">
                     <div class="flex gap-5 max-md:flex-col max-md:gap-0">
@@ -80,8 +77,8 @@
                         </div>
 
                         <div class="w-2/3 p-4">
-                            <div ref="uPlotContainer" class="w-full h-full bg-white" style="background-color: #fbfbfb;">
-                            </div>
+                            <!-- Replacing uPlot with ModelScoresGraph -->
+                            <ModelScoresGraph />
                         </div>
                     </div>
                 </header>
@@ -158,59 +155,32 @@
                 <nav class="flex gap-1 self-center mt-14 max-w-full text-sm leading-5 whitespace-nowrap text-zinc-400 w-[344px] max-md:mt-10"
                     aria-label="Pagination">
                     <a href="#" class="flex gap-0.5 text-white">
-                        <NuxtImg loading="lazy" src="/paginationleft.png" alt="Previous page"
-                            class="w-5 h-5 mt-3.5 mr-2" />
-                        <span class="sr-only">Previous page</span>
+                        <NuxtImg loading="lazy" src="/leftarrow.png" alt="Previous" class="shrink-0 w-6 aspect-square" />
+                        <span>Previous</span>
                     </a>
-                    <a href="#" aria-current="page"
-                        class="justify-center items-start px-4 py-3.5 bg-cyan-500 rounded text-white">
-                        1
-                    </a>
-                    <a href="#"
-                        class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-                        2
-                    </a>
-                    <a href="#"
-                        class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-                        3
-                    </a>
-                    <a href="#"
-                        class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-                        4
-                    </a>
-                    <span class="flex gap-1">
-                        <NuxtImg loading="lazy" src="/paginationdots.png" alt=""
-                            class="w-5 h-5 mt-3.5 aspect-square border-zinc-200" />
-                        <a href="#"
-                            class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-                            10
-                        </a>
-                        <a href="#"
-                            class="justify-center items-start px-4 py-3.5 bg-white rounded border border-solid border-zinc-200">
-                            11
-                        </a>
-                    </span>
-                    <a href="#" class="flex gap-0.5 text-zinc-400">
-                        <NuxtImg loading="lazy" src="/paginationright.png" alt="Next page"
-                            class="w-5 h-5 mt-3.5 ml-5" />
-                        <span class="sr-only">Next page</span>
+                    <a href="#" class="text-black">1</a>
+                    <a href="#" class="text-black">2</a>
+                    <a href="#" class="text-black">3</a>
+                    <a href="#" class="text-black">...</a>
+                    <a href="#" class="text-black">8</a>
+                    <a href="#" class="text-white">
+                        <span>Next</span>
+                        <NuxtImg loading="lazy" src="/rightarrow.png" alt="Next" class="shrink-0 w-6 aspect-square" />
                     </a>
                 </nav>
             </section>
         </main>
     </div>
 </template>
-
 <script lang="ts">
 import BarChartC from '@/components/BarChart.vue';
+import ModelScoresGraph from '@/components/ModelScoresGraph.vue';  
 import ky from 'ky';
 import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { useRouter } from 'vue-router'; 
 import Flatpickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
-import uPlot from 'uplot';
-import 'uplot/dist/uPlot.min.css';
 
 interface Config {
     evalID: string;
@@ -228,6 +198,7 @@ export default defineComponent({
     components: {
         Flatpickr,
         BarChartC,
+        ModelScoresGraph,
     },
     setup() {
         const router = useRouter(); 
@@ -250,7 +221,6 @@ export default defineComponent({
             dateFormat: 'Y/m/d',
             defaultDate: ['2019/04/14', '2024/06/14'],
         });
-        const uPlotContainer = ref<HTMLDivElement | null>(null);
 
         const filteredConfigs = computed(() => {
             const [startDate, endDate] = dateRange.value;
@@ -287,58 +257,8 @@ export default defineComponent({
             }
         };
 
-        const initChart = () => {
-            const container = uPlotContainer.value;
-
-            if (container) {
-                const categories = ['HealthCare', 'Finance', 'Geography', 'Politics', 'Psychology', 'History'];
-                const indices = categories.map((_, index) => index);
-
-                const data = [
-                    new Float64Array(indices),
-                    new Float64Array([50, 60, 55, 70, 65, 75]),
-                    new Float64Array([45, 65, 40, 55, 50, 60]),
-                    new Float64Array([60, 55, 50, 65, 60, 55]),
-                    new Float64Array([65, 70, 60, 45, 55, 65]),
-                ];
-
-                const opts: uPlot.Options = {
-                    title: 'Accuracy',
-                    width: container.clientWidth,
-                    height: 300,
-                    series: [
-                        {},
-                        { label: 'ChatGPT', stroke: 'cyan', paths: uPlot.paths?.spline?.() },
-                        { label: 'Meta', stroke: 'purple', paths: uPlot.paths?.spline?.() },
-                        { label: 'Anthropic', stroke: 'blue', paths: uPlot.paths?.spline?.() },
-                        { label: 'Mistral AI', stroke: 'orange', paths: uPlot.paths?.spline?.() },
-                    ],
-                    scales: {
-                        x: { time: false },
-                        y: { range: () => [30, 80] },
-                    },
-                    axes: [
-                        {
-                            stroke: 'black',
-                            label: 'Categories',
-                            values: (_self: uPlot, ticks: number[]) => ticks.map((i) => categories[i]),
-                        },
-                        {
-                            stroke: 'black',
-                            label: 'Accuracy (%)',
-                        },
-                    ],
-                };
-
-                new uPlot(opts, data, container);
-            } else {
-                console.error('uPlot container not found!');
-            }
-        };
-
         onMounted(() => {
             fetchConfigs();
-            initChart();
         });
 
         return {
@@ -350,12 +270,10 @@ export default defineComponent({
             searchQuery,
             dateRange,
             flatpickrConfig,
-            uPlotContainer,
             filteredConfigs,
             selectedLLM,
             llmLogos,
             llms,
-            initChart,
         };
     },
 });

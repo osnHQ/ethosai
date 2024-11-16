@@ -143,7 +143,6 @@ evaluationRouter.post('/evaluateCsv',
       }
 
 const averageScore = totalScore / evaluationResults.length;
-console.log(`Average Score for config ${configId}:`, averageScore);
 
 await db.update(configs)
   .set({
@@ -216,7 +215,6 @@ evaluationRouter.post('/ModelAverageScores', async (c) => {
 
       const avgScore = totalScore / configsForModel.length;
 
-      console.log(`Average score for model ${modelName}:`, avgScore);
 
       const existingModel = await db
         .select()
@@ -229,7 +227,6 @@ evaluationRouter.post('/ModelAverageScores', async (c) => {
           .update(models)
           .set({ averageScore: avgScore.toFixed(4) }) 
           .where(eq(models.name, modelName));
-        console.log(`Updated average score for model ${modelName}`);
       } else {
         await db
           .insert(models)
@@ -237,7 +234,6 @@ evaluationRouter.post('/ModelAverageScores', async (c) => {
             name: modelName,
             averageScore: avgScore.toFixed(4), 
           });
-        console.log(`Inserted new model ${modelName} with average score ${avgScore.toFixed(4)}`);
       }
     }
 

@@ -1,6 +1,6 @@
 import { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import OpenAI from "openai";
-import { generateResponse, generateReport } from "../utils/openai"; // Ensure these functions are exported correctly
+import { generateResponse, generateReport } from "../utils/openai"; 
 import { evaluations } from "../db/schema";
 
 export async function evaluateQuestion(
@@ -42,7 +42,7 @@ export async function evaluateQuestionBatch(
   openai: OpenAI,
   model: string,
   questions: { content: string; answer: string }[]
-): Promise<{ question: string; answer: string; generated: string }[]> {
+): Promise<{ question: string; answer: string; generated: string; evaluationId: number }[]> {
   const results = await Promise.all(
     questions.map(async (question) => {
       const result = await openai.chat.completions.create({
@@ -50,13 +50,22 @@ export async function evaluateQuestionBatch(
         messages: [{ role: "user", content: question.content }],
         max_tokens: 150,
       });
-      
-      const generatedText = result.choices[0]?.message?.content?.trim() || ""; // Ensures fallback to an empty string if content is null or undefined
+
+      const generatedText = result.choices[0]?.message?.content?.trim() || "";
+
+      const newEvaluation = await db.insert(evaluations).values({
+        model,
+        question: question.content,
+        answer: question.answer,
+        output: generatedText,
+        createdAt: new Date(),
+      }).returning();
 
       return {
         question: question.content,
         answer: question.answer,
-        generated: generatedText
+        generated: generatedText,
+        evaluationId: newEvaluation[0].id,
       };
     })
   );

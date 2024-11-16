@@ -122,6 +122,7 @@ evaluationRouter.post('/evaluateCsv',
       const reports = await generateReportsBatch(openai, model, prompts);
 
       let totalScore = 0;
+      const csvData = [];
 
       for (let i = 0; i < evaluationResults.length; i++) {
         const result = evaluationResults[i];
@@ -131,7 +132,7 @@ evaluationRouter.post('/evaluateCsv',
 
         totalScore += score;
 
-        await db.insert(evaluations).values({
+        const newEvaluation = await db.insert(evaluations).values({
           model,
           question: result.question,
           answer: result.answer,
@@ -139,27 +140,26 @@ evaluationRouter.post('/evaluateCsv',
           choice,
           score: String(score),
           createdAt: new Date(),
+        }).returning();
+
+        csvData.push({
+          ...result,
+          choice,
+          score,
+          evaluationId: newEvaluation[0].id,
         });
       }
 
-const averageScore = totalScore / evaluationResults.length;
+      const averageScore = totalScore / evaluationResults.length;
 
-await db.update(configs)
-  .set({
-    averageScore: averageScore.toFixed(4), 
-    model, 
-  })
-  .where(sql`${configs.id} = ${sql.raw(configId.toString())}`);
+      await db.update(configs)
+        .set({
+          averageScore: averageScore.toFixed(4),
+          model,
+        })
+        .where(sql`${configs.id} = ${sql.raw(configId.toString())}`);
 
-
-
-
-
-      const csvContent = generateCSV(evaluationResults.map((result, index) => ({
-        ...result,
-        choice: reports[index].choice,
-        score: choiceToScore[reports[index].choice] || 0,
-      })));
+      const csvContent = generateCSV(csvData);
 
       c.header('Content-Type', 'text/csv');
       c.header('Content-Disposition', `attachment; filename=config_${configId}_results.csv`);
@@ -191,7 +191,6 @@ function generateCSV(results: any[]): string {
   return csvContent;
 }
 
-
 evaluationRouter.post('/ModelAverageScores', async (c) => {
   const db = createDbConnection(c.env.DATABASE_URL);
 
@@ -210,7 +209,7 @@ evaluationRouter.post('/ModelAverageScores', async (c) => {
       }
 
       const totalScore = configsForModel.reduce((sum, config) => {
-        return sum + parseFloat(config.averageScore || '0'); // Convert score to float
+        return sum + parseFloat(config.averageScore || '0'); 
       }, 0);
 
       const avgScore = totalScore / configsForModel.length;

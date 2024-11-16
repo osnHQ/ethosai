@@ -190,7 +190,6 @@ export default {
 
     };
 
-    // Frontend code
     const runEvaluation = async () => {
   if (!selectedLlm.value || !configId.value) {
     console.error('Missing selected LLM or config ID.');
@@ -201,13 +200,12 @@ export default {
 
   const payload = {
     configId: Number(configId.value),
-    model: model,  
+    model: model,
   };
   loading.value = true;
 
   try {
-    // Step 1: Evaluate the configuration
-    const response = await fetch('http://localhost:8787/eval/evaluateCsv', {
+    const response = await fetch('http://localhost:8787/eval/evaluatePdf', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -216,32 +214,22 @@ export default {
     });
 
     if (response.ok) {
-      // Step 2: Download the CSV file after evaluation
-      const contentDisposition = response.headers.get('Content-Disposition');
-      console.log("Content-Disposition Header:", contentDisposition);
-
-      const filenameMatch = contentDisposition && contentDisposition.match(/filename="?(.+)"?/i);
-      const filename = filenameMatch ? filenameMatch[1] : 'evaluation_results.csv';
-
       const blob = await response.blob();
 
       const url = window.URL.createObjectURL(blob);
-
       const link = document.createElement('a');
       link.href = url;
-      link.download = filename;
+      link.download = 'evaluation_report.pdf';
       document.body.appendChild(link);
       link.click();
 
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
-      console.log('CSV file downloaded successfully');
+      console.log('PDF file downloaded successfully');
 
-      // Step 3: Call the API to update the model's average score
       await updateModelAverageScore();
 
-      // Step 4: Redirect after the evaluation is complete and model score is updated
       router.push({ name: 'auditqueue' });
     } else {
       console.error('Failed to run evaluation');
@@ -249,11 +237,10 @@ export default {
   } catch (error) {
     console.error('Error in evaluation:', error);
   } finally {
-    loading.value = false;  // Hide loading spinner
+    loading.value = false; 
   }
 };
 
-// Function to call the API to update the model's average score
 const updateModelAverageScore = async () => {
   try {
     const response = await fetch('http://localhost:8787/eval/ModelAverageScores', {
